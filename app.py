@@ -69,6 +69,8 @@ else:
     df_plot = df_hist
     display_df = df_hist[df_hist['Ano'] == int(ano_selecionado)]
 
+# ... (mantenha as importações e o load_data como estão) ...
+
 # --- 1. INTRODUÇÃO & CONTEXTO ---
 if menu == "Introdução & Contexto":
     st.markdown('<p class="section-title">Análise de Contexto Econômico</p>', unsafe_allow_html=True)
@@ -88,11 +90,11 @@ if menu == "Introdução & Contexto":
         de demanda tecnológica e uma atualização urgente no currículo técnico da população para atrair empresas que gerem mais dados e menos poeira.
     </div>
     """, unsafe_allow_html=True)
+
+# Mudei para elif e usei um nome que existe no seu st.radio da sidebar
+elif menu == "Metodologia ETL": 
+    st.markdown('<p class="section-title">Matriz de Problemas & Metodologia</p>', unsafe_allow_html=True)
     
- if menu == "Matriz":
-    st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
-    
-    # Criamos as colunas apenas UMA vez dentro do IF
     c1, c2 = st.columns(2)
     
     with c1:

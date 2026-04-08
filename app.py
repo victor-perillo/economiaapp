@@ -35,6 +35,17 @@ st.markdown("""
     .card { background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e0e0e0; }
     </style>
     """, unsafe_allow_html=True)
+<style>
+    .footer {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+        font-size: 14px;
+        border-top: 1px solid #eee;
+        margin-top: 50px;
+        width: 100%;
+    }
+</style>
 
 # --- CARREGAMENTO DE DADOS ---
 @st.cache_data

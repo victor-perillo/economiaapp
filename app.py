@@ -13,7 +13,10 @@ st.set_page_config(
 )
 
 # --- ESTILO CSS CUSTOMIZADO ---
-<style>
+st.markdown("""
+    <style>
+    .main { background-color: #f8f9fa; }
+    
     /* Classe base para todos os cards */
     .step-box { 
         padding: 15px; 
@@ -26,7 +29,12 @@ st.set_page_config(
     .step-extracao { background-color: #e7f0fd; border-color: #1E3A8A; color: #1E3A8A; }
     .step-transformacao { background-color: #fff4e6; border-color: #ff8c00; color: #854d0e; }
     .step-carga { background-color: #ebfbee; border-color: #2f9e44; color: #2b8a3e; }
-</style>
+    
+    /* Outros estilos que você já tinha */
+    .section-title { color: #1E3A8A; font-weight: bold; border-left: 10px solid #FF8C00; padding-left: 15px; margin-top: 30px; margin-bottom: 20px; font-size: 28px; }
+    .card { background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e0e0e0; }
+    </style>
+    """, unsafe_allow_html=True)
 
 # --- CARREGAMENTO DE DADOS ---
 @st.cache_data

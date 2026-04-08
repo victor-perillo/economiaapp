@@ -26,7 +26,7 @@ st.markdown("""
 # --- CARREGAMENTO E TRATAMENTO DE DADOS ---
 @st.cache_data
 def load_and_clean_data():
-    # Dados de Segmentos baseados no PDF (Páginas 4 e 7)
+    # Dados de Segmentos baseados no estudo setorial
     df_seg = pd.DataFrame({
         'Segmento': ["Minerais Não Metálicos", "Metalurgia", "Química/Plásticos", "Alimentos", "Outros"],
         'VAB_Pct': [55, 20, 12, 8, 5],
@@ -34,7 +34,7 @@ def load_and_clean_data():
         'Ganho_Eficiencia': [15, 22, 18, 10, 12]
     })
     
-    # Histórico de Produtividade (Páginas 5 e 7)
+    # Histórico de Produtividade
     df_hist = pd.DataFrame({
         'Ano': [2018, 2019, 2020, 2021, 2022, 2023],
         'Produtividade': [175, 190, 214, 223, 238, 255], 
@@ -61,17 +61,17 @@ if menu == "Introdução":
     
     st.markdown('<div class="intro-box">', unsafe_allow_html=True)
     st.markdown("""
-    Votorantim/SP possui um **legado industrial robusto** focado em indústria de base[cite: 7]. 
-    Entretanto, os dados revelam uma transição econômica latente: a indústria vem perdendo share para o setor de **Serviços**, 
-    caracterizando um movimento de desindustrialização ou modernização da matriz[cite: 8].
+    Votorantim/SP possui um **legado industrial robusto** focado em indústria de base. 
+    Entretanto, os dados revelam uma transição econômica latente: a indústria vem perdendo participação para o setor de **Serviços**, 
+    caracterizando um movimento de desindustrialização ou modernização da matriz.
     
-    <span class="highlight">O Efeito Shadowing:</span> A proximidade com Sorocaba gera uma sombra econômica[cite: 9]. 
-    Enquanto a vizinha atrai indústrias de **Alto Valor Agregado** (Tech/Automotiva), 
-    Votorantim retém setores de baixo valor e alto impacto ambiental[cite: 10].
+    <span class="highlight">O Efeito Shadowing:</span> A proximidade com Sorocaba gera uma sombra econômica. 
+    Enquanto a vizinha atrai indústrias de **Alto Valor Agregado** (Tecnologia/Automotiva), 
+    Votorantim historicamente retém setores de base e alto impacto ambiental.
     """)
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.info("🎯 **Desafio Central:** Migrar de uma economia de 'poeira' para uma economia de 'dados', atualizando o currículo técnico da população e atraindo demanda tecnológica[cite: 12].")
+    st.info("🎯 **Desafio Central:** Migrar de uma economia de manufatura tradicional para uma economia de dados, atualizando o currículo técnico da população e atraindo demanda tecnológica.")
 
 # --- 2. METODOLOGIA (ETL) ---
 elif menu == "Metodologia (ETL)":
@@ -80,14 +80,14 @@ elif menu == "Metodologia (ETL)":
     c1, c2 = st.columns(2)
     with c1:
         st.markdown("### 🛠️ Transformação e Limpeza")
-        st.write("- **Filtro de Nulos:** Remoção de registros onde o IBGE ainda não consolidou o PIB[cite: 18].")
-        st.write("- **Padronização CNAE:** Unificação de nomenclaturas entre CAGED e SEADE para garantir integridade[cite: 19].")
-        st.write("- **Unificação (Join):** Cruzamento das bases de Emprego e PIB utilizando o Código de Município como chave primária[cite: 20].")
+        st.write("- **Filtro de Nulos:** Remoção de registros onde o PIB ainda não foi consolidado.")
+        st.write("- **Padronização CNAE:** Unificação de nomenclaturas entre CAGED e SEADE para garantir integridade.")
+        st.write("- **Unificação (Join):** Cruzamento das bases de Emprego e PIB utilizando o Código de Município como chave primária.")
     
     with c2:
         st.markdown("### 📊 Estrutura de Carga")
-        st.write("- **DataFrames:** Dados estruturados em Pandas para análise imediata[cite: 22].")
-        st.write("- **Visualização:** Uso de bibliotecas de plotagem para consumo imediato no dashboard[cite: 22].")
+        st.write("- **DataFrames:** Dados estruturados em Pandas para análise imediata.")
+        st.write("- **Visualização:** Uso de bibliotecas gráficas para consumo imediato no dashboard.")
 
 # --- 3. PANORAMA ECONÔMICO ---
 elif menu == "Panorama Econômico":
@@ -100,22 +100,22 @@ elif menu == "Panorama Econômico":
                           title="Transição de Matriz: Crescimento Acelerado de Serviços",
                           color_discrete_map={"VAB_Indústria": "#1E3A8A", "VAB_Serviços": "#FF8C00"})
         st.plotly_chart(fig_comp, use_container_width=True)
-        st.caption("Nota-se que enquanto a Indústria cresce de forma constante, o setor de Serviços está acelerando muito mais rápido[cite: 68].")
+        st.caption("Nota-se que enquanto a Indústria cresce de forma constante, o setor de Serviços apresenta uma aceleração mais expressiva.")
 
     with col_vab2:
         fig_donut = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4,
                           title="Dominância Setorial (CNAE)",
                           color_discrete_sequence=px.colors.qualitative.Prism)
         st.plotly_chart(fig_donut, use_container_width=True)
-        st.write("O setor de **Cimento e Minerais** é o motor da cidade, detendo 55% da riqueza industrial[cite: 106, 107].")
+        st.write("O setor de **Cimento e Minerais** permanece como o motor da cidade, detendo 55% da riqueza industrial.")
 
 # --- 4. INDÚSTRIA 4.0 & INOVAÇÃO ---
 elif menu == "Indústria 4.0 & Inovação":
     st.markdown('<p class="section-title">Diagnóstico de Maturidade Digital e Ganhos</p>', unsafe_allow_html=True)
     
     st.markdown("""
-    As indústrias de Votorantim já operam em uma transição para a **Gestão 4.0**[cite: 137]. 
-    O principal diferencial é o uso da inovação através de **Sensoriamento (IoT)** em fornos e moendas, reduzindo o tempo de inatividade e otimizando o consumo energético[cite: 139].
+    As indústrias de Votorantim já operam em uma transição para a **Gestão 4.0**. 
+    O principal diferencial é o uso da inovação através de **Sensoriamento (IoT)** em fornos e moendas, reduzindo o tempo de inatividade e otimizando o consumo energético.
     """)
     
     c_40_1, c_40_2 = st.columns(2)
@@ -128,7 +128,7 @@ elif menu == "Indústria 4.0 & Inovação":
                                  title="Potencial de Modernização")
         fig_scatter.update_traces(textposition='top center')
         st.plotly_chart(fig_scatter, use_container_width=True)
-        st.write("**Dificuldade:** O setor de Alimentos enfrenta gargalos de rastreabilidade[cite: 84], enquanto a metalurgia foca em integração de cadeia.")
+        st.write("**Dificuldade:** O setor de Alimentos enfrenta gargalos de rastreabilidade, enquanto a metalurgia foca em integração de cadeia.")
 
     with c_40_2:
         st.markdown("#### Ganho de Operação: Produtividade por Trabalhador")
@@ -136,7 +136,7 @@ elif menu == "Indústria 4.0 & Inovação":
                          title="Valor Gerado (R$ Mil/Trabalhador)",
                          color_discrete_sequence=['#008080'])
         st.plotly_chart(fig_prod, use_container_width=True)
-        st.info("A produtividade cresce acima da contratação, provando que a indústria está produzindo mais com tecnologia e automação[cite: 109, 138].")
+        st.info("A produtividade cresce acima do ritmo de contratação, indicando que a indústria está produzindo mais através de tecnologia e automação.")
 
 # --- 5. PLANO ESTRATÉGICO ---
 elif menu == "Plano Estratégico":
@@ -144,8 +144,8 @@ elif menu == "Plano Estratégico":
     
     st.markdown('<div class="intro-box">', unsafe_allow_html=True)
     st.markdown("""
-    O problema central identificado é a **Alta dependência econômica** de um único segmento[cite: 155]. 
-    Para mitigar esse risco sistêmico, o plano propõe atrair indústrias de manufatura leve que utilizem o cimento/cal local como insumo (Verticalização)[cite: 141].
+    O problema central identificado é a **Alta dependência econômica** de um único segmento. 
+    Para mitigar esse risco sistêmico, o plano propõe atrair indústrias de manufatura leve que utilizem o cimento/cal local como insumo (Verticalização).
     """)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -162,14 +162,14 @@ elif menu == "Plano Estratégico":
     st.plotly_chart(fig_meta, use_container_width=True)
 
     st.markdown("### Execução do Plano")
-    st.write("A transição para um modelo sustentável exige três pilares baseados em dados[cite: 141]:")
+    st.write("A transição para um modelo sustentável exige três pilares baseados em dados:")
     
     st.table(pd.DataFrame({
-        "Ação": ["Hub de Dados Regional", "Green Tech Incentives", "Diversificação Vertical"],
+        "Ação": ["Hub de Dados Regional", "Incentivos Green Tech", "Diversificação Vertical"],
         "Descrição": [
-            "Centro de treinamento em IA para requalificar o operário local e fechar o gap de habilidades.",
+            "Centro de treinamento em IA para requalificar o operário local e reduzir o gap de habilidades.",
             "Subsídios fiscais para indústrias que utilizem créditos de carbono e energia limpa.",
-            "Atrair indústrias tech de pré-moldados para agregar valor ao cimento produzido na cidade."
+            "Atração de indústrias de pré-moldados tecnológicos para agregar valor ao insumo básico da região."
         ]
     }))
 

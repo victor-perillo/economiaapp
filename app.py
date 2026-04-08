@@ -20,20 +20,23 @@ st.markdown("""
     .chart-caption { background-color: #e9ecef; padding: 15px; border-radius: 0 0 10px 10px; border-top: 3px solid #1E3A8A; font-size: 14px; color: #333; font-style: italic; }
     .card { background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
     .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; border-top: 1px solid #ddd; }
+    .highlight { color: #1E3A8A; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
 # --- CARREGAMENTO DE DADOS ---
 @st.cache_data
 def load_data():
+    # Dados de Segmentos baseados no anexo (Páginas 4 e 7)
     df_seg = pd.DataFrame({
         'Segmento': ["Minerais Não Metálicos", "Metalurgia", "Química/Plásticos", "Alimentos", "Outros"],
         'VAB_Pct': [55, 20, 12, 8, 5],
         'Dificuldade_40': [70, 60, 45, 85, 50], 
         'Ganho_Eficiencia': [15, 22, 18, 10, 12],
-        'Maturidade_Atual': [2.4, 3.1, 2.8, 1.9, 2.5] # Escala 1 a 5
+        'Maturidade_Atual': [2.4, 3.1, 2.8, 1.9, 2.5] 
     })
     
+    # Histórico de Produtividade (Páginas 5 e 7)
     df_hist = pd.DataFrame({
         'Ano': [2018, 2019, 2020, 2021, 2022, 2023],
         'Produtividade': [175, 190, 214, 223, 238, 255], 
@@ -49,126 +52,146 @@ with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=80)
     st.title("Hub de Inteligência")
     
-    # SELETOR DE DATA
     anos_disponiveis = ["Todos"] + [str(ano) for ano in df_hist['Ano'].unique()]
     ano_selecionado = st.selectbox("Selecione o Período de Análise:", anos_disponiveis)
     
     st.divider()
     menu = st.radio("Navegação Estratégica:", 
-                   ["Dashboard Executivo", "Análise de Maturidade 4.0", "Plano de Reindustrialização"])
+                   ["Introdução & Contexto", "Metodologia (ETL)", "Dashboard Executivo", "Análise de Maturidade 4.0", "Plano de Ação"])
 
-# Filtragem dos dados baseada no seletor
 if ano_selecionado == "Todos":
     df_hist_filtered = df_hist
 else:
     df_hist_filtered = df_hist[df_hist['Ano'] == int(ano_selecionado)]
 
-# --- 1. DASHBOARD EXECUTIVO ---
-if menu == "Dashboard Executivo":
+# --- 1. INTRODUÇÃO & CONTEXTO ---
+if menu == "Introdução & Contexto":
+    st.markdown('<p class="section-title">Cenário e Contexto Econômico</p>', unsafe_allow_html=True)
+    
+    st.markdown(f"""
+    <div class="card">
+        Votorantim/SP ainda carrega um <b>legacy industrial</b> muito forte, focado essencialmente em indústria de base como cimento e metalurgia[cite: 7]. 
+        Entretanto, o dataset econômico revela uma transição clara: a indústria vem perdendo participação (share) no PIB para o setor de Serviços, 
+        indicando um processo latente de desindustrialização ou mudança de matriz econômica[cite: 8].
+        <br><br>
+        <span class="highlight">O Efeito Shadowing:</span> O município vive sob a "sombra" econômica de Sorocaba[cite: 9]. 
+        Enquanto a vizinha atrai indústrias de alto valor agregado (Tech e Automotiva), Votorantim retém setores de baixo valor agregado e 
+        alto impacto ambiental.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<p class="section-title">Problemas Identificados</p>', unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1:
+        st.error("**Risco de Setor Único:** O ecossistema é extremamente dependente de poucos players gigantes. Se uma dessas verticais sofre um choque, o impacto é sistêmico[cite: 81, 82].")
+        st.warning("**Conflito de Zoneamento:** O avanço imobiliário sobre áreas industriais cria barreiras para a expansão das fábricas (Trade-off expansão urbana vs. produção)[cite: 87, 88].")
+    with c2:
+        st.error("**Skill Gap (Mão de Obra):** Há um desalinhamento entre o perfil do trabalhador local e as demandas da Indústria 4.0. O mercado pede automação, mas a força ainda é analógica[cite: 84, 85].")
+        st.info("**Dependência de 'Poeira':** Necessidade urgente de migrar para uma economia que gere mais dados e menos impacto ambiental.")
+
+# --- 2. METODOLOGIA (ETL) ---
+elif menu == "Metodologia (ETL)":
+    st.markdown('<p class="section-title">Processamento de Dados (ETL)</p>', unsafe_allow_html=True)
+    
+    col_etl1, col_etl2 = st.columns(2)
+    with col_etl1:
+        st.markdown("### 📥 Extração & Transformação")
+        st.write("**1. Fontes Governamentais:** Coleta via IBGE Cidades, SEADE e Novo CAGED[cite: 15].")
+        st.write("**2. Limpeza de Nulos:** Remoção de registros incompletos, respeitando o lag de 2 anos do PIB municipal[cite: 18].")
+        st.write("**3. Padronização:** Unificação de nomenclaturas (ex: 'CNAE Fabricação de Cimento' para 'Indústria de Minerais Não Metálicos')[cite: 19].")
+    
+    with col_etl2:
+        st.markdown("### 🔄 Unificação & Carga")
+        st.write("**4. Join Técnico:** Merge das bases utilizando o Ano e o Código de Município como chaves primárias[cite: 20].")
+        st.write("**5. Estruturação:** Dados consolidados em DataFrames (Pandas) para visualização dinâmica via Plotly[cite: 22].")
+        st.code("# Exemplo de Join\ndf_final = pd.merge(df_pib, df_emprego, on=['cod_mun', 'ano'])", language="python")
+
+# --- 3. DASHBOARD EXECUTIVO ---
+elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macroeconômico Industrial</p>', unsafe_allow_html=True)
     
-    # KPIs Rápidos
     c1, c2, c3 = st.columns(3)
     with c1:
-        vab_total = df_hist_filtered['VAB_Indústria'].sum()
-        st.metric("VAB Industrial Acumulado", f"R$ {vab_total}M")
+        st.metric("VAB Industrial", f"R$ {df_hist_filtered['VAB_Indústria'].iloc[-1]}M")
     with c2:
-        prod_media = round(df_hist_filtered['Produtividade'].mean(), 2)
-        st.metric("Produtividade Média", f"{prod_media} pts")
+        st.metric("Produtividade Média", f"{df_hist_filtered['Produtividade'].mean():.1f}k")
     with c3:
-        crescimento = round(((df_hist['VAB_Indústria'].iloc[-1] / df_hist['VAB_Indústria'].iloc[0]) - 1) * 100, 1)
-        st.metric("Crescimento 5 Anos", f"{crescimento}%", "+5.2%")
+        st.metric("Dominância Setorial", "55%", "Minerais")
 
     col_left, col_right = st.columns([0.6, 0.4])
-
     with col_left:
-        fig_evolucao = px.area(df_hist_filtered, x='Ano', y=['VAB_Indústria', 'VAB_Serviços'],
-                              title="Convergência Setorial: Indústria vs Serviços",
-                              color_discrete_map={"VAB_Indústria": "#1E3A8A", "VAB_Serviços": "#FF8C00"},
-                              line_shape='spline')
+        fig_evolucao = px.line(df_hist_filtered, x='Ano', y=['VAB_Indústria', 'VAB_Serviços'],
+                              title="Crescimento Setorial: Aceleração de Serviços [cite: 68]",
+                              color_discrete_map={"VAB_Indústria": "#1E3A8A", "VAB_Serviços": "#FF8C00"}, markers=True)
         st.plotly_chart(fig_evolucao, use_container_width=True)
-        st.markdown('<div class="chart-caption"><b>Análise:</b> O gráfico revela um fenômeno de "terceirização avançada". Enquanto o valor industrial cresce nominalmente, sua participação relativa encolhe perante serviços, exigindo uma integração urgente entre produto e serviço (Servitização).</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-caption"><b>Análise:</b> Enquanto a indústria cresce de forma constante, o setor de serviços acelera rapidamente, sinalizando a "terceirização" da economia local[cite: 68, 69].</div>', unsafe_allow_html=True)
 
     with col_right:
-        fig_pizza = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.5,
-                          title="Concentração de Riqueza por CNAE",
-                          color_discrete_sequence=px.colors.sequential.RdBu)
+        fig_pizza = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.5, title="Distribuição de VAB (CNAE) [cite: 25]")
         st.plotly_chart(fig_pizza, use_container_width=True)
-        st.markdown('<div class="chart-caption"><b>Destaque:</b> 55% da economia industrial depende de Minerais Não Metálicos. Esta dependência cria um risco de exposição a ciclos da construção civil.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-caption"><b>Destaque:</b> O setor de Cimento e Minerais detém 55% da riqueza industrial, sendo o motor absoluto da cidade[cite: 106, 107].</div>', unsafe_allow_html=True)
 
-# --- 2. INDÚSTRIA 4.0 (MELHORADO) ---
+# --- 4. INDÚSTRIA 4.0 ---
 elif menu == "Análise de Maturidade 4.0":
-    st.markdown('<p class="section-title">Diagnóstico de Inteligência 4.0</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Diagnóstico Digital e Eficiência</p>', unsafe_allow_html=True)
     
-    # Explicação técnica
-    st.write("""
-    A transição para a Indústria 4.0 em Votorantim não é apenas sobre robôs, mas sobre a **Digitalização do Chão de Fábrica**. 
-    Abaixo, analisamos onde o investimento tecnológico gera o maior retorno sobre o capital investido (ROIC).
-    """)
+    st.write("A indústria de Votorantim já opera em transição para a Gestão 4.0, especialmente no uso de **Sensoriamento (IoT)** para reduzir downtime em fornos[cite: 137, 139].")
 
     c1, c2 = st.columns(2)
-    
     with c1:
-        fig_radar = go.Figure()
-        fig_radar.add_trace(go.Scatterpolar(
-            r=df_seg['Maturidade_Atual'],
-            theta=df_seg['Segmento'],
-            fill='toself',
-            name='Nível de Maturidade',
-            marker=dict(color='#1E3A8A')
-        ))
-        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])),
-                              title="Índice de Maturidade Digital por Setor")
-        st.plotly_chart(fig_radar, use_container_width=True)
-        st.markdown('<div class="chart-caption"><b>Insight:</b> O setor metalúrgico lidera a maturidade digital local. O setor de Alimentos apresenta o maior gap tecnológico, sendo a principal oportunidade para consultorias de automação.</div>', unsafe_allow_html=True)
+        fig_prod = px.bar(df_hist_filtered, x='Ano', y='Produtividade', title="Evolução da Produtividade (R$ por Trabalhador) [cite: 122]", color_discrete_sequence=['#008080'])
+        st.plotly_chart(fig_prod, use_container_width=True)
+        st.markdown('<div class="chart-caption"><b>Evidência:</b> O VAB por trabalhador cresce acima da contratação, provando que a indústria produz mais com tecnologia e automação[cite: 109, 138].</div>', unsafe_allow_html=True)
 
     with c2:
-        fig_bubbles = px.scatter(df_seg, x='Dificuldade_40', y='Ganho_Eficiencia',
-                                size='VAB_Pct', color='Segmento',
-                                title="Matriz de Priorização Tecnológica",
-                                labels={'Dificuldade_40': 'Barreira de Implementação', 'Ganho_Eficiencia': 'ROI Estimado'})
-        st.plotly_chart(fig_bubbles, use_container_width=True)
-        st.markdown('<div class="chart-caption"><b>Estratégia:</b> Setores no quadrante superior esquerdo são "Quick Wins" (Baixo esforço/Alto ganho). Deve-se focar em sensores IoT para manutenção preditiva em plantas de moagem.</div>', unsafe_allow_html=True)
+        fig_radar = go.Figure()
+        fig_radar.add_trace(go.Scatterpolar(r=df_seg['Maturidade_Atual'], theta=df_seg['Segmento'], fill='toself', name='Maturidade', marker=dict(color='#1E3A8A')))
+        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Índice de Maturidade Digital")
+        st.plotly_chart(fig_radar, use_container_width=True)
+        st.markdown('<div class="chart-caption"><b>Nota:</b> Metalurgia lidera em integração, enquanto Alimentos possui o maior gap para automação plena.</div>', unsafe_allow_html=True)
 
-# --- 3. PLANO ESTRATÉGICO (MODERNIZADO) ---
-elif menu == "Plano de Reindustrialização":
-    st.markdown('<p class="section-title">Eixo Estratégico 2024-2030</p>', unsafe_allow_html=True)
+# --- 5. PLANO DE AÇÃO ---
+elif menu == "Plano de Ação":
+    st.markdown('<p class="section-title">Estratégia de Diversificação e Portfólio Industrial</p>', unsafe_allow_html=True)
     
-    st.info("💡 **Visão de Futuro:** Transformar Votorantim de um polo de extração para um polo de manufatura avançada e materiais sustentáveis.")
+    st.markdown('<div class="card"><b>Problema Central:</b> Alta dependência econômica de um único segmento e risco de concentração sistêmica[cite: 155].</div>', unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["Metas de Diversificação", "Pilares de Ação"])
+    # Gráfico de Metas
+    meta_df = pd.DataFrame({
+        'Setor': ["Cimento", "Metalurgia", "Novas Techs", "Outros"],
+        'Cenário Atual': [55, 20, 5, 20],
+        'Meta Plano': [40, 20, 25, 15]
+    })
+    fig_meta = go.Figure()
+    fig_meta.add_trace(go.Bar(name='Atual', x=meta_df['Setor'], y=meta_df['Cenário Atual'], marker_color='#1E3A8A'))
+    fig_meta.add_trace(go.Bar(name='Meta', x=meta_df['Setor'], y=meta_df['Meta Plano'], marker_color='#FF8C00'))
+    st.plotly_chart(fig_meta, use_container_width=True)
+
+    st.markdown("### 🚀 Ações Estratégicas Baseadas em Dados")
     
-    with tab1:
-        meta_df = pd.DataFrame({
-            'Setor': ["Cimento/Base", "Materiais Avançados", "AgroTech", "Serviços Industriais"],
-            'Cenário Atual': [60, 10, 5, 25],
-            'Meta 2030': [35, 30, 15, 20]
-        })
-        fig_metas = go.Figure()
-        fig_metas.add_trace(go.Bar(name='Cenário Atual', x=meta_df['Setor'], y=meta_df['Cenário Atual'], marker_color='#1E3A8A'))
-        fig_metas.add_trace(go.Bar(name='Meta 2030', x=meta_df['Setor'], y=meta_df['Meta 2030'], marker_color='#FF8C00'))
-        st.plotly_chart(fig_metas, use_container_width=True)
-        st.markdown('<div class="chart-caption"><b>Objetivo:</b> Reduzir a dependência do cimento básico em 25% e migrar para "Materiais Avançados" (grafeno, polímeros técnicos), aproveitando a infraestrutura logística existente.</div>', unsafe_allow_html=True)
-
-    with tab2:
-        st.write("### 🚀 Pilares de Execução")
-        
-        col_p1, col_p2, col_p3 = st.columns(3)
-        with col_p1:
-            st.subheader("1. Simbiose Industrial")
-            st.write("Criar um ecossistema onde o resíduo da metalurgia sirva de insumo para a construção civil, reduzindo custos e pegada de carbono.")
-        with col_p2:
-            st.subheader("2. Sandbox Tecnológico")
-            st.write("Atrair startups de Sorocaba para testar soluções de IA e Robótica nas plantas de Votorantim com incentivos fiscais específicos.")
-        with col_p3:
-            st.subheader("3. Talent Hub")
-            st.write("Parceria com Fatec e Senai para criação de cursos focados em Data Science aplicado à manufatura e operação de drones industriais.")
+    # 5 Ações detalhadas
+    st.table(pd.DataFrame({
+        "Ação": [
+            "1. Diversificação Vertical", 
+            "2. Hub de Dados Regional", 
+            "3. Green Tech Incentives",
+            "4. Simbiose Industrial",
+            "5. Requalificação 4.0"
+        ],
+        "Objetivo": [
+            "Atrair indústrias de manufatura leve que utilizem o cimento/cal local como insumo (ex: pré-moldados tech).",
+            "Criar centro de treinamento em IA e IoT em parceria com Sorocaba para suporte tecnológico.",
+            "Subsídios fiscais para indústrias que utilizem créditos de carbono e energia limpa.",
+            "Integrar o cluster de minerais com novas indústrias de reciclagem para reduzir impacto ambiental e gerar novos subprodutos.",
+            "Atualização do currículo técnico da população para atrair empresas que gerem mais dados e 'menos poeira'."
+        ]
+    }))
 
 # --- FOOTER ---
 st.markdown(f"""
     <div class="footer">
-        <p><b>Observatório Industrial Votorantim v2.0</b> - Inteligência de Dados Aplicada</p>
+        <p><b>Observatório Industrial Votorantim v2.1</b> | Desenvolvido com base no Dataset Consolidado (IBGE/SEADE/CAGED)</p>
         <p>Desenvolvido por: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.</p>
-        <p>Relatório dinâmico gerado em {datetime.now().strftime('%d/%m/%Y %H:%M')}</p>
+        <p>Gerado em {datetime.now().strftime('%d/%m/%Y %H:%M')}</p>
     </div>
     """, unsafe_allow_html=True)

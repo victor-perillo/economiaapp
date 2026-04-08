@@ -6,189 +6,159 @@ from datetime import datetime
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
-    page_title="Observatório Industrial Votorantim | Indústria 4.0",
+    page_title="Observatório Industrial | Votorantim SP",
     page_icon="🏭",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# --- ESTILIZAÇÃO CUSTOMIZADA (CSS) ---
+# --- ESTILO CSS AVANÇADO ---
 st.markdown("""
     <style>
-    .main { background-color: #f4f7f6; }
-    [data-testid="stMetricValue"] { font-size: 32px; color: #1E3A8A; font-weight: bold; }
-    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
-    h1, h2, h3 { color: #1E3A8A; font-family: 'Segoe UI', sans-serif; }
-    .footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #1E3A8A; color: white; text-align: center; padding: 10px; font-size: 14px; z-index: 100; }
-    .highlight { background-color: #fff3cd; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+    .main { background-color: #f8f9fa; }
+    .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; border-left: 5px solid #1E3A8A; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .card { background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .section-title { color: #1E3A8A; font-weight: bold; border-bottom: 2px solid #1E3A8A; padding-bottom: 5px; margin-top: 20px; }
+    .footer { position: relative; width: 100%; background-color: #f1f3f5; color: #444; text-align: center; padding: 20px; font-size: 14px; margin-top: 50px; border-top: 1px solid #ddd; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- SEÇÃO 1: ETL (Processamento de Dados baseado no PDF) ---
+# --- CARREGAMENTO DE DADOS (ETL CONFORME PDF) ---
 @st.cache_data
-def load_and_process_data():
-    # 1. EXTRAÇÃO (Fontes mencionadas no PDF)
-    # Fontes: IBGE Cidades, SEADE e Novo CAGED
+def get_data():
+    # Estrutura baseada nos dados consolidados do PDF [cite: 15, 16]
+    df_seg = pd.DataFrame({
+        'Segmento': ["Cimento/Minerais", "Metalurgia", "Química/Plásticos", "Alimentos", "Outros"],
+        'VAB_Pct': [55, 20, 12, 8, 5],
+        'Cor': ['#1E3A8A', '#2E59A8', '#4A7CC2', '#769FDB', '#A3C1F3']
+    })
     
-    segmentos_data = {
-        'CNAE_Segmento': ["Minerais Não Metálicos (Cimento)", "Metalurgia", "Química/Plásticos", "Alimentos", "Outros"],
-        'Participacao_VAB_Pct': [55, 20, 12, 8, 5],
-        'Estoque_Emprego': [3100, 1950, 1100, 850, 600]
-    }
+    df_hist = pd.DataFrame({
+        'Ano': [2018, 2019, 2020, 2021, 2022, 2023],
+        'VAB_Ind': [1520, 1610, 1740, 1920, 2100, 2300],
+        'VAB_Ser': [2100, 2250, 2380, 2750, 3100, 3500],
+        'Empregos': [8450, 8120, 8600, 8750, 8920, 9100] # Baseado no gráfico de estoque [cite: 76]
+    })
     
-    # Histórico de VAB (Baseado no Gráfico 1 do PDF)
-    pib_data = {
-        'Ano': [2018, 2019, 2020, 2021],
-        'Indústria': [1520, 1610, 1740, 1920], 
-        'Serviços': [2100, 2250, 2380, 2750]
-    }
-    
-    # Dados de Planejamento (Cenário Atual vs Meta - Página 9 do PDF)
-    meta_data = {
-        'Setor': ["Cimento", "Metalurgia", "Novas Techs", "Outros"],
-        'Atual': [55, 20, 5, 20],
-        'Meta': [40, 20, 25, 15]
-    }
+    return df_seg, df_hist
 
-    # 2. TRANSFORMAÇÃO
-    df_seg = pd.DataFrame(segmentos_data)
-    df_pib = pd.DataFrame(pib_data)
-    df_meta = pd.DataFrame(meta_data)
-    
-    # Padronização e Unificação (Join simulado)
-    df_pib['Crescimento_Ind'] = df_pib['Indústria'].pct_change() * 100
-    
-    return df_seg, df_pib, df_meta
+df_seg, df_hist = get_data()
 
-df_seg, df_pib, df_meta = load_and_process_data()
+# --- HEADER ---
+st.title("🏭 Observatório de Inteligência Industrial")
+st.markdown("### Análise Econômica e Transição para Indústria 4.0 - Votorantim/SP")
+st.divider()
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.title("🚀 Hub Industrial")
-    st.markdown("---")
-    aba = st.radio("Navegação Estratégica", 
-                  ["📌 Panorama & Metodologia", "📊 Análise de Segmentos", "🤖 Diagnóstico 4.0", "🚀 Planejamento"])
+    st.image("https://cdn-icons-png.flaticon.com/512/2761/2761014.png", width=80)
+    st.header("Menu de Navegação")
+    aba = st.radio("Escolha uma visão:", ["Metodologia ETL", "Panorama Econômico", "Diagnóstico & Risco", "Plano Estratégico"])
     
-    st.markdown("---")
-    st.markdown("### Fontes de Dados")
-    st.caption("• **IBGE:** Séries de PIB")
-    st.caption("• **SEADE:** VAB Setorial")
-    st.caption("• **CAGED:** Empregos Formais")
+    st.divider()
+    st.info("**Fontes Governamentais:**\n- IBGE (SIDRA)\n- SEADE\n- Novo CAGED")
 
-# --- CONTEÚDO PRINCIPAL ---
-st.title("Observatório de Inteligência Industrial de Votorantim")
-
-# --- TAB 1: PANORAMA & METODOLOGIA (LIGANDO OS PONTOS) ---
-if aba == "📌 Panorama & Metodologia":
-    col1, col2 = st.columns([0.6, 0.4])
+# --- ABA 1: METODOLOGIA ETL ---
+if aba == "Metodologia ETL":
+    st.subheader("⚙️ Pipeline de Dados (ETL)")
     
-    with col1:
-        st.subheader("O Fenômeno do Shadowing e Transição")
-        st.markdown(f"""
-        Votorantim vive um momento crítico de sua história econômica. Enquanto carrega um forte **legacy industrial** focado em indústrias de base, os dados mostram um efeito de **'Shadowing' de Sorocaba**. 
-        
-        * **O Desafio:** Votorantim retém setores de baixo valor agregado e alto impacto ambiental, enquanto a vizinha atrai Tech e Automotiva.
-        * **A Transição:** O setor de Serviços cresce em ritmo acelerado, indicando uma mudança de matriz econômica.
-        """)
-        
-        # Gráfico Comparativo Indústria vs Serviços
-        fig_pib = px.line(df_pib, x='Ano', y=['Indústria', 'Serviços'], markers=True,
-                         title="Evolução do VAB: Aceleração do Setor de Serviços (R$ Milhões)",
-                         color_discrete_map={"Indústria": "#1E3A8A", "Serviços": "#FF8C00"})
-        st.plotly_chart(fig_pib, use_container_width=True)
-
-    with col2:
-        st.subheader("⚙️ Processo ETL")
-        with st.expander("Ver etapas de Extração e Transformação", expanded=True):
-            st.info("""
-            **1. Extração:**
-            Coleta de dados brutos (CSV/JSON) via APIs do SIDRA/IBGE e Novo CAGED.
-            
-            **2. Transformação:**
-            * **Limpeza:** Remoção de nulos (PIB Municipal possui lag de 2 anos).
-            * **Padronização:** Unificação de CNAEs (Ex: Fabricação de Cimento agrupada em 'Minerais não Metálicos').
-            * **Join:** Merge de bases de Emprego e PIB usando Código IBGE.
-            
-            **3. Carga:**
-            Dataset estruturado em DataFrames e exportado para consumo visual.
-            """)
-
-# --- TAB 2: ANÁLISE DE SEGMENTOS ---
-elif aba == "📊 Análise de Segmentos":
-    st.subheader("Análise de Concentração e Risco Setorial")
-    
-    c1, c2 = st.columns([0.4, 0.6])
-    
+    c1, c2, c3 = st.columns(3)
     with c1:
-        st.warning("### Risco de Setor Único")
-        st.markdown("""
-        O setor de **Cimento e Minerais** detém mais de **55% da riqueza industrial** da cidade. 
-        Isso cria uma dependência sistêmica: se a construção civil sofre um choque, o impacto no município é total.
-        """)
-        
-        fig_donut = px.pie(df_seg, values='Participacao_VAB_Pct', names='CNAE_Segmento', hole=.4,
-                          title="Concentração de VAB por CNAE", color_discrete_sequence=px.colors.qualitative.Prism)
-        st.plotly_chart(fig_donut, use_container_width=True)
-
+        st.markdown("**1. Extração** [cite: 14]")
+        st.caption("Coleta de dados brutos de fontes distintas como IBGE (PIB), SEADE (VAB) e CAGED (Empregos) em formatos CSV, XML e JSON[cite: 15, 16].")
     with c2:
-        st.markdown("#### Distribuição de Força de Trabalho vs. Riqueza")
-        fig_bar = px.bar(df_seg, x='CNAE_Segmento', y='Estoque_Emprego', 
-                         color='Participacao_VAB_Pct',
-                         labels={'Estoque_Emprego': 'Postos de Trabalho', 'Participacao_VAB_Pct': '% do VAB'},
-                         title="Empregos por Setor (Cor indica contribuição no PIB)")
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.markdown("**2. Transformação** [cite: 17]")
+        st.caption("Limpeza de nulos (tratando o lag de 2 anos do PIB), padronização de nomenclaturas CNAE e unificação (Join) das bases via código de município[cite: 18, 19, 20].")
+    with c3:
+        st.markdown("**3. Carga** [cite: 21]")
+        st.caption("Estruturação dos dados em DataFrames (Pandas) prontos para visualização em bibliotecas como Plotly e Matplotlib[cite: 22].")
 
-# --- TAB 3: DIAGNÓSTICO 4.0 ---
-elif aba == "🤖 Diagnóstico 4.0":
-    st.subheader("Resiliência e Skill Gap")
-    
-    col_prod, col_gap = st.columns(2)
-    
-    with col_prod:
-        st.markdown("#### Produtividade (VAB por Trabalhador)")
-        # Simulação de produtividade crescente conforme PDF
-        st.success("📈 **Evidência:** A saída financeira cresce acima da contratação, indicando adoção de tecnologia.")
-        prod_fig = px.bar(x=[2019, 2020, 2021], y=[190, 214, 223], 
-                         title="Produtividade: Valor Gerado por Trabalhador (R$ Mil)",
-                         labels={'x': 'Ano', 'y': 'R$ Mil/Trabalhador'}, color_discrete_sequence=['#008080'])
-        st.plotly_chart(prod_fig, use_container_width=True)
+# --- ABA 2: PANORAMA ECONÔMICO ---
+elif aba == "Panorama Econômico":
+    # KPIs Rápidos
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Líder de VAB", "Cimento (55%)", "Dominância Industrial")
+    m2.metric("Tendência", "Setor de Serviços", "Crescimento Acelerado")
+    m3.metric("Recuperação Post-Pandemia", "Resiliente", "Empregos ↑")
 
-    with col_gap:
-        st.error("#### Problemas Identificados")
+    st.markdown('<p class="section-title">Evolução do VAB e Setor de Serviços</p>', unsafe_allow_html=True)
+    
+    col_text, col_chart = st.columns([0.4, 0.6])
+    with col_text:
         st.markdown("""
-        * **Skill Gap:** Desalinhamento entre o perfil analógico do trabalhador e as demandas da Indústria 4.0 (IA e IoT).
-        * **Conflito de Zoneamento:** Setor imobiliário avançando sobre áreas industriais, limitando a expansão.
-        * **Downtime:** Setores de base ainda sofrem com paradas que poderiam ser evitadas com sensoriamento preditivo.
+        **Transição de Matriz Econômica:**
+        A cidade está deixando de ser apenas um "canteiro de fábricas" para se tornar um polo de serviços[cite: 69]. 
+        
+        **Efeito Shadowing (Sorocaba):**
+        Votorantim enfrenta o desafio de reter indústrias de alto valor agregado, que hoje migram para a vizinha Sorocaba (Setor Tech/Automotivo), mantendo setores de alto impacto ambiental.
         """)
+        st.warning("A indústria cresce de forma constante, mas o setor de serviços acelera mais rápido[cite: 68].")
+        
+    with col_chart:
+        fig_evol = px.area(df_hist, x='Ano', y=['Indústria', 'Serviços'], 
+                          title="Composição do VAB (Indústria vs Serviços) - R$ Milhões",
+                          color_discrete_map={"Indústria": "#1E3A8A", "Serviços": "#FF8C00"})
+        st.plotly_chart(fig_evol, use_container_width=True)
 
-# --- TAB 4: PLANEJAMENTO ---
-elif aba == "🚀 Planejamento":
-    st.subheader("Estratégia de Diversificação Industrial")
+# --- ABA 3: DIAGNÓSTICO & RISCO ---
+elif aba == "Diagnóstico & Risco":
+    st.markdown('<p class="section-title">Análise de Risco e Produtividade</p>', unsafe_allow_html=True)
     
+    d1, d2 = st.columns(2)
+    with d1:
+        st.markdown("#### Concentração Industrial (VAB %)")
+        fig_donut = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.5,
+                          color_discrete_sequence=df_seg['Cor'])
+        st.plotly_chart(fig_donut, use_container_width=True)
+        st.error("**Risco de Setor Único:** A dependência extrema do cimento torna o PIB vulnerável a crises na construção civil.")
+
+    with d2:
+        st.markdown("#### Saúde do Emprego Industrial")
+        fig_emp = px.line(df_hist, x='Ano', y='Empregos', markers=True, 
+                          title="Estoque de Emprego Industrial (Resiliência)",
+                          color_discrete_sequence=['#2E59A8'])
+        st.plotly_chart(fig_emp, use_container_width=True)
+        st.info("Mesmo com a queda em 2020, o setor recuperou e superou os níveis pré-crise[cite: 76].")
+
+    st.divider()
+    st.markdown("#### 🤖 Diagnóstico Indústria 4.0")
+    st.write("A produtividade por trabalhador indica investimento em automação (produzir mais com menos pessoas)[cite: 109, 110].")
     st.markdown("""
-    Para reduzir o risco de concentração, o planejamento estratégico foca em atrair **Indústrias de Manufatura Leve** e criar um 
-    **Hub de Dados Regional**.
+    - **Skill Gap:** Desalinhamento entre o perfil manual do trabalhador local e a demanda por automação/dados[cite: 83, 85].
+    - **Inovação:** Uso de IoT (Sensoriamento) em fornos para reduzir downtime e custos energéticos[cite: 139].
     """)
-    
-    # Gráfico de Metas (Cenário Atual vs Plano de Ação)
-    fig_meta = go.Figure()
-    fig_meta.add_trace(go.Bar(name='Cenário Atual', x=df_meta['Setor'], y=df_meta['Atual'], marker_color='#1E3A8A'))
-    fig_meta.add_trace(go.Bar(name='Meta (Plano de Ação)', x=df_meta['Setor'], y=df_meta['Meta'], marker_color='#FF8C00'))
-    
-    fig_meta.update_layout(barmode='group', title="Diversificação de Portfólio Industrial: Hoje vs Futuro (%)")
-    st.plotly_chart(fig_meta, use_container_width=True)
-    
-    st.table(pd.DataFrame({
-        "Ação": ["Diversificação Vertical", "Hub de Dados Regional", "Green Tech Incentives"],
-        "Objetivo": ["Atrair manufatura leve (pré-moldados tech)", "Treinamento em IA/IoT em parceria com Sorocaba", "Subsídios para indústrias Carbono Zero"],
-        "Base de Dados": ["Treemap de Market Share", "Gráfico de Produtividade", "Análise de VAB Industrial"]
-    }))
 
-# --- RODAPÉ ---
-st.markdown("<br><br>", unsafe_allow_html=True)
+# --- ABA 4: PLANO ESTRATÉGICO ---
+elif aba == "Plano Estratégico":
+    st.markdown('<p class="section-title">Estratégias de Diversificação (Portfólio Industrial)</p>', unsafe_allow_html=True)
+    
+    # Gráfico de Meta conforme Página 9 do PDF
+    meta_df = pd.DataFrame({
+        'Setor': ["Cimento", "Metalurgia", "Novas Techs", "Outros"],
+        'Atual': [55, 20, 5, 20],
+        'Meta': [40, 20, 25, 15]
+    })
+    
+    fig_meta = go.Figure()
+    fig_meta.add_trace(go.Bar(name='Cenário Atual', x=meta_df['Setor'], y=meta_df['Atual'], marker_color='#1E3A8A'))
+    fig_meta.add_trace(go.Bar(name='Meta Plano de Ação', x=meta_df['Setor'], y=meta_df['Meta'], marker_color='#FF8C00'))
+    fig_meta.update_layout(barmode='group', title="Planejamento: Redução de Dependência e Novos Segmentos")
+    st.plotly_chart(fig_meta, use_container_width=True)
+
+    with st.expander("Ver Detalhes do Plano de Ação", expanded=True):
+        st.table(pd.DataFrame({
+            "Ação Estratégica": ["Diversificação Vertical", "Hub de Dados Regional", "Green Tech Incentives"],
+            "Objetivo": [
+                "Atrair manufatura leve que use insumos locais (cimento/cal)[cite: 141].",
+                "Centro de treinamento em IA e IoT com foco em requalificação[cite: 141].",
+                "Subsídios para indústrias com crédito de carbono e energia limpa[cite: 141]."
+            ]
+        }))
+
+# --- FOOTER ---
 st.markdown(f"""
     <div class="footer">
-        Desenvolvido por: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote. <br>
-        <b>Instituição: Fatec Votorantim</b> | Relatório gerado em {datetime.now().strftime('%d/%m/%Y')}
+        <p><b>Desenvolvido por:</b> Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.</p>
+        <p><b>Instituição:</b> Fatec Votorantim | Disciplina: Projeto Integrador</p>
+        <p><small>Relatório gerado em {datetime.now().strftime('%d/%m/%Y')} baseado em evidências de datasets consolidados.</small></p>
     </div>
     """, unsafe_allow_html=True)

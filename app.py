@@ -49,7 +49,7 @@ df_seg, df_hist = load_data()
 # --- SIDEBAR ---
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=70)
-    st.title("Hub de Inteligência")
+    st.title("Inteligência Industrial")
     st.subheader("Votorantim 4.0")
     
     anos_disponiveis = ["Todos"] + [str(ano) for ano in df_hist['Ano'].unique()]

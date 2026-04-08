@@ -89,7 +89,11 @@ if menu == "Introdução & Contexto":
     </div>
     """, unsafe_allow_html=True)
     
-  st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
+ if menu == "Matriz":
+    st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1:
+        st.error("Texto aqui")
 
 c1, c2 = st.columns(2)
 

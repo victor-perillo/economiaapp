@@ -13,18 +13,20 @@ st.set_page_config(
 )
 
 # --- ESTILO CSS CUSTOMIZADO ---
-st.markdown("""
-    <style>
-    .main { background-color: #f8f9fa; }
-    [data-testid="stMetricValue"] { font-size: 32px; color: #1E3A8A; font-weight: bold; }
-    .section-title { color: #1E3A8A; font-weight: bold; border-left: 10px solid #FF8C00; padding-left: 15px; margin-top: 30px; margin-bottom: 20px; font-size: 28px; }
-    .chart-caption { background-color: #f1f3f5; padding: 12px; border-radius: 0 0 10px 10px; border-top: 2px solid #1E3A8A; font-size: 13px; color: #444; }
-    .card { background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e0e0e0; }
-    .footer { text-align: center; padding: 30px; color: #555; font-size: 13px; border-top: 2px solid #eee; margin-top: 50px; line-height: 1.6; }
-    .highlight { color: #1E3A8A; font-weight: 700; }
-    .step-box { background-color: #e7f0fd; padding: 15px; border-radius: 8px; border-left: 5px solid #1E3A8A; margin-bottom: 10px; }
-    </style>
-    """, unsafe_allow_html=True)
+<style>
+    /* Classe base para todos os cards */
+    .step-box { 
+        padding: 15px; 
+        border-radius: 8px; 
+        margin-bottom: 15px; 
+        border-left: 8px solid; 
+    }
+    
+    /* Cores específicas para cada etapa */
+    .step-extracao { background-color: #e7f0fd; border-color: #1E3A8A; color: #1E3A8A; }
+    .step-transformacao { background-color: #fff4e6; border-color: #ff8c00; color: #854d0e; }
+    .step-carga { background-color: #ebfbee; border-color: #2f9e44; color: #2b8a3e; }
+</style>
 
 # --- CARREGAMENTO DE DADOS ---
 @st.cache_data
@@ -126,7 +128,7 @@ elif menu == "Metodologia ETL":
             Unificação (Join): Realizamos o merge das bases de Emprego e PIB utilizando o Ano e o Código de Município do IBGE como chaves primárias, criando um dataset único e consistente para os gráficos.
         </div>
         <div class="step-box">
-            <b>3. Carga:</b><br>
+            <b>3. Carregamento:</b><br>
             Ação: O dataset limpo foi estruturado em DataFrames (Pandas) e exportado para formatos prontos para consumo (.csv), permitindo a visualização imediata através de bibliotecas de plotagem (Plotly/Matplotlib) no VS Code.
         </div>
     ''', unsafe_allow_html=True)

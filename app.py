@@ -72,25 +72,41 @@ else:
 # --- 1. INTRODUÇÃO & CONTEXTO ---
 if menu == "Introdução & Contexto":
     st.markdown('<p class="section-title">Análise de Contexto Econômico</p>', unsafe_allow_html=True)
+    
     st.markdown("""
     <div class="card">
-        Votorantim apresenta uma matriz econômica historicamente ligada à indústria de base pesada. 
-        A análise dos dados aponta para um fenômeno de <b>terceirização da economia</b>, onde o setor de serviços cresce 
-        em ritmo superior ao industrial.
+        Votorantim ainda carrega um legacy industrial muito forte, focado em indústria de base (cimento e metalurgia). 
+        No entanto, o dataset econômico da cidade mostra uma transição clara: a indústria está perdendo share no PIB para o setor de Serviços, 
+        o que indica um processo de desindustrialização ou mudança de matriz econômica. O cenário sugere que Votorantim vive um efeito de 
+        "Shadowing" de Sorocaba. Enquanto a vizinha atrai indústrias de alto valor agregado (Tech e Automotiva), Votorantim fica com o setor 
+        de baixo valor agregado e alto impacto ambiental.
         <br><br>
         <span class="highlight">Destaque:</span> A proximidade com o polo tecnológico de Sorocaba cria um desafio de retenção de talentos e 
         necessidade de modernização para que Votorantim não se torne apenas um fornecedor de baixo valor agregado.
+        <br><br>
+        <span class="highlight">Insight:</span> Para reverter isso, o município precisaria de políticas de incentivo baseadas em predição 
+        de demanda tecnológica e uma atualização urgente no currículo técnico da população para atrair empresas que gerem mais dados e menos poeira.
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        st.error("**Concentração Setorial:** Alta dependência dos setores de extração e minerais.")
-        st.warning("**Conflito Territorial:** Avanço da urbanização sobre áreas industrializáveis.")
-    with c2:
-        st.error("**Gap Tecnológico:** Baixa digitalização em pequenas e médias empresas.")
-        st.info("**Efeito Shadowing:** Fuga de capital intelectual para Sorocaba.")
+  st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
+
+c1, c2 = st.columns(2)
+
+with c1:
+    # Usando aspas triplas para permitir quebra de linha no código
+    st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como o Grupo Votorantim). 
+    Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
+    
+    st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
+    É um problema de Trade-off entre expansão urbana e manutenção da produção. 
+    Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos.""")
+
+with c2:
+    # Aqui não precisaria de aspas triplas porque o texto é curto e está em uma linha só, 
+    # mas mantive por padronização e removi os dois pontos extras (::).
+    st.error("**Skill Gap (Mão de Obra):** Baixa digitalização em pequenas e médias empresas.")
+    st.info("**Efeito Shadowing:** Fuga de capital intelectual para Sorocaba.")
 
 # --- 2. METODOLOGIA ETL ---
 elif menu == "Metodologia ETL":

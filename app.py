@@ -91,23 +91,21 @@ if menu == "Introdução & Contexto":
     
  if menu == "Matriz":
     st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        st.error("Texto aqui")
-
-c1, c2 = st.columns(2)
-
-with c1:
-    st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como o Grupo Votorantim). 
-Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
     
-    st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
+    # Criamos as colunas apenas UMA vez dentro do IF
+    c1, c2 = st.columns(2)
+    
+    with c1:
+        st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como o Grupo Votorantim). 
+Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
+        
+        st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
 É um problema de Trade-off entre expansão urbana e manutenção da produção. 
 Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos.""")
 
-with c2:
-    st.error("**Skill Gap (Mão de Obra):** Baixa digitalização em pequenas e médias empresas.")
-    st.info("**Efeito Shadowing:** Fuga de capital intelectual para Sorocaba.")
+    with c2:
+        st.error("**Skill Gap (Mão de Obra):** Baixa digitalização em pequenas e médias empresas.")
+        st.info("**Efeito Shadowing:** Fuga de capital intelectual para Sorocaba.")
 
 # --- 2. METODOLOGIA ETL ---
 elif menu == "Metodologia ETL":

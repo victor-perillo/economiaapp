@@ -35,7 +35,10 @@ st.markdown("""
     .card { background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e0e0e0; }
     </style>
     """, unsafe_allow_html=True)
-<style>
+
+# MODO CORRETO: O CSS deve estar dentro de uma STRING (aspas triplas)
+st.markdown("""
+    <style>
     .footer {
         text-align: center;
         padding: 30px;
@@ -45,7 +48,8 @@ st.markdown("""
         margin-top: 50px;
         width: 100%;
     }
-</style>
+    </style>
+""", unsafe_allow_html=True)
 
 # --- CARREGAMENTO DE DADOS ---
 @st.cache_data

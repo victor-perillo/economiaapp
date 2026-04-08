@@ -57,7 +57,7 @@ with st.sidebar:
     
     st.divider()
     menu = st.radio("Navegação Estratégica:", 
-                   ["Introdução & Contexto","Problemas Identificados" "Metodologia ETL", "Dashboard Executivo", 
+                   ["Introdução & Contexto","Problemas Identificados", "Metodologia ETL", "Dashboard Executivo", 
                     "Diagnóstico Indústria 4.0", "Projeção Futura", "Plano de Ação", "Fontes/Referências"])
 
 # Lógica de Dados para Gráficos
@@ -80,18 +80,15 @@ if menu == "Introdução & Contexto":
         Votorantim ainda carrega um legacy industrial muito forte, focado em indústria de base (cimento e metalurgia). 
         No entanto, o dataset econômico da cidade mostra uma transição clara: a indústria está perdendo share no PIB para o setor de Serviços, 
         o que indica um processo de desindustrialização ou mudança de matriz econômica. O cenário sugere que Votorantim vive um efeito de 
-        "Shadowing" de Sorocaba. Enquanto a vizinha atrai indústrias de alto valor agregado (Tech e Automotiva), Votorantim fica com o setor 
-        de baixo valor agregado e alto impacto ambiental.
+        "Shadowing" de Sorocaba.
         <br><br>
-        <span class="highlight">Destaque:</span> A proximidade com o polo tecnológico de Sorocaba cria um desafio de retenção de talentos e 
-        necessidade de modernização para que Votorantim não se torne apenas um fornecedor de baixo valor agregado.
+        <span class="highlight">Destaque:</span> A proximidade com o polo tecnológico de Sorocaba cria um desafio de retenção de talentos.
         <br><br>
-        <span class="highlight">Insight:</span> Para reverter isso, o município precisaria de políticas de incentivo baseadas em predição 
-        de demanda tecnológica e uma atualização urgente no currículo técnico da população para atrair empresas que gerem mais dados e menos poeira.
+        <span class="highlight">Insight:</span> É necessária uma atualização urgente no currículo técnico para atrair empresas que gerem mais dados e menos poeira.
     </div>
     """, unsafe_allow_html=True)
 
-# Mudei para elif e usei um nome que existe no seu st.radio da sidebar
+# AJUSTE: Certifique-se que este nome esteja EXATAMENTE igual no seu st.sidebar.radio
 elif menu == "Problemas Identificados": 
     st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
     
@@ -102,42 +99,29 @@ elif menu == "Problemas Identificados":
 Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
         
         st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
-É um problema de Trade-off entre expansão urbana e manutenção da produção. 
-Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos.""")
+É um problema de Trade-off entre expansão urbana e manutenção da produção.""")
 
     with c2:
-        st.error("""**Skill Gap (Mão de Obra):** BHá um desalinhamento entre o perfil do trabalhador local e as demandas da Indústria 4.0. 
-        Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos..""")
-        st.info("""**Efeito Shadowing:** O Efeito Shadowing ocorre quando uma cidade perde protagonismo e recursos devido à proximidade com um polo econômico dominante (como Sorocaba). 
-        A cidade menor(Votorantim) sofre uma "drenagem" de talentos e investimentos, que migram para a vizinha mais atraente. Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado ou indústrias de base. 
-        Na prática, o município torna-se uma "cidade-dormitório" ou um fornecedor de insumos brutos, enquanto a inovação e a riqueza tecnológica se concentram no centro vizinho..""")
+        st.error("""**Skill Gap (Mão de Obra):** Há um desalinhamento entre o perfil do trabalhador local e as demandas da Indústria 4.0. 
+Enquanto o mercado pede automação, a força de trabalho ainda está atrelada a processos manuais.""")
+        
+        st.info("""**Efeito Shadowing:** Ocorre quando Votorantim perde talentos e investimentos para Sorocaba. 
+Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado ou indústrias de base.""")
 
 # --- 2. METODOLOGIA ETL ---
 elif menu == "Metodologia ETL":
     st.markdown('<p class="section-title">Pipeline de Dados (ETL)</p>', unsafe_allow_html=True)
     
+    # Usando st.info ou containers para a metodologia ficar elegante
     st.markdown('''
         <div class="step-box">
-            <b>1. Extração:</b> 
-            Ação: Coletamos dados brutos de três fontes governamentais distintas: IBGE Cidades (Séries históricas de PIB), SEADE (VAB por setor municipal) e Novo CAGED (Movimentação formal de empregos).
-            Formatos: Os dados foram extraídos originalmente em formatos como CSV (tabelas de emprego) e XML/JSON (via APIs ou consultas em tabelas do SIDRA/IBGE).
+            <b>1. Extração:</b> Coletamos dados brutos de fontes como IBGE Cidades (PIB), SEADE (VAB) e Novo CAGED (Empregos).
         </div>
-    ''', unsafe_allow_html=True)
-    
-    st.markdown('''
         <div class="step-box">
-            <b>2. Transformação:</b> 
-            Limpeza de Nulos: Removemos registros incompletos de anos onde o IBGE ainda não consolidou o PIB (lembrando que o PIB municipal tem um lag de 2 anos).
-            Padronização de Nomenclaturas: Unificamos as classificações. O que no CAGED estava como "CNAE 2.3 - Fabricação de Cimento", no SEADE agrupamos como "Indústria de Minerais Não Metálicos" para garantir a integridade da análise.
-            Unificação (Join): Realizamos o merge das bases de Emprego e PIB utilizando o Ano e o Código de Município do IBGE como chaves primárias, criando um dataset único e consistente para os gráficos.
+            <b>2. Transformação:</b> Limpeza de Nulos (tratamento de lag do PIB) e Padronização de Nomenclaturas (CNAE vs Grupos SEADE).
         </div>
-    ''', unsafe_allow_html=True)
-    
-    st.markdown('''
         <div class="step-box">
-            <b>3. Carga:</b> 
-            Ação: O dataset limpo foi estruturado em DataFrames (Pandas) e exportado para formatos prontos para consumo (.csv), permitindo a visualização imediata através de bibliotecas de plotagem (Plotly/Matplotlib) no Vs.Code.
-            Armazenamento em DataFrames estruturados para visualização dinâmica no Streamit.
+            <b>3. Carga:</b> Estruturação em DataFrames (Pandas) exportados para .csv para consumo dinâmico no Streamlit.
         </div>
     ''', unsafe_allow_html=True)
     

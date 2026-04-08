@@ -106,8 +106,11 @@ Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre 
 Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos.""")
 
     with c2:
-        st.error("**Skill Gap (Mão de Obra):** Baixa digitalização em pequenas e médias empresas.")
-        st.info("**Efeito Shadowing:** Fuga de capital intelectual para Sorocaba.")
+        st.error("""**Skill Gap (Mão de Obra):** BHá um desalinhamento entre o perfil do trabalhador local e as demandas da Indústria 4.0. 
+        Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos..""")
+        st.info("""**Efeito Shadowing:** O Efeito Shadowing ocorre quando uma cidade perde protagonismo e recursos devido à proximidade com um polo econômico dominante (como Sorocaba). 
+        A cidade menor(Votorantim) sofre uma "drenagem" de talentos e investimentos, que migram para a vizinha mais atraente. Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado ou indústrias de base. 
+        Na prática, o município torna-se uma "cidade-dormitório" ou um fornecedor de insumos brutos, enquanto a inovação e a riqueza tecnológica se concentram no centro vizinho..""")
 
 # --- 2. METODOLOGIA ETL ---
 elif menu == "Metodologia ETL":

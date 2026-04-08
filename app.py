@@ -94,17 +94,14 @@ if menu == "Introdução & Contexto":
 c1, c2 = st.columns(2)
 
 with c1:
-    # Usando aspas triplas para permitir quebra de linha no código
     st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como o Grupo Votorantim). 
-    Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
+Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
     
     st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
-    É um problema de Trade-off entre expansão urbana e manutenção da produção. 
-    Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos.""")
+É um problema de Trade-off entre expansão urbana e manutenção da produção. 
+Enquanto o mercado pede automação e análise de dados, a força de trabalho ainda está muito atrelada a processos manuais/analógicos.""")
 
 with c2:
-    # Aqui não precisaria de aspas triplas porque o texto é curto e está em uma linha só, 
-    # mas mantive por padronização e removi os dois pontos extras (::).
     st.error("**Skill Gap (Mão de Obra):** Baixa digitalização em pequenas e médias empresas.")
     st.info("**Efeito Shadowing:** Fuga de capital intelectual para Sorocaba.")
 

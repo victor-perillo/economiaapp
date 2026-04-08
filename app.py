@@ -112,16 +112,22 @@ Isso resulta em uma economia local estagnada, focada em setores de baixo valor a
 elif menu == "Metodologia ETL":
     st.markdown('<p class="section-title">Pipeline de Dados (ETL)</p>', unsafe_allow_html=True)
     
-    # Usando st.info ou containers para a metodologia ficar elegante
+   # Usando st.info ou containers para a metodologia ficar elegante
     st.markdown('''
         <div class="step-box">
-            <b>1. Extração:</b> Coletamos dados brutos de fontes como IBGE Cidades (PIB), SEADE (VAB) e Novo CAGED (Empregos).
+            <b>1. Extração:</b><br>
+            Ação: Coletamos dados brutos de três fontes governamentais distintas: IBGE Cidades (Séries históricas de PIB), SEADE (VAB por setor municipal) e Novo CAGED (Movimentação formal de empregos).<br>
+            Formatos: Os dados foram extraídos originalmente em formatos como CSV (tabelas de emprego) e XML/JSON (via APIs ou consultas em tabelas do SIDRA/IBGE).
         </div>
         <div class="step-box">
-            <b>2. Transformação:</b> Limpeza de Nulos (tratamento de lag do PIB) e Padronização de Nomenclaturas (CNAE vs Grupos SEADE).
+            <b>2. Transformação:</b><br>
+            Limpeza de Nulos: Removemos registros incompletos de anos onde o IBGE ainda não consolidou o PIB (lembrando que o PIB municipal tem um lag de 2 anos).<br>
+            Padronização de Nomenclaturas: Unificamos as classificações. O que no CAGED estava como "CNAE 2.3 - Fabricação de Cimento", no SEADE agrupamos como "Indústria de Minerais Não Metálicos" para garantir a integridade da análise.<br>
+            Unificação (Join): Realizamos o merge das bases de Emprego e PIB utilizando o Ano e o Código de Município do IBGE como chaves primárias, criando um dataset único e consistente para os gráficos.
         </div>
         <div class="step-box">
-            <b>3. Carga:</b> Estruturação em DataFrames (Pandas) exportados para .csv para consumo dinâmico no Streamlit.
+            <b>3. Carga:</b><br>
+            Ação: O dataset limpo foi estruturado em DataFrames (Pandas) e exportado para formatos prontos para consumo (.csv), permitindo a visualização imediata através de bibliotecas de plotagem (Plotly/Matplotlib) no VS Code.
         </div>
     ''', unsafe_allow_html=True)
     

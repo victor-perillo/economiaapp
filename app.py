@@ -57,7 +57,7 @@ with st.sidebar:
     
     st.divider()
     menu = st.radio("Navegação Estratégica:", 
-                   ["Introdução & Contexto", "Metodologia ETL", "Dashboard Executivo", 
+                   ["Introdução & Contexto","Problemas Identificados" "Metodologia ETL", "Dashboard Executivo", 
                     "Diagnóstico Indústria 4.0", "Projeção Futura", "Plano de Ação", "Fontes/Referências"])
 
 # Lógica de Dados para Gráficos
@@ -92,8 +92,8 @@ if menu == "Introdução & Contexto":
     """, unsafe_allow_html=True)
 
 # Mudei para elif e usei um nome que existe no seu st.radio da sidebar
-elif menu == "Metodologia ETL": 
-    st.markdown('<p class="section-title">Matriz de Problemas & Metodologia</p>', unsafe_allow_html=True)
+elif menu == "Problemas Identificados": 
+    st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
     
     c1, c2 = st.columns(2)
     
@@ -140,7 +140,7 @@ elif menu == "Metodologia ETL":
             Armazenamento em DataFrames estruturados para visualização dinâmica no Streamit.
         </div>
     ''', unsafe_allow_html=True)
-
+    
 # --- 3. DASHBOARD EXECUTIVO ---
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)

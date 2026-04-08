@@ -58,7 +58,7 @@ with st.sidebar:
     st.divider()
     menu = st.radio("Navegação Estratégica:", 
                    ["Introdução & Contexto", "Metodologia ETL", "Dashboard Executivo", 
-                    "Diagnóstico Indústria 4.0", "Projeção Futura", "Plano de Ação"])
+                    "Diagnóstico Indústria 4.0", "Projeção Futura", "Plano de Ação", "Fontes/Referências"])
 
 # Lógica de Dados para Gráficos
 if ano_selecionado == "Todos":
@@ -95,9 +95,13 @@ if menu == "Introdução & Contexto":
 # --- 2. METODOLOGIA ETL ---
 elif menu == "Metodologia ETL":
     st.markdown('<p class="section-title">Pipeline de Dados (ETL)</p>', unsafe_allow_html=True)
-    st.markdown('<div class="step-box"><b>1. Extração:</b> Coleta automatizada de dados brutos do IBGE, SEADE e Novo CAGED via bibliotecas de scraping e APIs governamentais.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="step-box"><b>2. Transformação:</b> Limpeza de outliers, conversão de tipos de dados, deflacionamento de valores históricos e cálculo de produtividade relativa.</div>', unsafe_allow_html=True)
-    st.markdown('<div class="step-box"><b>3. Carga:</b> Armazenamento em DataFrames estruturados para visualização dinâmica no Streamit.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="step-box"><b>1. Extração:</b> Ação: Coletamos dados brutos de três fontes governamentais distintas: IBGE Cidades (Séries históricas de PIB), SEADE (VAB por setor municipal) e Novo CAGED (Movimentação formal de empregos).
+Formatos: Os dados foram extraídos originalmente em formatos como CSV (tabelas de emprego) e XML/JSON (via APIs ou consultas em tabelas do SIDRA/IBGE).</div>', unsafe_allow_html=True)
+    st.markdown('<div class="step-box"><b>2. Transformação:</b> Limpeza de Nulos: Removemos registros incompletos de anos onde o IBGE ainda não consolidou o PIB (lembrando que o PIB municipal tem um lag de 2 anos).
+Padronização de Nomenclaturas: Unificamos as classificações. O que no CAGED estava como "CNAE 2.3 - Fabricação de Cimento", no SEADE agrupamos como "Indústria de Minerais Não Metálicos" para garantir a integridade da análise.
+Unificação (Join): Realizamos o merge das bases de Emprego e PIB utilizando o Ano e o Código de Município do IBGE como chaves primárias, criando um dataset único e consistente para os gráficos.
+</div>', unsafe_allow_html=True)
+    st.markdown('<div class="step-box"><b>3. Carga:</b> Ação: O dataset limpo foi estruturado em DataFrames (Pandas) e exportado para formatos prontos para consumo (.csv), permitindo a visualização imediata através de bibliotecas de plotagem (Plotly/Matplotlib) no Vs.Code.Armazenamento em DataFrames estruturados para visualização dinâmica no Streamit.</div>', unsafe_allow_html=True)
 
 # --- 3. DASHBOARD EXECUTIVO ---
 elif menu == "Dashboard Executivo":

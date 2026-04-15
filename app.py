@@ -77,7 +77,7 @@ with st.sidebar:
 
 # --- FILTRAGEM DE DADOS PARA DISPLAY ---
 if ano_selecionado == "Todos":
-    display_df = df_hist.iloc[[-1]] # Último ano para os cards
+    display_df = df_hist.iloc[[-1]] 
     ano_txt = "2025 (Projeção)"
 else:
     display_df = df_hist[df_hist['Ano'] == int(ano_selecionado)]
@@ -143,7 +143,6 @@ elif menu == "Dashboard Executivo":
     
     c1, c2, c3, c4 = st.columns(4)
     
-    # Delta do PIB se houver ano anterior
     delta_pib = None
     if ano_selecionado != "Todos":
         idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
@@ -166,6 +165,8 @@ elif menu == "Dashboard Executivo":
                                title="Evolução Histórica: Indústria vs Serviços",
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
                                markers=True)
+        # FORÇANDO TODOS OS ANOS NO EIXO X
+        fig_evolucao.update_xaxes(dtick=1)
         st.plotly_chart(fig_evolucao, use_container_width=True)
         st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
 
@@ -179,6 +180,8 @@ elif menu == "Diagnóstico Indústria 4.0":
     c1, c2 = st.columns(2)
     with c1:
         fig_prod = px.bar(df_hist, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)", color_discrete_sequence=['#1E3A8A'])
+        # FORÇANDO TODOS OS ANOS NO EIXO X
+        fig_prod.update_xaxes(dtick=1)
         st.plotly_chart(fig_prod, use_container_width=True)
     with c2:
         fig_radar = go.Figure()
@@ -204,6 +207,8 @@ elif menu == "Projeção Futura":
     fig_proj = px.line(df_full, x='Ano', y=['VAB_Industria', 'VAB_Servicos'], 
                       color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
                       line_dash='Tipo', title=f"Projeção de Crescimento até {ano_final}")
+    # FORÇANDO TODOS OS ANOS NO EIXO X
+    fig_proj.update_xaxes(dtick=1)
     st.plotly_chart(fig_proj, use_container_width=True)
     st.info(f"Estimativa para {ano_final}: Indústria R$ {df_p['VAB_Industria'].iloc[-1]:.0f}M | Serviços R$ {df_p['VAB_Servicos'].iloc[-1]:.0f}M")
 

@@ -141,22 +141,30 @@ elif menu == "Metodologia ETL":
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     
-    c1, c2, c3, c4 = st.columns(4)
+    # Adicionando 5 colunas para acomodar o Crescimento Acumulado
+    c1, c2, c3, c4, c5 = st.columns(5)
     
-    delta_pib = None
+    # Lógica de Crescimento Ano Anterior (YoY)
+    delta_yoy = None
     if ano_selecionado != "Todos":
         idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
         if idx > 0:
             pib_ant = df_hist.iloc[idx-1]['PIB']
-            delta_pib = f"{((dados_atuais['PIB']/pib_ant)-1)*100:.1f}% cresc."
+            delta_yoy = f"{((dados_atuais['PIB']/pib_ant)-1)*100:.1f}% cresc. anual"
+    
+    # Lógica de Crescimento Acumulado (Base 2018)
+    pib_2018 = df_hist.iloc[0]['PIB']
+    delta_acumulado = f"{((dados_atuais['PIB']/pib_2018)-1)*100:.1f}% total"
 
     with c1:
-        st.metric(f"PIB ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_pib)
+        st.metric(f"PIB ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_yoy)
     with c2:
-        st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
+        st.metric("Cresc. Acumulado (desde 2018)", delta_acumulado)
     with c3:
-        st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
+        st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
     with c4:
+        st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
+    with c5:
         st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
 
     col_left, col_right = st.columns([0.6, 0.4])
@@ -165,7 +173,6 @@ elif menu == "Dashboard Executivo":
                                title="Evolução Histórica: Indústria vs Serviços",
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
                                markers=True)
-        # FORÇANDO TODOS OS ANOS NO EIXO X
         fig_evolucao.update_xaxes(dtick=1)
         st.plotly_chart(fig_evolucao, use_container_width=True)
         st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
@@ -180,7 +187,6 @@ elif menu == "Diagnóstico Indústria 4.0":
     c1, c2 = st.columns(2)
     with c1:
         fig_prod = px.bar(df_hist, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)", color_discrete_sequence=['#1E3A8A'])
-        # FORÇANDO TODOS OS ANOS NO EIXO X
         fig_prod.update_xaxes(dtick=1)
         st.plotly_chart(fig_prod, use_container_width=True)
     with c2:
@@ -207,7 +213,6 @@ elif menu == "Projeção Futura":
     fig_proj = px.line(df_full, x='Ano', y=['VAB_Industria', 'VAB_Servicos'], 
                       color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
                       line_dash='Tipo', title=f"Projeção de Crescimento até {ano_final}")
-    # FORÇANDO TODOS OS ANOS NO EIXO X
     fig_proj.update_xaxes(dtick=1)
     st.plotly_chart(fig_proj, use_container_width=True)
     st.info(f"Estimativa para {ano_final}: Indústria R$ {df_p['VAB_Industria'].iloc[-1]:.0f}M | Serviços R$ {df_p['VAB_Servicos'].iloc[-1]:.0f}M")

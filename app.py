@@ -30,7 +30,6 @@ st.markdown("""
     .footer { text-align: center; padding: 30px; color: #666; font-size: 14px; border-top: 1px solid #eee; margin-top: 50px; width: 100%; }
     .highlight { color: #FF8C00; font-weight: bold; }
     .chart-caption { text-align: center; color: #666; font-style: italic; margin-top: 5px; }
-    /* Estilo para o texto do acumulado abaixo da métrica */
     .acumulado-text { font-size: 0.85rem; color: #666; margin-top: -10px; }
     </style>
     """, unsafe_allow_html=True)
@@ -145,7 +144,6 @@ elif menu == "Dashboard Executivo":
     
     c1, c2, c3, c4 = st.columns(4)
     
-    # 1. Cálculo Delta Anual (YoY)
     delta_yoy = None
     if ano_selecionado != "Todos":
         idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
@@ -153,13 +151,11 @@ elif menu == "Dashboard Executivo":
             pib_ant = df_hist.iloc[idx-1]['PIB']
             delta_yoy = f"{((dados_atuais['PIB']/pib_ant)-1)*100:.1f}% vs ano anterior"
     
-    # 2. Cálculo Crescimento Acumulado (Base 2018)
     pib_2018 = df_hist.iloc[0]['PIB']
     perc_acumulado = ((dados_atuais['PIB']/pib_2018)-1)*100
 
     with c1:
         st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_yoy)
-        # Texto adicional abaixo da métrica igual à imagem
         st.markdown(f'<p class="acumulado-text">🚀 Acumulado: <b>+{perc_acumulado:.1f}%</b> desde 2018</p>', unsafe_allow_html=True)
         
     with c2:
@@ -204,20 +200,62 @@ elif menu == "Projeção Futura":
     anos_a_projetar = 5 if "5" in horizonte else 10
     ano_final = 2023 + anos_a_projetar
     
+    anos_hist = df_hist['Ano'].values
     anos_proj = np.arange(2026, ano_final + 1)
-    def projetar(valores):
-        coef = np.polyfit(df_hist['Ano'], valores, 1)
-        return np.polyval(coef, anos_proj)
 
-    df_p = pd.DataFrame({'Ano': anos_proj, 'VAB_Industria': projetar(df_hist['VAB_Industria']), 'VAB_Servicos': projetar(df_hist['VAB_Servicos']), 'Tipo': 'Projeção'})
-    df_full = pd.concat([df_hist.assign(Tipo='Histórico'), df_p])
+    def projetar_com_r2(y_hist):
+        # Regressão linear (Grau 1)
+        coef = np.polyfit(anos_hist, y_hist, 1)
+        p = np.poly1d(coef)
+        
+        # Valores preditos para o histórico (cálculo do R²)
+        y_pred_hist = p(anos_hist)
+        y_mean = np.mean(y_hist)
+        ss_res = np.sum((y_hist - y_pred_hist) ** 2)
+        ss_tot = np.sum((y_hist - y_mean) ** 2)
+        r2 = 1 - (ss_res / ss_tot)
+        
+        # Projeção futura
+        y_proj = p(anos_proj)
+        return y_proj, r2
 
-    fig_proj = px.line(df_full, x='Ano', y=['VAB_Industria', 'VAB_Servicos'], 
-                      color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
-                      line_dash='Tipo', title=f"Projeção de Crescimento até {ano_final}")
+    # Calculando projeções e R²
+    proj_ind, r2_ind = projetar_com_r2(df_hist['VAB_Industria'].values)
+    proj_serv, r2_serv = projetar_com_r2(df_hist['VAB_Servicos'].values)
+
+    # Preparando DataFrame para o gráfico
+    df_p = pd.DataFrame({
+        'Ano': anos_proj, 
+        f'VAB_Industria (R²={r2_ind:.3f})': proj_ind, 
+        f'VAB_Servicos (R²={r2_serv:.3f})': proj_serv, 
+        'Tipo': 'Projeção'
+    })
+    
+    # Ajustando nomes do histórico para bater com a legenda do gráfico
+    df_h_display = df_hist.rename(columns={
+        'VAB_Industria': f'VAB_Industria (R²={r2_ind:.3f})',
+        'VAB_Servicos': f'VAB_Servicos (R²={r2_serv:.3f})'
+    })
+    
+    df_full = pd.concat([df_h_display.assign(Tipo='Histórico'), df_p])
+
+    fig_proj = px.line(df_full, x='Ano', 
+                      y=[f'VAB_Industria (R²={r2_ind:.3f})', f'VAB_Servicos (R²={r2_serv:.3f})'], 
+                      color_discrete_map={
+                          f'VAB_Industria (R²={r2_ind:.3f})': "#1E3A8A", 
+                          f'VAB_Servicos (R²={r2_serv:.3f})': "#FF8C00"
+                      },
+                      line_dash='Tipo', title=f"Projeção de Crescimento até {ano_final} (Regressão Linear)")
+    
     fig_proj.update_xaxes(dtick=1)
     st.plotly_chart(fig_proj, use_container_width=True)
-    st.info(f"Estimativa para {ano_final}: Indústria R$ {df_p['VAB_Industria'].iloc[-1]:.0f}M | Serviços R$ {df_p['VAB_Servicos'].iloc[-1]:.0f}M")
+    
+    st.info(f"""
+    **Estatísticas do Modelo:**
+    * **Indústria:** $R^2 = {r2_ind:.4f}$ | Estimativa {ano_final}: R$ {proj_ind[-1]:.0f}M
+    * **Serviços:** $R^2 = {r2_serv:.4f}$ | Estimativa {ano_final}: R$ {proj_serv[-1]:.0f}M
+    * *Nota: Um $R^2$ próximo de 1.00 indica que a tendência histórica é muito estável e previsível.*
+    """)
 
 # --- 7. PLANO DE AÇÃO ---
 elif menu == "Plano de Ação":

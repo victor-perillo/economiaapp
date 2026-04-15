@@ -30,6 +30,8 @@ st.markdown("""
     .footer { text-align: center; padding: 30px; color: #666; font-size: 14px; border-top: 1px solid #eee; margin-top: 50px; width: 100%; }
     .highlight { color: #FF8C00; font-weight: bold; }
     .chart-caption { text-align: center; color: #666; font-style: italic; margin-top: 5px; }
+    /* Estilo para o texto do acumulado abaixo da métrica */
+    .acumulado-text { font-size: 0.85rem; color: #666; margin-top: -10px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -141,30 +143,30 @@ elif menu == "Metodologia ETL":
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     
-    # Adicionando 5 colunas para acomodar o Crescimento Acumulado
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
     
-    # Lógica de Crescimento Ano Anterior (YoY)
+    # 1. Cálculo Delta Anual (YoY)
     delta_yoy = None
     if ano_selecionado != "Todos":
         idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
         if idx > 0:
             pib_ant = df_hist.iloc[idx-1]['PIB']
-            delta_yoy = f"{((dados_atuais['PIB']/pib_ant)-1)*100:.1f}% cresc. anual"
+            delta_yoy = f"{((dados_atuais['PIB']/pib_ant)-1)*100:.1f}% vs ano anterior"
     
-    # Lógica de Crescimento Acumulado (Base 2018)
+    # 2. Cálculo Crescimento Acumulado (Base 2018)
     pib_2018 = df_hist.iloc[0]['PIB']
-    delta_acumulado = f"{((dados_atuais['PIB']/pib_2018)-1)*100:.1f}% total"
+    perc_acumulado = ((dados_atuais['PIB']/pib_2018)-1)*100
 
     with c1:
-        st.metric(f"PIB ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_yoy)
+        st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_yoy)
+        # Texto adicional abaixo da métrica igual à imagem
+        st.markdown(f'<p class="acumulado-text">🚀 Acumulado: <b>+{perc_acumulado:.1f}%</b> desde 2018</p>', unsafe_allow_html=True)
+        
     with c2:
-        st.metric("Cresc. Acumulado (desde 2018)", delta_acumulado)
-    with c3:
         st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
-    with c4:
+    with c3:
         st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
-    with c5:
+    with c4:
         st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
 
     col_left, col_right = st.columns([0.6, 0.4])

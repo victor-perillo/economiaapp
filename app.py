@@ -1,57 +1,4 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from datetime import datetime
-
-# --- CONFIGURAÇÃO DA PÁGINA ---
-st.set_page_config(
-    page_title="Observatório Industrial Votorantim | Inteligência 4.0",
-    page_icon="🏭",
-    layout="wide"
-)
-
-# --- ESTILO CSS CUSTOMIZADO ---
-st.markdown("""
-    <style>
-    .main { background-color: #f8f9fa; }
-    
-    /* Classe base para todos os cards */
-    .step-box { 
-        padding: 15px; 
-        border-radius: 8px; 
-        margin-bottom: 15px; 
-        border-left: 8px solid; 
-    }
-    
-    /* Cores específicas para cada etapa */
-    .step-extracao { background-color: #e7f0fd; border-color: #1E3A8A; color: #1E3A8A; }
-    .step-transformacao { background-color: #fff4e6; border-color: #ff8c00; color: #854d0e; }
-    .step-carga { background-color: #ebfbee; border-color: #2f9e44; color: #2b8a3e; }
-    
-    /* Outros estilos que você já tinha */
-    .section-title { color: #1E3A8A; font-weight: bold; border-left: 10px solid #FF8C00; padding-left: 15px; margin-top: 30px; margin-bottom: 20px; font-size: 28px; }
-    .card { background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e0e0e0; }
-    </style>
-    """, unsafe_allow_html=True)
-
-# MODO CORRETO: O CSS deve estar dentro de uma STRING (aspas triplas)
-st.markdown("""
-    <style>
-    .footer {
-        text-align: center;
-        padding: 30px;
-        color: #666;
-        font-size: 14px;
-        border-top: 1px solid #eee;
-        margin-top: 50px;
-        width: 100%;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# --- CARREGAMENTO DE DADOS ---
+# --- 1. ATUALIZAÇÃO DOS DADOS (Substitua sua função load_data por esta) ---
 @st.cache_data
 def load_data():
     df_seg = pd.DataFrame({
@@ -61,206 +8,73 @@ def load_data():
         'Maturidade_Atual': [2.8, 3.2, 3.5, 2.9, 1.8, 2.4] 
     })
     
+    # Dados extraídos do seu anexo e projeções baseadas no PIB
     df_hist = pd.DataFrame({
-        'Ano': [2018, 2019, 2020, 2021, 2022, 2023],
-        'Produtividade': [185, 198, 210, 225, 242, 268], 
-        'VAB_Industria': [1450.5, 1580.2, 1690.8, 1850.4, 2100.2, 2350.7],
-        'VAB_Servicos': [1980.1, 2150.4, 2320.6, 2680.9, 3050.5, 3480.2]
+        'Ano': [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+        'Produtividade': [185, 198, 210, 225, 242, 268, 285, 302], 
+        'VAB_Industria': [732.1, 785.4, 810.2, 932.4, 1020.0, 1110.0, 1220.0, 1350.0],
+        'VAB_Servicos': [1480.0, 1590.0, 1620.0, 1897.8, 2120.0, 2350.0, 2610.0, 2900.0],
+        'PIB': [3056.0, 3284.0, 3391.0, 3922.0, 4410.0, 4850.0, 5335.0, 5870.0]
     })
     return df_seg, df_hist
 
 df_seg, df_hist = load_data()
 
-# --- SIDEBAR ---
-with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=70)
-    st.title("Inteligência Industrial")
-    st.subheader("Votorantim 4.0")
-    
-    anos_disponiveis = ["Todos"] + [str(ano) for ano in df_hist['Ano'].unique()]
-    ano_selecionado = st.selectbox("Período de Análise:", anos_disponiveis)
-    
-    st.divider()
-    menu = st.radio("Navegação Estratégica:", 
-                   ["Introdução & Contexto","Problemas Identificados", "Metodologia ETL", "Dashboard Executivo", 
-                    "Diagnóstico Indústria 4.0", "Projeção Futura", "Plano de Ação", "Fontes/Referências"])
+# --- 2. FUNÇÃO DE FORMATAÇÃO Mi/Bi ---
+def formatar_valor(valor):
+    if valor >= 1000:
+        return f"R$ {valor/1000:.2f} Bi"
+    return f"R$ {valor:.1f} Mi"
 
-# Lógica de Dados para Gráficos
-if ano_selecionado == "Todos":
-    df_plot = df_hist
-    display_df = df_hist.iloc[[-1]] 
-else:
-    # Mantemos o histórico para o gráfico não quebrar, mas destacamos o ano
-    df_plot = df_hist
-    display_df = df_hist[df_hist['Ano'] == int(ano_selecionado)]
-
-# ... (mantenha as importações e o load_data como estão) ...
-
-# --- 1. INTRODUÇÃO & CONTEXTO ---
-if menu == "Introdução & Contexto":
-    st.markdown('<p class="section-title">Análise de Contexto Econômico</p>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="card">
-        Votorantim ainda carrega um legacy industrial muito forte, focado em indústria de base (cimento e metalurgia). 
-        No entanto, o dataset econômico da cidade mostra uma transição clara: a indústria está perdendo share no PIB para o setor de Serviços, 
-        o que indica um processo de desindustrialização ou mudança de matriz econômica. O cenário sugere que Votorantim vive um efeito de 
-        "Shadowing" de Sorocaba.
-        <br><br>
-        <span class="highlight">Destaque:</span> A proximidade com o polo tecnológico de Sorocaba cria um desafio de retenção de talentos.
-        <br><br>
-        <span class="highlight">Insight:</span> É necessária uma atualização urgente no currículo técnico para atrair empresas que gerem mais dados e menos poeira.
-    </div>
-    """, unsafe_allow_html=True)
-
-# AJUSTE: Certifique-se que este nome esteja EXATAMENTE igual no seu st.sidebar.radio
-elif menu == "Problemas Identificados": 
-    st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
-    
-    c1, c2 = st.columns(2)
-    
-    with c1:
-        st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como o Grupo Votorantim). 
-Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
-        
-        st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
-É um problema de Trade-off entre expansão urbana e manutenção da produção.""")
-
-    with c2:
-        st.error("""**Skill Gap (Mão de Obra):** Há um desalinhamento entre o perfil do trabalhador local e as demandas da Indústria 4.0. 
-Enquanto o mercado pede automação, a força de trabalho ainda está atrelada a processos manuais.""")
-        
-        st.info("""**Efeito Shadowing:** Ocorre quando Votorantim perde talentos e investimentos para Sorocaba. 
-Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado ou indústrias de base.""")
-
-# --- 2. METODOLOGIA ETL ---
-elif menu == "Metodologia ETL":
-    st.markdown('<p class="section-title">Pipeline de Dados (ETL)</p>', unsafe_allow_html=True)
-    
-   # Usando st.info ou containers para a metodologia ficar elegante
-    st.markdown('''
-        <div class="step-box">
-            <b>1. Extração:</b><br>
-            Ação: Coletamos dados brutos de três fontes governamentais distintas: IBGE Cidades (Séries históricas de PIB), SEADE (VAB por setor municipal) e Novo CAGED (Movimentação formal de empregos).<br>
-            Formatos: Os dados foram extraídos originalmente em formatos como CSV (tabelas de emprego) e XML/JSON (via APIs ou consultas em tabelas do SIDRA/IBGE).
-        </div>
-        <div class="step-box">
-            <b>2. Transformação:</b><br>
-            Limpeza de Nulos: Removemos registros incompletos de anos onde o IBGE ainda não consolidou o PIB (lembrando que o PIB municipal tem um lag de 2 anos).<br>
-            Padronização de Nomenclaturas: Unificamos as classificações. O que no CAGED estava como "CNAE 2.3 - Fabricação de Cimento", no SEADE agrupamos como "Indústria de Minerais Não Metálicos" para garantir a integridade da análise.<br>
-            Unificação (Join): Realizamos o merge das bases de Emprego e PIB utilizando o Ano e o Código de Município do IBGE como chaves primárias, criando um dataset único e consistente para os gráficos.
-        </div>
-        <div class="step-box">
-            <b>3. Carregamento:</b><br>
-            Ação: O dataset limpo foi estruturado em DataFrames (Pandas) e exportado para formatos prontos para consumo (.csv), permitindo a visualização imediata através de bibliotecas de plotagem (Plotly/Matplotlib) no VS Code.
-        </div>
-    ''', unsafe_allow_html=True)
-    
-# --- 3. DASHBOARD EXECUTIVO ---
+# --- 3. AJUSTE NO DASHBOARD EXECUTIVO (Substitua este menu no seu código) ---
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns(3)
-    vab_i = display_df['VAB_Industria'].values[0]
-    vab_s = display_df['VAB_Servicos'].values[0]
+    # Cards Dinâmicos
+    c1, c2, c3, c4 = st.columns(4)
     
-    c1.metric("VAB Indústria", f"R$ {vab_i:,.2f} Mi", delta=None if ano_selecionado == "Todos" else f"{vab_i - df_hist.iloc[0]['VAB_Industria']:.1f} cresc. total")
-    c2.metric("VAB Serviços", f"R$ {vab_s:,.2f} Mi")
-    c3.metric("Produtividade", f"R$ {display_df['Produtividade'].values[0]}k")
+    # Lógica para Delta do PIB
+    if ano_selecionado != "Todos":
+        dados_atuais = df_hist[df_hist['Ano'] == int(ano_selecionado)].iloc[0]
+        idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
+        pib_val = dados_atuais['PIB']
+        vab_i = dados_atuais['VAB_Industria']
+        vab_s = dados_atuais['VAB_Servicos']
+        prod = dados_atuais['Produtividade']
+        
+        # Delta PIB
+        delta_pib = None
+        if idx > 0:
+            pib_ant = df_hist.iloc[idx-1]['PIB']
+            delta_pib = f"{((pib_val/pib_ant)-1)*100:.1f}%"
+    else:
+        # Se selecionar "Todos", mostra o último ano da série
+        dados_ult = df_hist.iloc[-1]
+        pib_val, vab_i, vab_s, prod = dados_ult['PIB'], dados_ult['VAB_Industria'], dados_ult['VAB_Servicos'], dados_ult['Produtividade']
+        delta_pib = "Série Histórica"
 
+    with c1:
+        st.metric("PIB Municipal", formatar_valor(pib_val), delta=delta_pib)
+    with c2:
+        st.metric("VAB Indústria", formatar_valor(vab_i))
+    with c3:
+        st.metric("VAB Serviços", formatar_valor(vab_s))
+    with c4:
+        st.metric("Produtividade", f"R$ {prod}k")
+
+    # Gráficos
     col_left, col_right = st.columns([0.6, 0.4])
     with col_left:
-        # Gráfico que não "some": mostra a linha e destaca o ano selecionado
-        fig_evolucao = px.line(df_plot, x='Ano', y=['VAB_Industria', 'VAB_Servicos'],
-                               title="Evolução Histórica: Indústria vs Serviços",
-                               color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
+        fig_evolucao = px.line(df_hist, x='Ano', y=['VAB_Industria', 'VAB_Servicos', 'PIB'],
+                               title="Evolução Econômica: PIB vs Setores",
+                               color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00", "PIB": "#2b8a3e"},
                                markers=True)
-        
-        if ano_selecionado != "Todos":
-            fig_evolucao.add_selection(x=[int(ano_selecionado)]) # Destaque visual
-            
         st.plotly_chart(fig_evolucao, use_container_width=True)
-        st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
 
     with col_right:
-        fig_pizza = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE")
-        st.plotly_chart(fig_pizza, use_container_width=True)
-
-# --- 4. DIAGNÓSTICO INDÚSTRIA 4.0 ---
-elif menu == "Diagnóstico Indústria 4.0":
-    st.markdown('<p class="section-title">Maturidade Digital</p>', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        fig_prod = px.bar(df_plot, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)", color_discrete_sequence=['#1E3A8A'])
-        st.plotly_chart(fig_prod, use_container_width=True)
-    with c2:
-        fig_radar = go.Figure()
-        fig_radar.add_trace(go.Scatterpolar(r=df_seg['Maturidade_Atual'], theta=df_seg['Segmento'], fill='toself', marker=dict(color='#FF8C00')))
-        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Nível de Automação por Setor")
-        st.plotly_chart(fig_radar, use_container_width=True)
-
-# --- 5. PROJEÇÃO FUTURA ---
-elif menu == "Projeção Futura":
-    st.markdown('<p class="section-title">Análise Preditiva de Cenários</p>', unsafe_allow_html=True)
-    
-    horizonte = st.radio("Selecione o Horizonte de Projeção:", ["Próximos 5 Anos (2028)", "Próximos 10 Anos (2033)"], horizontal=True)
-    anos_a_projetar = 5 if "5" in horizonte else 10
-    ano_final = 2023 + anos_a_projetar
-    
-    anos_hist = df_hist['Ano'].values
-    anos_proj = np.arange(2024, ano_final + 1)
-    
-    def projetar(valores, n_anos):
-        coef = np.polyfit(anos_hist, valores, 1)
-        futuro = np.arange(2024, 2024 + n_anos)
-        return np.polyval(coef, futuro)
-
-    proj_ind = projetar(df_hist['VAB_Industria'].values, anos_a_projetar)
-    proj_serv = projetar(df_hist['VAB_Servicos'].values, anos_a_projetar)
-
-    df_proj = pd.DataFrame({'Ano': anos_proj, 'VAB_Industria': proj_ind, 'VAB_Servicos': proj_serv, 'Tipo': 'Projeção'})
-    df_completo = pd.concat([df_hist.assign(Tipo='Histórico'), df_proj])
-
-    fig_proj = px.line(df_completo, x='Ano', y=['VAB_Industria', 'VAB_Servicos'], 
-                      color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
-                      line_dash='Tipo', title=f"Projeção de Crescimento até {ano_final}")
-    st.plotly_chart(fig_proj, use_container_width=True)
-    
-    st.info(f"Estimativa para {ano_final}: Indústria R$ {proj_ind[-1]:.0f}M | Serviços R$ {proj_serv[-1]:.0f}M")
-
-# --- 6. PLANO DE AÇÃO ---
-elif menu == "Plano de Ação":
-    st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
-    
-    # Plano de ação focado nos problemas reais identificados na introdução e dashboard
-    acoes_corrigidas = pd.DataFrame({
-        "Problema Identificado": [
-            "Dependência de Setor Único (Minerais)",
-            "Efeito Shadowing (Sorocaba)",
-            "Gap de Maturidade 4.0",
-            "Crescimento Acelerado de Serviços"
-        ],
-        "Ação Estratégica": [
-            "Verticalização da cadeia de minerais para produtos de alto valor (ex: cerâmica técnica).",
-            "Criação de Incentivos para Instalação de Startups de 'Logtech' e 'Industrial IoT'.",
-            "Programa Municipal de Subsídio para Auditoria de Maturidade Digital em PMEs.",
-            "Estimular a 'Servitização' industrial (Indústrias vendendo serviços e dados)."
-        ],
-        "Impacto Esperado": ["Diversificação do VAB", "Retenção de Talentos", "Aumento da Produtividade", "Equilíbrio Setorial"]
-    })
-    
-    st.table(acoes_corrigidas)
-    
-    st.markdown("""
-    > **Nota do Grupo:** Este plano visa utilizar os insights extraídos (crescimento de serviços e alta produtividade industrial) 
-    > para transformar Votorantim em um hub de inteligência industrial, e não apenas uma base extrativista.
-    """)
-
-# --- FOOTER ---
-st.markdown(f"""
-    <div class="footer">
-        <b>Observatório Industrial Votorantim | Ciência de Dados para Negócio</b><br>
-        Desenvolvido por: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.<br>
-        <i>Gerado em {datetime.now().strftime('%d/%m/%Y')}</i>
-    </div>
-    """, unsafe_allow_html=True)
+        # Gráfico de pizza baseado no VAB do ano selecionado ou último ano
+        vab_total_ano = vab_i + vab_s
+        fig_dist = px.pie(values=[vab_i, vab_s], names=['Indústria', 'Serviços'], 
+                          hole=.4, title=f"Composição VAB ({ano_selecionado if ano_selecionado != 'Todos' else '2025'})",
+                          color_discrete_sequence=["#1E3A8A", "#FF8C00"])
+        st.plotly_chart(fig_dist, use_container_width=True)

@@ -280,6 +280,6 @@ st.markdown(f"""
     <div class="footer">
         <b>Observatório Industrial Votorantim | Ciência de Dados para Negócio</b><br>
         Desenvolvido por: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.<br>
-        <i>Gerado em {datetime.now().strftime('%d/%m/%Y')}</i>
+        <i>Dados Atualizados em {datetime.now().strftime('%d/%m/%Y')}</i>
     </div>
     """, unsafe_allow_html=True)

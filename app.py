@@ -88,19 +88,34 @@ dados_atuais = display_df.iloc[0]
 
 # --- 1. INTRODUÇÃO & CONTEXTO ---
 if menu == "Introdução & Contexto":
-    st.markdown('<p class="section-title">Análise de Contexto Econômico</p>', unsafe_allow_html=True)
-    st.markdown("""
-    <div class="card">
-        Votorantim ainda carrega um legacy industrial muito forte, focado em indústria de base (cimento e metalurgia). 
-        No entanto, o dataset econômico da cidade mostra uma transição clara: a indústria está perdendo share no PIB para o setor de Serviços, 
-        o que indica um processo de desindustrialização ou mudança de matriz econômica. O cenário sugere que Votorantim vive um efeito de 
-        "Shadowing" de Sorocaba.
-        <br><br>
-        <span class="highlight">Destaque:</span> A proximidade com o polo tecnológico de Sorocaba cria um desafio de retenção de talentos.
-        <br><br>
-        <span class="highlight">Insight:</span> É necessária uma atualização urgente no currículo técnico para atrair empresas que gerem mais dados e menos poeira.
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Contexto e Ordenamento Territorial</p>', unsafe_allow_html=True)
+    
+    tab_econ, tab_diretor = st.tabs(["📊 Análise Econômica", "📜 Plano Diretor de Votorantim"])
+    
+    with tab_econ:
+        st.markdown("""
+        <div class="card">
+            <h3>Observatório Econômico Votorantim: Da Base Industrial à Inteligência de Dados</h3>
+            Votorantim atravessa um momento crucial de transição econômica. Historicamente consolidada como um pilar da indústria de base (minerais e metalurgia), a cidade hoje apresenta uma nova dinâmica revelada pelos dados: a ascensão acelerada do setor de serviços e um aumento expressivo na produtividade por operário.
+            <br><br>
+            Este dashboard utiliza técnicas avançadas de Ciência de Dados para monitorar essa evolução, integrando fontes oficiais (IBGE, SEADE, CAGED) em um pipeline ETL automatizado. Nosso objetivo é fornecer uma visão estratégica sobre o fenômeno de <b>"Shadowing"</b> em relação a Sorocaba e identificar como a Indústria 4.0 pode atuar como o motor para a retenção de talentos e o crescimento do VAB municipal no próximo decênio.
+        </div>
+        """, unsafe_allow_html=True)
+
+    with tab_diretor:
+        st.markdown("""
+        <div class="card">
+            Votorantim possui um <b>Plano Diretor</b> que organiza o crescimento da cidade e define onde atividades industriais podem se instalar, sempre respeitando regras de uso do solo e exigências ambientais. Em teoria, o município permite a instalação de indústrias, desde que elas estejam localizadas nas zonas adequadas e atendam aos critérios legais.
+            <br><br>
+            Na prática, porém, o cenário atual cria dificuldades. As áreas industriais são limitadas e, com o crescimento da cidade, muitas delas passaram a ficar próximas ou até “encostadas” em regiões urbanas. Isso gera conflitos, pois aumenta a exigência por controle de impactos como ruído, trânsito de caminhões e poluição, restringindo principalmente a instalação de indústrias de maior porte.
+            <br><br>
+            Além disso, existem restrições ambientais importantes que reduzem ainda mais o espaço disponível, somadas a processos burocráticos e custos de adequação. O resultado é que, embora não haja proibição, há uma limitação prática: poucas áreas realmente viáveis e um nível alto de exigência para novos empreendimentos.
+            <br><br>
+            Em resumo, Votorantim permite a instalação de indústrias, mas o avanço urbano, as restrições ambientais e a escassez de zonas industriais adequadas tornam esse processo cada vez mais difícil, especialmente para empresas maiores ou com maior impacto.
+            <br><br>
+            <small>Fonte: <a href="https://www.votorantim.sp.gov.br/plano-diretor-lei-vigente-anexos" target="_blank">votorantim.sp.gov.br/plano-diretor</a></small>
+        </div>
+        """, unsafe_allow_html=True)
 
 # --- 2. PROBLEMAS IDENTIFICADOS ---
 elif menu == "Problemas Identificados":
@@ -204,26 +219,19 @@ elif menu == "Projeção Futura":
     anos_proj = np.arange(2026, ano_final + 1)
 
     def projetar_com_r2(y_hist):
-        # Regressão linear (Grau 1)
         coef = np.polyfit(anos_hist, y_hist, 1)
         p = np.poly1d(coef)
-        
-        # Valores preditos para o histórico (cálculo do R²)
         y_pred_hist = p(anos_hist)
         y_mean = np.mean(y_hist)
         ss_res = np.sum((y_hist - y_pred_hist) ** 2)
         ss_tot = np.sum((y_hist - y_mean) ** 2)
         r2 = 1 - (ss_res / ss_tot)
-        
-        # Projeção futura
         y_proj = p(anos_proj)
         return y_proj, r2
 
-    # Calculando projeções e R²
     proj_ind, r2_ind = projetar_com_r2(df_hist['VAB_Industria'].values)
     proj_serv, r2_serv = projetar_com_r2(df_hist['VAB_Servicos'].values)
 
-    # Preparando DataFrame para o gráfico
     df_p = pd.DataFrame({
         'Ano': anos_proj, 
         f'VAB_Industria (R²={r2_ind:.3f})': proj_ind, 
@@ -231,7 +239,6 @@ elif menu == "Projeção Futura":
         'Tipo': 'Projeção'
     })
     
-    # Ajustando nomes do histórico para bater com a legenda do gráfico
     df_h_display = df_hist.rename(columns={
         'VAB_Industria': f'VAB_Industria (R²={r2_ind:.3f})',
         'VAB_Servicos': f'VAB_Servicos (R²={r2_serv:.3f})'
@@ -254,7 +261,6 @@ elif menu == "Projeção Futura":
     **Estatísticas do Modelo:**
     * **Indústria:** $R^2 = {r2_ind:.4f}$ | Estimativa {ano_final}: R$ {proj_ind[-1]:.0f}M
     * **Serviços:** $R^2 = {r2_serv:.4f}$ | Estimativa {ano_final}: R$ {proj_serv[-1]:.0f}M
-    * *Nota: Um $R^2$ próximo de 1.00 indica que a tendência histórica é muito estável e previsível.*
     """)
 
 # --- 7. PLANO DE AÇÃO ---

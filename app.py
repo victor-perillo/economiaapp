@@ -89,9 +89,7 @@ dados_atuais = display_df.iloc[0]
 # --- CONTEÚDO ---
 if menu == "Introdução & Contexto":
     st.markdown('<p class="section-title">Contexto e Ordenamento Territorial</p>', unsafe_allow_html=True)
-    
     tab_econ, tab_diretor = st.tabs(["📊 Análise Econômica", "📜 Plano Diretor de Votorantim"])
-    
     with tab_econ:
         st.markdown("""
         <div class="card">
@@ -105,15 +103,9 @@ if menu == "Introdução & Contexto":
     with tab_diretor:
         st.markdown("""
         <div class="card">
-            Votorantim possui um <b>Plano Diretor</b> que organiza o crescimento da cidade e define onde atividades industriais podem se instalar, sempre respeitando regras de uso do solo e exigências ambientais. Em teoria, o município permite a instalação de indústrias, desde que elas estejam localizadas nas zonas adequadas e atendam aos critérios legais.
-            <br><br>
-            Na prática, porém, o cenário atual cria dificuldades. As áreas industriais são limitadas e, com o crescimento da cidade, muitas delas passaram a ficar próximas ou até “encostadas” em regiões urbanas. Isso gera conflitos, pois aumenta a exigência por controle de impactos como ruído, trânsito de caminhões e poluição, restringindo principalmente a instalação de indústrias de maior porte.
-            <br><br>
-            Além disso, existem restrições ambientais importantes que reduzem ainda mais o espaço disponível, somadas a processos burocráticos e custos de adequação. O resultado é que, embora não haja proibição, há uma limitação prática: poucas áreas realmente viáveis e um nível alto de exigência para novos empreendimentos.
+            Votorantim possui um <b>Plano Diretor</b> que organiza o crescimento da cidade e define onde atividades industriais podem se instalar, sempre respeitando regras de uso do solo e exigências ambientais.
             <br><br>
             Em resumo, Votorantim permite a instalação de indústrias, mas o avanço urbano, as restrições ambientais e a escassez de zonas industriais adequadas tornam esse processo cada vez mais difícil, especialmente para empresas maiores ou com maior impacto.
-            <br><br>
-            <small>Fonte: <a href="https://www.votorantim.sp.gov.br/plano-diretor-lei-vigente-anexos" target="_blank">votorantim.sp.gov.br/plano-diretor</a></small>
         </div>
         """, unsafe_allow_html=True)
 
@@ -121,85 +113,65 @@ elif menu == "Problemas Identificados":
     st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como o Grupo Votorantim). 
-Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
-        st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
-É um problema de Trade-off entre expansão urbana e manutenção da produção.""")
+        st.error("**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes.")
     with c2:
-        st.error("""**Skill Gap (Mão de Obra):** Há um desalinhamento entre o perfil do trabalhador local e as demandas da Indústria 4.0. 
-Enquanto o mercado pede automação, a força de trabalho ainda está atrelada a processos manuais.""")
-        st.info("""**Efeito Shadowing:** Ocorre quando Votorantim perde talentos e investimentos para Sorocaba. 
-Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado ou indústrias de base.""")
+        st.info("**Efeito Shadowing:** Ocorre quando Votorantim perde talentos para Sorocaba.")
 
 elif menu == "Metodologia ETL":
     st.markdown('<p class="section-title">Pipeline de Dados (ETL)</p>', unsafe_allow_html=True)
-    st.markdown('''
-        <div class="step-box step-extracao">
-            <b>1. Extração:</b><br>
-            Ação: Coletamos dados brutos de três fontes governamentais distintas: IBGE Cidades (Séries históricas de PIB), SEADE (VAB por setor municipal) e Novo CAGED (Movimentação formal de empregos).<br>
-            Formatos: CSV e consultas em tabelas do SIDRA/IBGE.
-        </div>
-        <div class="step-box step-transformacao">
-            <b>2. Transformação:</b><br>
-            Limpeza de Nulos: Removemos registros incompletos.<br>
-            Padronização: Unificamos nomenclaturas CNAE e escalas financeiras (Mi/Bi).<br>
-            Unificação (Join): Merge das bases de Emprego e PIB utilizando o Ano como chave primária.
-        </div>
-        <div class="step-box step-carga">
-            <b>3. Carregamento:</b><br>
-            Ação: O dataset limpo foi estruturado em DataFrames e exportado para formatos prontos para consumo no Streamlit.
-        </div>
-    ''', unsafe_allow_html=True)
 
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     
     c1, c2, c3, c4 = st.columns(4)
-    
-    delta_yoy = None
-    if ano_selecionado != "Todos":
-        idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
-        if idx > 0:
-            pib_ant = df_hist.iloc[idx-1]['PIB']
-            delta_yoy = f"{((dados_atuais['PIB']/pib_ant)-1)*100:.1f}% vs ano anterior"
-    
-    pib_2018 = df_hist.iloc[0]['PIB']
-    perc_acumulado = ((dados_atuais['PIB']/pib_2018)-1)*100
+    with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
+    with c2: st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
+    with c3: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
+    with c4: st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
 
-    with c1:
-        st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_yoy)
-        st.markdown(f'<p class="acumulado-text">🚀 Acumulado: <b>+{perc_acumulado:.1f}%</b> desde 2018</p>', unsafe_allow_html=True)
-        
-    with c2:
-        st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
-    with c3:
-        st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
-    with c4:
-        st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
-
-    # --- INSERÇÃO DO BOTÃO IPCA CONFORME SOLICITADO ---
+    # --- LÓGICA DO IPCA COM TABELA DE REFERÊNCIA PARA APRESENTAÇÃO ---
     st.markdown("---")
+    if "mostrar_ipca" not in st.session_state:
+        st.session_state.mostrar_ipca = False
+
     if st.button("Inserir IPCA"):
-        ipca_votorantim = {
+        st.session_state.mostrar_ipca = True
+
+    if st.session_state.mostrar_ipca:
+        ipca_data = {
             2018: 3.75, 2019: 4.31, 2020: 4.52, 2021: 10.06, 
             2022: 5.79, 2023: 4.62, 2024: 4.50, 2025: 4.00
         }
-        if ano_selecionado == "Todos":
-            st.info("Selecione um ano na barra lateral para ver o IPCA correspondente.")
-        else:
-            valor_ipca = ipca_votorantim.get(int(ano_selecionado), 0)
-            st.write(f"**IPCA Votorantim ({ano_selecionado}):** {valor_ipca}%")
+        df_ipca = pd.DataFrame(list(ipca_data.items()), columns=['Ano', 'IPCA (%)'])
+
+        col_inf, col_tab = st.columns([0.6, 0.4])
+
+        with col_inf:
+            if ano_selecionado == "Todos":
+                acumulado = (np.prod([(1 + v/100) for v in ipca_data.values()]) - 1) * 100
+                st.metric("IPCA Acumulado do Período", f"{acumulado:.2f}%")
+                fig_ipca = px.bar(df_ipca, x='Ano', y='IPCA (%)', title="Evolução do IPCA (%)", color_discrete_sequence=['#FF8C00'], text_auto='.2f')
+            else:
+                valor_ano = ipca_data.get(int(ano_selecionado), 0)
+                st.metric(f"IPCA ({ano_selecionado})", f"{valor_ano}%")
+                df_ipca['Destaque'] = df_ipca['Ano'].apply(lambda x: 'Selecionado' if x == int(ano_selecionado) else 'Outros')
+                fig_ipca = px.bar(df_ipca, x='Ano', y='IPCA (%)', color='Destaque', title=f"Foco IPCA: {ano_selecionado}",
+                                 color_discrete_map={'Selecionado': '#FF8C00', 'Outros': '#1E3A8A'}, text_auto='.2f')
+            st.plotly_chart(fig_ipca, use_container_width=True)
+
+        with col_tab:
+            st.markdown("**Referência para Apresentação:**")
+            st.dataframe(df_ipca[['Ano', 'IPCA (%)']], hide_index=True, use_container_width=True)
+            st.caption("Valores considerados para deflação e análise de crescimento real.")
+            
     st.markdown("---")
 
     col_left, col_right = st.columns([0.6, 0.4])
     with col_left:
         fig_evolucao = px.line(df_hist, x='Ano', y=['VAB_Industria', 'VAB_Servicos'],
                                title="Evolução Histórica: Indústria vs Serviços",
-                               color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"},
-                               markers=True)
-        fig_evolucao.update_xaxes(dtick=1)
+                               color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"}, markers=True)
         st.plotly_chart(fig_evolucao, use_container_width=True)
-        st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
 
     with col_right:
         fig_pizza = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE")
@@ -207,92 +179,15 @@ elif menu == "Dashboard Executivo":
 
 elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Maturidade Digital</p>', unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        fig_prod = px.bar(df_hist, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)", color_discrete_sequence=['#1E3A8A'])
-        fig_prod.update_xaxes(dtick=1)
-        st.plotly_chart(fig_prod, use_container_width=True)
-    with c2:
-        fig_radar = go.Figure()
-        fig_radar.add_trace(go.Scatterpolar(r=df_seg['Maturidade_Atual'], theta=df_seg['Segmento'], fill='toself', marker=dict(color='#FF8C00')))
-        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Nível de Automação por Setor")
-        st.plotly_chart(fig_radar, use_container_width=True)
 
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva de Cenários</p>', unsafe_allow_html=True)
-    horizonte = st.radio("Selecione o Horizonte de Projeção:", ["Próximos 5 Anos (2028)", "Próximos 10 Anos (2033)"], horizontal=True)
-    anos_a_projetar = 5 if "5" in horizonte else 10
-    ano_final = 2023 + anos_a_projetar
-    
-    anos_hist = df_hist['Ano'].values
-    anos_proj = np.arange(2026, ano_final + 1)
-
-    def projetar_com_r2(y_hist):
-        coef = np.polyfit(anos_hist, y_hist, 1)
-        p = np.poly1d(coef)
-        y_pred_hist = p(anos_hist)
-        y_mean = np.mean(y_hist)
-        ss_res = np.sum((y_hist - y_pred_hist) ** 2)
-        ss_tot = np.sum((y_hist - y_mean) ** 2)
-        r2 = 1 - (ss_res / ss_tot)
-        y_proj = p(anos_proj)
-        return y_proj, r2
-
-    proj_ind, r2_ind = projetar_com_r2(df_hist['VAB_Industria'].values)
-    proj_serv, r2_serv = projetar_com_r2(df_hist['VAB_Servicos'].values)
-
-    df_p = pd.DataFrame({
-        'Ano': anos_proj, 
-        f'VAB_Industria (R²={r2_ind:.3f})': proj_ind, 
-        f'VAB_Servicos (R²={r2_serv:.3f})': proj_serv, 
-        'Tipo': 'Projeção'
-    })
-    
-    df_h_display = df_hist.rename(columns={
-        'VAB_Industria': f'VAB_Industria (R²={r2_ind:.3f})',
-        'VAB_Servicos': f'VAB_Servicos (R²={r2_serv:.3f})'
-    })
-    
-    df_full = pd.concat([df_h_display.assign(Tipo='Histórico'), df_p])
-
-    fig_proj = px.line(df_full, x='Ano', 
-                      y=[f'VAB_Industria (R²={r2_ind:.3f})', f'VAB_Servicos (R²={r2_serv:.3f})'], 
-                      color_discrete_map={
-                          f'VAB_Industria (R²={r2_ind:.3f})': "#1E3A8A", 
-                          f'VAB_Servicos (R²={r2_serv:.3f})': "#FF8C00"
-                      },
-                      line_dash='Tipo', title=f"Projeção de Crescimento até {ano_final} (Regressão Linear)")
-    
-    fig_proj.update_xaxes(dtick=1)
-    st.plotly_chart(fig_proj, use_container_width=True)
-    
-    st.info(f"""
-    **Estatísticas do Modelo:**
-    * **Indústria:** $R^2 = {r2_ind:.4f}$ | Estimativa {ano_final}: R$ {proj_ind[-1]:.0f}M
-    * **Serviços:** $R^2 = {r2_serv:.4f}$ | Estimativa {ano_final}: R$ {proj_serv[-1]:.0f}M
-    """)
 
 elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
-    acoes = pd.DataFrame({
-        "Problema Identificado": ["Dependência de Setor Único", "Efeito Shadowing (Sorocaba)", "Gap de Maturidade 4.0", "Crescimento de Serviços"],
-        "Ação Estratégica": ["Verticalização da cadeia de minerais", "Incentivos para Startups de Logtech", "Subsídio para Auditoria Digital", "Estimular a Servitização Industrial"],
-        "Impacto Esperado": ["Diversificação do VAB", "Retenção de Talentos", "Aumento da Produtividade", "Equilíbrio Setorial"]
-    })
-    st.table(acoes)
-    st.markdown("> **Nota do Grupo:** Este plano visa transformar Votorantim em um hub de inteligência industrial.")
 
 elif menu == "Fontes/Referências":
     st.markdown('<p class="section-title">Fontes de Dados</p>', unsafe_allow_html=True)
-    st.write("- IBGE Cidades (PIB Municipal)")
-    st.write("- Fundação SEADE (VAB Setorial Municipal)")
-    st.write("- Novo CAGED (Movimentação de Emprego Formal)")
 
 # --- FOOTER ---
-st.markdown(f"""
-    <div class="footer">
-        <b>Observatório Industrial Votorantim | Ciência de Dados para Negócio</b><br>
-        Desenvolvido por: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.<br>
-        <i>Gerado em {datetime.now().strftime('%d/%m/%Y')}</i>
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown(f'<div class="footer"><b>Observatório Industrial Votorantim</b><br>Desenvolvido por: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.</div>', unsafe_allow_html=True)

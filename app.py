@@ -4,6 +4,8 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import segno
+from io import BytesIO
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -41,6 +43,12 @@ def formatar_valor(valor):
         return f"R$ {valor/1000:.2f} Bi"
     return f"R$ {valor:.1f} Mi"
 
+def gerar_qrcode(url):
+    qrcode = segno.make_qr(url)
+    out = BytesIO()
+    qrcode.save(out, kind='png', scale=10)
+    return out.getvalue()
+
 # --- CARREGAMENTO DE DADOS ---
 @st.cache_data
 def load_data():
@@ -65,7 +73,17 @@ ipca_map = {2018: 3.75, 2019: 4.31, 2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=70)
+    # Criando colunas para alinhar Logo e QR Code
+    col_logo, col_qr = st.columns([1, 1])
+    
+    with col_logo:
+        st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=70)
+        
+    with col_qr:
+        url_da_pagina = "https://economiaapp.streamlit.app" # Substitua pela sua URL real
+        st.image(gerar_qrcode(url_da_pagina), width=75)
+        st.caption("Acesse aqui")
+
     st.title("Inteligência Industrial")
     st.subheader("Votorantim 4.0")
     
@@ -156,7 +174,7 @@ elif menu == "Metodologia ETL":
             Formatos: CSV e consultas em tabelas do SIDRA/IBGE.
         </div>
         <div class="step-box step-transformacao">
-            <b>2. Transformation:</b><br>
+            <b>2. Transformação:</b><br>
             Limpeza de Nulos: Removemos registros incompletos.<br>
             Padronização: Unificamos nomenclaturas CNAE e escalas financeiras (Mi/Bi).<br>
             Unificação (Join): Merge das bases de Emprego e PIB utilizando o Ano como chave primária.
@@ -241,7 +259,6 @@ elif menu == "Diagnóstico Indústria 4.0":
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva e IPCA Previsionado (Horizonte 2030)</p>', unsafe_allow_html=True)
     
-    # --- TEXTO EXPLICATIVO EM CARDS ---
     st.markdown("""
     <div class="card">
         <h3 style="color: #1E3A8A;">Análise de Tendência: O Caminho até 2030</h3>
@@ -256,7 +273,7 @@ elif menu == "Projeção Futura":
                 Ao aplicarmos o <b>IPCA Previsionado</b>, descontamos a inflação. Isso revela o ganho real de produção da cidade.
             </div>
             <div class="z-card" style="flex:1;">
-                <b>Confiabilidade (R²):</b><br>
+                <b>Confiabilidade ($R^2$):</b><br>
                 Nossos dados mostram uma aderência sólida, indicando uma trajetória previsível de transição tecnológica.
             </div>
         </div>

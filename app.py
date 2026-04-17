@@ -156,7 +156,7 @@ elif menu == "Metodologia ETL":
             Formatos: CSV e consultas em tabelas do SIDRA/IBGE.
         </div>
         <div class="step-box step-transformacao">
-            <b>2. Transformação:</b><br>
+            <b>2. Transformation:</b><br>
             Limpeza de Nulos: Removemos registros incompletos.<br>
             Padronização: Unificamos nomenclaturas CNAE e escalas financeiras (Mi/Bi).<br>
             Unificação (Join): Merge das bases de Emprego e PIB utilizando o Ano como chave primária.
@@ -240,6 +240,29 @@ elif menu == "Diagnóstico Indústria 4.0":
 # --- 6. PROJEÇÃO FUTURA ---
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva e IPCA Previsionado (Horizonte 2030)</p>', unsafe_allow_html=True)
+    
+    # --- TEXTO EXPLICATIVO EM CARDS ---
+    st.markdown("""
+    <div class="card">
+        <h3 style="color: #1E3A8A;">Análise de Tendência: O Caminho até 2030</h3>
+        <p>Este gráfico utiliza <b>Regressão Linear</b>, um modelo estatístico que analisa o comportamento dos anos anteriores para prever o futuro.</p>
+        <div style="display: flex; gap: 15px;">
+            <div class="z-card" style="flex:1;">
+                <b>Crescimento Nominal (Linha Escura):</b><br>
+                Mostra que, mantendo o ritmo atual, Votorantim continuará expandindo seu Valor Adicionado (VAB).
+            </div>
+            <div class="z-card" style="flex:1;">
+                <b>Crescimento Real (Linha Clara):</b><br>
+                Ao aplicarmos o <b>IPCA Previsionado</b>, descontamos a inflação. Isso revela o ganho real de produção da cidade.
+            </div>
+            <div class="z-card" style="flex:1;">
+                <b>Confiabilidade ($R^2$):</b><br>
+                Nossos dados mostram uma aderência sólida, indicando uma trajetória previsível de transição tecnológica.
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     ano_final = 2030
     anos_hist = df_hist['Ano'].values
     anos_proj = np.arange(2026, ano_final + 1)

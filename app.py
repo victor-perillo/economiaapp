@@ -158,10 +158,9 @@ elif menu == "Problemas Identificados":
         st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
         É um problema de Trade-off entre expansão urbana e manutenção da produção.""")
     with c2:
-        st.error("""**Skill Gap (Mão de Obra):** Há um desalinhamento entre o perfil do trabalhador local e as demandas da Indústria 4.0. 
-        Enquanto o mercado pede automação, a força de trabalho ainda está atrelada a processos manuais.""")
+        st.success("""**Evolução Setorial:** Embora desafiadora, a migração para o setor de serviços abre portas para a servitização industrial e novos modelos de negócios 4.0.""")
         st.info("""**Efeito Shadowing:** Ocorre quando Votorantim perde talentos e investimentos para Sorocaba. 
-        Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado ou indústrias de base.""")
+        Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado.""")
 
 # Modulo Metodologia ETL
 elif menu == "Metodologia ETL":

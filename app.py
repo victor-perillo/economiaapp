@@ -272,18 +272,51 @@ elif menu == "Projeção Futura":
     df_f = pd.concat([df_hist.assign(Tipo='Histórico'), df_p_total])
     st.plotly_chart(px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030",
                     color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"}), use_container_width=True)
-    st.info(f"**Estatísticas do Modelo:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(proj_ipca):.2f}%")
+    st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(proj_ipca):.2f}%")
 
 # --- 7. PLANO DE AÇÃO ---
 elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
-    acoes = pd.DataFrame({
-        "Problema Identificado": ["Dependência de Setor Único", "Efeito Shadowing (Sorocaba)", "Gap de Maturidade 4.0", "Crescimento de Serviços"],
-        "Ação Estratégica": ["Verticalização da cadeia de minerais", "Incentivos para Startups de Logtech", "Subsídio para Auditoria Digital", "Estimular a Servitização Industrial"],
-        "Impacto Esperado": ["Diversificação do VAB", "Retenção de Talentos", "Aumento da Produtividade", "Equilíbrio Setorial"]
-    })
-    st.table(acoes)
-    st.markdown("> **Nota do Grupo:** Este plano visa transformar Votorantim em um hub de inteligência industrial.")
+    
+    col_a, col_b = st.columns(2)
+    
+    with col_a:
+        st.markdown("""
+        <div class="card">
+            <h4 style="color: #1E3A8A;">Eixo 1: Modernização Industrial</h4>
+            <p><b>Ação:</b> Programa Votorantim 4.0.</p>
+            <p><b>Como:</b> Isenção parcial de ISS/IPTU para empresas que investirem em IoT e Big Data.</p>
+            <p><b>Impacto:</b> Aumento real da produtividade e diversificação do VAB.</p>
+        </div>
+        <div class="card">
+            <h4 style="color: #1E3A8A;">Eixo 2: Zoneamento e Território</h4>
+            <p><b>Ação:</b> Zonas de Transição Tecnológica.</p>
+            <p><b>Como:</b> Revisão do Plano Diretor para criar 'amortecedores' entre áreas residenciais e fábricas limpas.</p>
+            <p><b>Impacto:</b> Redução de conflitos urbanos e segurança jurídica para investimentos.</p>
+        </div>
+        <div class="card">
+            <h4 style="color: #1E3A8A;">Eixo 3: Retenção de Talentos</h4>
+            <p><b>Ação:</b> Hub de Inovação Industrial Votorantim.</p>
+            <p><b>Como:</b> Parceria com SESI/SENAI para requalificação técnica focada em análise de dados.</p>
+            <p><b>Impacto:</b> Combate ao 'Efeito Shadowing' e aumento da renda média local.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with col_b:
+        st.markdown("""
+        <div class="card">
+            <h4 style="color: #1E3A8A;">Eixo 4: Servitização Industrial</h4>
+            <p><b>Ação:</b> Estímulo à Indústria como Serviço.</p>
+            <p><b>Como:</b> Apoio para grandes plantas incubarem startups de logística e manutenção preditiva.</p>
+            <p><b>Impacto:</b> Equilíbrio setorial e criação de novos fluxos de receita tributária.</p>
+        </div>
+        <div class="card">
+            <h4 style="color: #1E3A8A;">Eixo 5: Atração de Investimentos Real</h4>
+            <p><b>Ação:</b> Monitoramento de Crescimento Pós-IPCA.</p>
+            <p><b>Como:</b> Utilização deste Observatório para demonstrar ganhos reais de eficiência a investidores externos.</p>
+            <p><b>Impacto:</b> Melhoria da imagem municipal e competitividade frente a Sorocaba.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # --- 8. FONTES/REFERÊNCIAS ---
 elif menu == "Fontes/Referências":

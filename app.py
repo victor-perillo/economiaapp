@@ -89,7 +89,6 @@ dados_atuais = display_df.iloc[0]
 # --- 1. INTRODUÇÃO & CONTEXTO ---
 if menu == "Introdução & Contexto":
     st.markdown('<p class="section-title">Contexto e Ordenamento Territorial</p>', unsafe_allow_html=True)
-    
     tab_econ, tab_diretor = st.tabs(["📊 Análise Econômica", "📜 Plano Diretor de Votorantim"])
     
     with tab_econ:
@@ -156,44 +155,34 @@ elif menu == "Metodologia ETL":
 # --- 4. DASHBOARD EXECUTIVO ---
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
-    
     c1, c2, c3, c4 = st.columns(4)
-    
     delta_yoy = None
     if ano_selecionado != "Todos":
         idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
         if idx > 0:
             pib_ant = df_hist.iloc[idx-1]['PIB']
             delta_yoy = f"{((dados_atuais['PIB']/pib_ant)-1)*100:.1f}% vs ano anterior"
-    
     pib_2018 = df_hist.iloc[0]['PIB']
     perc_acumulado = ((dados_atuais['PIB']/pib_2018)-1)*100
 
     with c1:
         st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_yoy)
         st.markdown(f'<p class="acumulado-text">🚀 Acumulado: <b>+{perc_acumulado:.1f}%</b> desde 2018</p>', unsafe_allow_html=True)
-        
-    with c2:
-        st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
-    with c3:
-        st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
-    with c4:
-        st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
+    with c2: st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
+    with c3: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
+    with c4: st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
 
-    # --- LÓGICA IPCA (COMPARAÇÃO REAL VS NOMINAL) ---
+    # --- LÓGICA IPCA ---
     st.markdown("---")
-    if "aplicar_ipca" not in st.session_state:
-        st.session_state.aplicar_ipca = False
-
-    if st.button("Inserir IPCA (Análise de Crescimento Real vs Inflação)"):
+    if "aplicar_ipca" not in st.session_state: st.session_state.aplicar_ipca = False
+    if st.button("Inserir IPCA (Avaliação de Impacto Inflacionário)"):
         st.session_state.aplicar_ipca = not st.session_state.aplicar_ipca
 
     ipca_map = {2018: 3.75, 2019: 4.31, 2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4.62, 2024: 4.50, 2025: 4.00}
     df_plot = df_hist.copy()
 
     if st.session_state.aplicar_ipca:
-        st.success("✅ IPCA Aplicado: Comparando Valores Nominais vs Valores Deflacionados (Base 2018).")
-        # Cálculo de Deflação
+        st.success("✅ IPCA Aplicado: Analisando VAB Real (descontada a inflação base 2018).")
         df_plot['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_plot['Ano']]
         df_plot['Indústria (Real)'] = df_plot['VAB_Industria'] / df_plot['Fator']
         df_plot['Serviços (Real)'] = df_plot['VAB_Servicos'] / df_plot['Fator']
@@ -201,27 +190,19 @@ elif menu == "Dashboard Executivo":
     else:
         y_cols = ['VAB_Industria', 'VAB_Servicos']
 
-    col_left, col_right = st.columns([0.7, 0.3])
-    with col_left:
-        fig_evolucao = px.line(df_plot, x='Ano', y=y_cols,
-                               title="Evolução Histórica: Impacto do IPCA em Votorantim",
-                               color_discrete_map={
-                                   "VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd",
-                                   "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"
-                               }, markers=True)
-        st.plotly_chart(fig_evolucao, use_container_width=True)
-    
-    with col_right:
-        st.write("**Tabela de IPCA Aplicada:**")
-        st.dataframe(pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)']), hide_index=True)
+    col_l, col_r = st.columns([0.7, 0.3])
+    with col_l:
+        fig_evol = px.line(df_plot, x='Ano', y=y_cols, title="Evolução: VAB Nominal vs VAB Real", markers=True,
+                          color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"})
+        st.plotly_chart(fig_evol, use_container_width=True)
+    with col_r:
+        st.write("**IPCA Anual e Evolução:**")
+        df_ipca_tab = pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)'])
+        st.dataframe(df_ipca_tab, hide_index=True)
+        st.plotly_chart(px.bar(df_ipca_tab, x='Ano', y='IPCA (%)', color_discrete_sequence=['#FF8C00'], height=200), use_container_width=True)
 
     st.markdown("---")
-    
-    c_p1, c_p2 = st.columns([0.6, 0.4])
-    with c_p1:
-        st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
-    with c_p2:
-        st.info("**Nota Técnica:** As linhas claras representam o valor real (descontada a inflação). A distância entre a linha escura e a clara mostra quanto do crescimento foi apenas aumento de preços.")
+    st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
 
 # --- 5. DIAGNÓSTICO INDÚSTRIA 4.0 ---
 elif menu == "Diagnóstico Indústria 4.0":
@@ -237,9 +218,87 @@ elif menu == "Diagnóstico Indústria 4.0":
         fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Nível de Automação por Setor")
         st.plotly_chart(fig_radar, use_container_width=True)
 
-# --- 6. PROJEÇÃO FUTURA ---
+# --- 6. PROJEÇÃO FUTURA (RECUPERADO) ---
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva de Cenários</p>', unsafe_allow_html=True)
-    horizonte = st.radio("Selecione o Horizonte de Projeção:", ["Próximos 5 Anos (2028)", "Próximos 10 Anos (2033)"], horizontal=True)
+    horizonte = st.radio("Selecione o Horizonte de Projeção:", ["Próximos 5 Anos (2030)", "Próximos 10 Anos (2035)"], horizontal=True)
     anos_a_projetar = 5 if "5" in horizonte else 10
-    ano_final = 202
+    ano_final = 2025 + anos_a_projetar
+    
+    anos_hist = df_hist['Ano'].values
+    anos_proj = np.arange(2026, ano_final + 1)
+
+    def projetar_com_r2(y_hist):
+        coef = np.polyfit(anos_hist, y_hist, 1)
+        p = np.poly1d(coef)
+        y_proj = p(anos_proj)
+        # R2 calculation
+        y_pred_hist = p(anos_hist)
+        y_mean = np.mean(y_hist)
+        ss_res = np.sum((y_hist - y_pred_hist) ** 2)
+        ss_tot = np.sum((y_hist - y_mean) ** 2)
+        r2 = 1 - (ss_res / ss_tot)
+        return y_proj, r2
+
+    proj_ind, r2_ind = projetar_com_r2(df_hist['VAB_Industria'].values)
+    proj_serv, r2_serv = projetar_com_r2(df_hist['VAB_Servicos'].values)
+
+    df_p = pd.DataFrame({
+        'Ano': anos_proj, 
+        f'VAB_Industria (R²={r2_ind:.3f})': proj_ind, 
+        f'VAB_Servicos (R²={r2_serv:.3f})': proj_serv, 
+        'Tipo': 'Projeção'
+    })
+    
+    df_h_display = df_hist.rename(columns={
+        'VAB_Industria': f'VAB_Industria (R²={r2_ind:.3f})',
+        'VAB_Servicos': f'VAB_Servicos (R²={r2_serv:.3f})'
+    })
+    
+    df_full = pd.concat([df_h_display.assign(Tipo='Histórico'), df_p])
+
+    fig_proj = px.line(df_full, x='Ano', 
+                      y=[f'VAB_Industria (R²={r2_ind:.3f})', f'VAB_Servicos (R²={r2_serv:.3f})'], 
+                      color_discrete_map={
+                          f'VAB_Industria (R²={r2_ind:.3f})': "#1E3A8A", 
+                          f'VAB_Servicos (R²={r2_serv:.3f})': "#FF8C00"
+                      },
+                      line_dash='Tipo', title=f"Projeção de Crescimento até {ano_final} (Regressão Linear)")
+    
+    fig_proj.update_xaxes(dtick=1)
+    st.plotly_chart(fig_proj, use_container_width=True)
+    
+    st.info(f"""
+    **Estatísticas do Modelo:**
+    * **Indústria:** $R^2 = {r2_ind:.4f}$ | Estimativa {ano_final}: R$ {proj_ind[-1]:.0f}M
+    * **Serviços:** $R^2 = {r2_serv:.4f}$ | Estimativa {ano_final}: R$ {proj_serv[-1]:.0f}M
+    """)
+
+# --- 7. PLANO DE AÇÃO ---
+elif menu == "Plano de Ação":
+    st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
+    acoes = pd.DataFrame({
+        "Problema Identificado": ["Dependência de Setor Único", "Efeito Shadowing (Sorocaba)", "Gap de Maturidade 4.0", "Crescimento de Serviços"],
+        "Ação Estratégica": ["Verticalização da cadeia de minerais", "Incentivos para Startups de Logtech", "Subsídio para Auditoria Digital", "Estimular a Servitização Industrial"],
+        "Impacto Esperado": ["Diversificação do VAB", "Retenção de Talentos", "Aumento da Produtividade", "Equilíbrio Setorial"]
+    })
+    st.table(acoes)
+    st.markdown("> **Nota do Grupo:** Este plano visa transformar Votorantim em um hub de inteligência industrial.")
+
+# --- 8. FONTES/REFERÊNCIAS (RECUPERADO) ---
+elif menu == "Fontes/Referências":
+    st.markdown('<p class="section-title">Fontes de Dados</p>', unsafe_allow_html=True)
+    st.write("- **IBGE Cidades**: Séries históricas de PIB Municipal e Valor Adicionado Bruto.")
+    st.write("- **Fundação SEADE**: Dados setoriais de VAB (Indústria e Serviços) para o estado de São Paulo.")
+    st.write("- **Novo CAGED**: Movimentação formal de empregos para diagnóstico de produtividade.")
+    st.write("- **Plano Diretor de Votorantim**: Lei vigente e diretrizes de ordenamento territorial.")
+    st.write("- **IPCA (IBGE)**: Índice Nacional de Preços ao Consumidor Amplo para correção inflacionária.")
+
+# --- FOOTER ---
+st.markdown(f"""
+    <div class="footer">
+        <b>Observatório Industrial Votorantim | Ciência de Dados para Negócio</b><br>
+        Desenvolvido por: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.<br>
+        <i>Gerado em {datetime.now().strftime('%d/%m/%Y')}</i>
+    </div>
+    """, unsafe_allow_html=True)

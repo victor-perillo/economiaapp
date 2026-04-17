@@ -79,8 +79,6 @@ with st.sidebar:
         st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=70)
         
     with col_qr:
-        # ATENÇÃO: Verifique se esta URL está correta. Se o app estiver rodando, 
-        # copie a URL da barra do navegador e cole abaixo:
         url_da_pagina = "https://economiaapp-economia-fatec.streamlit.app/" 
         st.image(gerar_qrcode(url_da_pagina), width=75)
         st.caption("Acesse aqui")
@@ -108,7 +106,7 @@ dados_atuais = display_df.iloc[0]
 
 # Módulo - Introdução e Contexto
 if menu == "Introdução & Contexto":
-    st.markdown('<p class="section-title">Contexto e Ordenamento Territorial</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Contexto e Plano Diretor</p>', unsafe_allow_html=True)
     tab_econ, tab_diretor, tab_urbano = st.tabs(["📊 Análise Econômica", "📜 Plano Diretor de Votorantim", "🗺️ Zoneamento Urbano"])
     
     with tab_econ:
@@ -230,9 +228,9 @@ elif menu == "Dashboard Executivo":
         st.dataframe(df_ipca_tab, hide_index=True, height=250)
         st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
 
-# --- 5. DIAGNÓSTICO INDÚSTRIA 4.0 ---
+# Módulo Diagnóstico Industria 4.0
 elif menu == "Diagnóstico Indústria 4.0":
-    st.markdown('<p class="section-title">Maturidade Digital e Impactos 4.0</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Geração Digital e Impactos 4.0</p>', unsafe_allow_html=True)
     
     st.markdown("""
     <div class="card">
@@ -321,19 +319,19 @@ elif menu == "Plano de Ação":
     with col_a:
         st.markdown("""
         <div class="card">
-            <h4 style="color: #1E3A8A;">Eixo 1: Modernização Industrial</h4>
+            <h4 style="color: #1E3A8A;">1: Modernização Industrial</h4>
             <p><b>Ação:</b> Programa Votorantim 4.0.</p>
             <p><b>Como:</b> Isenção parcial de ISS/IPTU para empresas que investirem em IoT e Big Data.</p>
             <p><b>Impacto:</b> Aumento real da produtividade e diversificação do VAB.</p>
         </div>
         <div class="card">
-            <h4 style="color: #1E3A8A;">Eixo 2: Zoneamento e Território</h4>
+            <h4 style="color: #1E3A8A;">2: Zoneamento e Território</h4>
             <p><b>Ação:</b> Zonas de Transição Tecnológica.</p>
             <p><b>Como:</b> Revisão do Plano Diretor para criar 'amortecedores' entre áreas residenciais e fábricas limpas.</p>
             <p><b>Impacto:</b> Redução de conflitos urbanos e segurança jurídica para investimentos.</p>
         </div>
         <div class="card">
-            <h4 style="color: #1E3A8A;">Eixo 3: Retenção de Talentos</h4>
+            <h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4>
             <p><b>Ação:</b> Hub de Inovação Industrial Votorantim.</p>
             <p><b>Como:</b> Parceria com SESI/SENAI para requalificação técnica focada em análise de dados.</p>
             <p><b>Impacto:</b> Combate ao 'Efeito Shadowing' e aumento da renda média local.</p>
@@ -342,13 +340,13 @@ elif menu == "Plano de Ação":
     with col_b:
         st.markdown("""
         <div class="card">
-            <h4 style="color: #1E3A8A;">Eixo 4: Servitização Industrial</h4>
+            <h4 style="color: #1E3A8A;">4: Servitização Industrial</h4>
             <p><b>Ação:</b> Estímulo à Indústria como Serviço.</p>
             <p><b>Como:</b> Apoio para grandes plantas incubarem startups de logística e manutenção preditiva.</p>
             <p><b>Impacto:</b> Equilíbrio setorial e criação de novos fluxos de receita tributária.</p>
         </div>
         <div class="card">
-            <h4 style="color: #1E3A8A;">Eixo 5: Atração de Investimentos Real</h4>
+            <h4 style="color: #1E3A8A;">5: Atração de Investimentos Real</h4>
             <p><b>Ação:</b> Monitoramento de Crescimento Pós-IPCA.</p>
             <p><b>Como:</b> Utilização deste Observatório para demonstrar ganhos reais de eficiência a investidores externos.</p>
             <p><b>Impacto:</b> Melhoria da imagem municipal e competitividade frente a Sorocaba.</p>

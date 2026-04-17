@@ -7,14 +7,14 @@ from datetime import datetime
 import segno
 from io import BytesIO
 
-# --- CONFIGURAÇÃO DA PÁGINA ---
+# Configuração da Página
 st.set_page_config(
     page_title="Observatório Industrial Votorantim | Inteligência 4.0",
     page_icon="🏭",
     layout="wide"
 )
 
-# --- ESTILO CSS CUSTOMIZADO ---
+# Customização da Página
 st.markdown("""
     <style>
     .main { background-color: #f8f9fa; }
@@ -37,7 +37,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- FUNÇÕES DE SUPORTE ---
+# Funções e Suporte
 def formatar_valor(valor):
     if valor >= 1000:
         return f"R$ {valor/1000:.2f} Bi"
@@ -49,7 +49,7 @@ def gerar_qrcode(url):
     qrcode.save(out, kind='png', scale=10)
     return out.getvalue()
 
-# --- CARREGAMENTO DE DADOS ---
+# Carregando os Dados
 @st.cache_data
 def load_data():
     df_seg = pd.DataFrame({
@@ -71,16 +71,17 @@ def load_data():
 df_seg, df_hist = load_data()
 ipca_map = {2018: 3.75, 2019: 4.31, 2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4.62, 2024: 4.50, 2025: 4.00}
 
-# --- SIDEBAR ---
+# Sidebar
 with st.sidebar:
-    # Criando colunas para alinhar Logo e QR Code
     col_logo, col_qr = st.columns([1, 1])
     
     with col_logo:
         st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=70)
         
     with col_qr:
-        url_da_pagina = "https://economiaapp.streamlit.app" # Substitua pela sua URL real
+        # ATENÇÃO: Verifique se esta URL está correta. Se o app estiver rodando, 
+        # copie a URL da barra do navegador e cole abaixo:
+        url_da_pagina = "https://economiaapp-economia-fatec.streamlit.app/" 
         st.image(gerar_qrcode(url_da_pagina), width=75)
         st.caption("Acesse aqui")
 
@@ -96,7 +97,7 @@ with st.sidebar:
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 
                     "Plano de Ação", "Fontes/Referências"])
 
-# --- FILTRAGEM ---
+# Filtros
 if ano_selecionado == "Todos":
     display_df = df_hist.iloc[[-1]] 
     ano_txt = "2025 (Projeção)"
@@ -105,7 +106,7 @@ else:
     ano_txt = ano_selecionado
 dados_atuais = display_df.iloc[0]
 
-# --- 1. INTRODUÇÃO & CONTEXTO ---
+# Módulo - Introdução e Contexto
 if menu == "Introdução & Contexto":
     st.markdown('<p class="section-title">Contexto e Ordenamento Territorial</p>', unsafe_allow_html=True)
     tab_econ, tab_diretor, tab_urbano = st.tabs(["📊 Análise Econômica", "📜 Plano Diretor de Votorantim", "🗺️ Zoneamento Urbano"])
@@ -149,7 +150,7 @@ if menu == "Introdução & Contexto":
         pdf_url = "https://www.votorantim.sp.gov.br/arquivos/mapas_002_19043716.pdf"
         st.link_button("🔍 Abrir Mapa de Zoneamento (Link Externo Seguro)", pdf_url, use_container_width=True)
 
-# --- 2. PROBLEMAS IDENTIFICADOS ---
+# Módulo Problemas Identificados
 elif menu == "Problemas Identificados":
     st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
@@ -164,7 +165,7 @@ elif menu == "Problemas Identificados":
         st.info("""**Efeito Shadowing:** Ocorre quando Votorantim perde talentos e investimentos para Sorocaba. 
         Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado ou indústrias de base.""")
 
-# --- 3. METODOLOGIA ETL ---
+# Modulo Metodologia ETL
 elif menu == "Metodologia ETL":
     st.markdown('<p class="section-title">Pipeline de Dados (ETL)</p>', unsafe_allow_html=True)
     st.markdown('''
@@ -185,7 +186,7 @@ elif menu == "Metodologia ETL":
         </div>
     ''', unsafe_allow_html=True)
 
-# --- 4. DASHBOARD EXECUTIVO ---
+# Modulo Dashboard Executivo
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns(4)
@@ -209,7 +210,6 @@ elif menu == "Dashboard Executivo":
 
     df_p = df_hist.copy()
     if st.session_state.aplicar_ipca_dash:
-        st.success("✅ IPCA Aplicado: Comparando Valores Nominais vs Valores Reais (Deflacionados base 2018).")
         df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']
         df_p['Serviços (Real)'] = df_p['VAB_Servicos'] / df_p['Fator']
@@ -255,7 +255,7 @@ elif menu == "Diagnóstico Indústria 4.0":
         fig_r.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Nível de Automação por Setor")
         st.plotly_chart(fig_r, use_container_width=True)
 
-# --- 6. PROJEÇÃO FUTURA ---
+# Modulo Projeção Futura
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva e IPCA Previsionado (Horizonte 2030)</p>', unsafe_allow_html=True)
     
@@ -314,12 +314,10 @@ elif menu == "Projeção Futura":
                     color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"}), use_container_width=True)
     st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(proj_ipca):.2f}%")
 
-# --- 7. PLANO DE AÇÃO ---
+# Modulo Plano de Ação
 elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
-    
     col_a, col_b = st.columns(2)
-    
     with col_a:
         st.markdown("""
         <div class="card">
@@ -341,7 +339,6 @@ elif menu == "Plano de Ação":
             <p><b>Impacto:</b> Combate ao 'Efeito Shadowing' e aumento da renda média local.</p>
         </div>
         """, unsafe_allow_html=True)
-        
     with col_b:
         st.markdown("""
         <div class="card">
@@ -358,7 +355,7 @@ elif menu == "Plano de Ação":
         </div>
         """, unsafe_allow_html=True)
 
-# --- 8. FONTES/REFERÊNCIAS ---
+# Módulo Fontes e Referências
 elif menu == "Fontes/Referências":
     st.markdown('<p class="section-title">Fontes de Dados e Bibliografia</p>', unsafe_allow_html=True)
     st.write("- **IBGE Cidades**: Séries de PIB Municipal e Valor Adicionado.")
@@ -367,11 +364,10 @@ elif menu == "Fontes/Referências":
     st.write("- **Plano Diretor de Votorantim**: Lei Complementar 002/10 e Zoneamento Oficial.")
     st.write("- **BCB / IBGE**: Índice Nacional de Preços ao Consumidor Amplo (IPCA).")
 
-# --- FOOTER ---
+# Footer
 st.markdown(f"""
     <div class="footer">
         <b>Observatório Industrial Votorantim | Inteligência Industrial 4.0</b><br>
         Grupo: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.<br>
-        <i>Gerado em {datetime.now().strftime("%d/%m/%Y")}</i>
-    </div>
+            </div>
     """, unsafe_allow_html=True)

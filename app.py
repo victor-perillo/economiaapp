@@ -1,4 +1,4 @@
-# --- 4. DASHBOARD EXECUTIVO ---
+# --- 4. DASHBOARD EXECUTIVO (SUBSTITUA ESTE BLOCO NO SEU ARQUIVO) ---
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     
@@ -28,7 +28,7 @@ elif menu == "Dashboard Executivo":
     # --- INSERÇÃO DO BOTÃO IPCA E LÓGICA ---
     st.markdown("---")
     if st.button("Inserir IPCA"):
-        # Dados IPCA Votorantim (Exemplo de série histórica para o cálculo)
+        # Dados IPCA Votorantim
         ipca_votorantim = {
             2018: 3.75, 2019: 4.31, 2020: 4.52, 2021: 10.06, 
             2022: 5.79, 2023: 4.62, 2024: 4.50, 2025: 4.00

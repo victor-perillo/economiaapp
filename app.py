@@ -256,7 +256,7 @@ elif menu == "Projeção Futura":
                 Ao aplicarmos o <b>IPCA Previsionado</b>, descontamos a inflação. Isso revela o ganho real de produção da cidade.
             </div>
             <div class="z-card" style="flex:1;">
-                <b>Confiabilidade ($R^2$):</b><br>
+                <b>Confiabilidade (R²):</b><br>
                 Nossos dados mostram uma aderência sólida, indicando uma trajetória previsível de transição tecnológica.
             </div>
         </div>

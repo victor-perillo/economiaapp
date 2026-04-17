@@ -75,7 +75,7 @@ with st.sidebar:
     menu = st.radio("Navegação Estratégica:", 
                     ["Introdução & Contexto", "Problemas Identificados", "Metodologia ETL", 
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 
-                    "Plano de Ação", "Fontes/Referências"])
+                    "Plano Comercial", "Plano de Ação", "Fontes/Referências"])
 
 # --- FILTRAGEM ---
 if ano_selecionado == "Todos":
@@ -152,12 +152,11 @@ elif menu == "Metodologia ETL":
         </div>
     ''', unsafe_allow_html=True)
 
-# --- 4. DASHBOARD EXECUTIVO (RESTAURADO COMPLETO) ---
+# --- 4. DASHBOARD EXECUTIVO ---
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     
     c1, c2, c3, c4 = st.columns(4)
-    
     delta_yoy = None
     if ano_selecionado != "Todos":
         idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
@@ -171,15 +170,10 @@ elif menu == "Dashboard Executivo":
     with c1:
         st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_yoy)
         st.markdown(f'<p class="acumulado-text">🚀 Acumulado: <b>+{perc_acumulado:.1f}%</b> desde 2018</p>', unsafe_allow_html=True)
-        
-    with c2:
-        st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
-    with c3:
-        st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
-    with c4:
-        st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
+    with c2: st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
+    with c3: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
+    with c4: st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
 
-    # --- BOTÃO IPCA NO DASHBOARD ---
     st.markdown("---")
     if "aplicar_ipca_dash" not in st.session_state: st.session_state.aplicar_ipca_dash = False
     if st.button("Inserir IPCA (Impacto Inflacionário Histórico)"):
@@ -187,7 +181,6 @@ elif menu == "Dashboard Executivo":
 
     df_p = df_hist.copy()
     if st.session_state.aplicar_ipca_dash:
-        st.success("✅ IPCA Aplicado: Comparando Valores Nominais vs Valores Reais (Deflacionados).")
         df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']
         df_p['Serviços (Real)'] = df_p['VAB_Servicos'] / df_p['Fator']
@@ -197,36 +190,26 @@ elif menu == "Dashboard Executivo":
 
     col_left, col_right = st.columns([0.65, 0.35])
     with col_left:
-        fig_evolucao = px.line(df_p, x='Ano', y=y_cols,
-                               title="Evolução Histórica: Indústria vs Serviços",
+        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços",
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"},
                                markers=True)
-        fig_evolucao.update_xaxes(dtick=1)
         st.plotly_chart(fig_evolucao, use_container_width=True)
-        st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
-
     with col_right:
         st.write("**Referência IPCA Aplicada:**")
-        df_ipca_tab = pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)'])
-        st.dataframe(df_ipca_tab, hide_index=True, height=250)
-        fig_pizza = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE")
-        st.plotly_chart(fig_pizza, use_container_width=True)
+        st.dataframe(pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)']), hide_index=True, height=250)
+        st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
 
 # --- 5. DIAGNÓSTICO INDÚSTRIA 4.0 ---
 elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Maturidade Digital</p>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
-    with c1:
-        fig_prod = px.bar(df_hist, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)", color_discrete_sequence=['#1E3A8A'])
-        fig_prod.update_xaxes(dtick=1)
-        st.plotly_chart(fig_prod, use_container_width=True)
+    with c1: st.plotly_chart(px.bar(df_hist, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)"), use_container_width=True)
     with c2:
         fig_radar = go.Figure()
         fig_radar.add_trace(go.Scatterpolar(r=df_seg['Maturidade_Atual'], theta=df_seg['Segmento'], fill='toself', marker=dict(color='#FF8C00')))
-        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Nível de Automação por Setor")
         st.plotly_chart(fig_radar, use_container_width=True)
 
-# --- 6. PROJEÇÃO FUTURA (FIXO 2030 + IPCA PREVISIONADO) ---
+# --- 6. PROJEÇÃO FUTURA ---
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva e IPCA Previsionado (Horizonte 2030)</p>', unsafe_allow_html=True)
     ano_final = 2030
@@ -242,7 +225,7 @@ elif menu == "Projeção Futura":
 
     proj_ind, r2_ind, _ = projetar(anos_hist, df_hist['VAB_Industria'].values, anos_proj)
     proj_serv, r2_serv, _ = projetar(anos_hist, df_hist['VAB_Servicos'].values, anos_proj)
-    proj_ipca, r2_ipca, model_ipca = projetar(np.array(list(ipca_map.keys())), np.array(list(ipca_map.values())), anos_proj)
+    proj_ipca, r2_ipca, _ = projetar(np.array(list(ipca_map.keys())), np.array(list(ipca_map.values())), anos_proj)
 
     if st.button("Aplicar IPCA Previsionado (Ver Crescimento Real Projetado)"):
         st.session_state.deflacao_proj = not st.session_state.get('deflacao_proj', False)
@@ -259,13 +242,28 @@ elif menu == "Projeção Futura":
         y_cols_p = ['VAB_Industria', 'VAB_Servicos']
 
     df_f = pd.concat([df_hist.assign(Tipo='Histórico'), df_p_total])
-    fig_p = px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030",
-                    color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"})
-    st.plotly_chart(fig_p, use_container_width=True)
-    
+    st.plotly_chart(px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030",
+                    color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"}), use_container_width=True)
     st.info(f"**Estatísticas do Modelo:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(proj_ipca):.2f}%")
 
-# --- 7. PLANO DE AÇÃO (RESTAURADO) ---
+# --- 7. PLANO COMERCIAL (NOVA SEÇÃO COM MAPA PDF NAVEGÁVEL) ---
+elif menu == "Plano Comercial":
+    st.markdown('<p class="section-title">Zoneamento Municipal e Áreas Comerciais</p>', unsafe_allow_html=True)
+    
+    st.markdown("""
+        <div class="card">
+            <h3>Mapa de Zoneamento (Lei Complementar 002/10)</h3>
+            Consulte abaixo o mapa oficial de Votorantim. Utilize os controles do visualizador (no canto superior do quadro) para dar zoom e navegar pelas áreas industriais e comerciais. 
+            Este mapa é fundamental para entender a viabilidade de novos empreendimentos baseados no Plano Diretor.
+        </div>
+    """, unsafe_allow_html=True)
+
+    pdf_url = "https://www.votorantim.sp.gov.br/arquivos/mapas_002_19043716.pdf"
+    
+    # Exibe o PDF em um Iframe (navegável pelo leitor do browser)
+    st.markdown(f'<iframe src="{pdf_url}" width="100%" height="800px"></iframe>', unsafe_allow_html=True)
+
+# --- 8. PLANO DE AÇÃO ---
 elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
     acoes = pd.DataFrame({
@@ -276,13 +274,10 @@ elif menu == "Plano de Ação":
     st.table(acoes)
     st.markdown("> **Nota do Grupo:** Este plano visa transformar Votorantim em um hub de inteligência industrial.")
 
-# --- 8. FONTES/REFERÊNCIAS ---
+# --- 9. FONTES/REFERÊNCIAS ---
 elif menu == "Fontes/Referências":
     st.markdown('<p class="section-title">Fontes de Dados</p>', unsafe_allow_html=True)
-    st.write("- IBGE Cidades (PIB Municipal)")
-    st.write("- Fundação SEADE (VAB Setorial Municipal)")
-    st.write("- Novo CAGED (Movimentação de Emprego Formal)")
-    st.write("- Plano Diretor de Votorantim (Lei Vigente)")
+    st.write("- IBGE Cidades | Fundação SEADE | Novo CAGED | Plano Diretor de Votorantim")
 
 # --- FOOTER ---
 st.markdown(f"""

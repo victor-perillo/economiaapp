@@ -27,7 +27,7 @@ st.markdown("""
     .step-carga { background-color: #ebfbee; border-color: #2f9e44; color: #2b8a3e; }
     .section-title { color: #1E3A8A; font-weight: bold; border-left: 10px solid #FF8C00; padding-left: 15px; margin-top: 30px; margin-bottom: 20px; font-size: 28px; }
     .card { background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e0e0e0; }
-    .z-card { background-color: #f1f5f9; padding: 15px; border-radius: 8px; border-left: 5px solid #FF8C00; margin-bottom: 10px; height: 100%; }
+    .z-card { background-color: #f1f5f9; padding: 15px; border-radius: 8px; border-left: 5px solid #FF8C00; margin-bottom: 10px; min-height: 100px; }
     .footer { text-align: center; padding: 30px; color: #666; font-size: 14px; border-top: 1px solid #eee; margin-top: 50px; width: 100%; }
     .highlight { color: #FF8C00; font-weight: bold; }
     .chart-caption { text-align: center; color: #666; font-style: italic; margin-top: 5px; }
@@ -119,21 +119,17 @@ if menu == "Introdução & Contexto":
 
     with tab_urbano:
         st.markdown('### Desafios do Ordenamento Territorial')
-        
         col1, col2 = st.columns(2)
         with col1:
             st.markdown('<div class="z-card"><b>Conflito Urbano-Industrial:</b> O avanço de bairros residenciais sobre áreas fabris gera restrições de ruído e logística, criando insegurança jurídica para grandes plantas industriais.</div>', unsafe_allow_html=True)
             st.markdown('<div class="z-card"><b>Topografia Desfavorável:</b> O relevo acidentado de muitas zonas industriais eleva os custos de terraplenagem e encarece a construção de galpões e acessos.</div>', unsafe_allow_html=True)
             st.markdown('<div class="z-card"><b>Restrições Ambientais:</b> A proximidade com mananciais e áreas de preservação (como a região da Represa de Itupararanga) exige licenciamentos rigorosos e limita o tipo de atividade permitida.</div>', unsafe_allow_html=True)
-        
         with col2:
             st.markdown('<div class="z-card"><b>Competição com Sorocaba:</b> A cidade vizinha oferece distritos industriais mais consolidados e planos diretores que facilitam a instalação rápida, gerando uma fuga de investimentos para o município vizinho.</div>', unsafe_allow_html=True)
             st.markdown('<div class="z-card"><b>Infraestrutura de Acesso:</b> Dificuldade em escoar carga pesada sem atravessar perímetros urbanos adensados, o que sobrecarrega o trânsito local e atrasa a logística.</div>', unsafe_allow_html=True)
-
         st.markdown("---")
-        st.markdown('<p style="color:#1E3A8A; font-weight:bold;">Mapa de Zoneamento Oficial (Lei Complementar 002/10)</p>', unsafe_allow_html=True)
         pdf_url = "https://www.votorantim.sp.gov.br/arquivos/mapas_002_19043716.pdf"
-        st.link_button("🔍 Abrir Mapa de Zoneamento (Navegação Completa)", pdf_url, use_container_width=True)
+        st.link_button("🔍 Abrir Mapa de Zoneamento (Link Externo Seguro)", pdf_url, use_container_width=True)
 
 # --- 2. PROBLEMAS IDENTIFICADOS ---
 elif menu == "Problemas Identificados":
@@ -195,7 +191,7 @@ elif menu == "Dashboard Executivo":
 
     df_p = df_hist.copy()
     if st.session_state.aplicar_ipca_dash:
-        st.success("✅ IPCA Aplicado: Comparando Valores Nominais vs Valores Reais (Deflacionados).")
+        st.success("✅ IPCA Aplicado: Comparando Valores Nominais vs Valores Reais (Deflacionados base 2018).")
         df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']
         df_p['Serviços (Real)'] = df_p['VAB_Servicos'] / df_p['Fator']
@@ -209,6 +205,7 @@ elif menu == "Dashboard Executivo":
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"},
                                markers=True)
         st.plotly_chart(fig_evolucao, use_container_width=True)
+        st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
     with col_right:
         st.write("**Referência IPCA Aplicada:**")
         df_ipca_tab = pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)'])
@@ -217,7 +214,21 @@ elif menu == "Dashboard Executivo":
 
 # --- 5. DIAGNÓSTICO INDÚSTRIA 4.0 ---
 elif menu == "Diagnóstico Indústria 4.0":
-    st.markdown('<p class="section-title">Maturidade Digital</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Maturidade Digital e Impactos 4.0</p>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="card">
+        <h3 style="color: #1E3A8A;">A Revolução 4.0 em Votorantim</h3>
+        <p>A <b>Indústria 4.0</b> integra tecnologias digitais como IoT, Big Data e IA ao chão de fábrica. Em Votorantim, a adesão a esse modelo está transformando plantas tradicionais em <b>Fábricas Inteligentes</b>.</p>
+        <div style="display: flex; gap: 15px;">
+            <div class="z-card" style="flex:1;"><b>Ganho de Eficiência:</b> Sensores em tempo real reduzem desperdícios nas indústrias de base.</div>
+            <div class="z-card" style="flex:1;"><b>Manutenção Preditiva:</b> Algoritmos preveem falhas antes de paradas caras na produção.</div>
+            <div class="z-card" style="flex:1;"><b>Customização:</b> Flexibilidade para atender demandas específicas com menor custo.</div>
+        </div>
+        <p style="margin-top:15px;"><b>Como está acontecendo:</b> Empresas locais investem na digitalização e na requalificação técnica, elevando a competitividade do VAB municipal frente a outros hubs.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
     c1, c2 = st.columns(2)
     with c1: st.plotly_chart(px.bar(df_hist, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)"), use_container_width=True)
     with c2:
@@ -261,7 +272,7 @@ elif menu == "Projeção Futura":
     df_f = pd.concat([df_hist.assign(Tipo='Histórico'), df_p_total])
     st.plotly_chart(px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030",
                     color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"}), use_container_width=True)
-    st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(proj_ipca):.2f}%")
+    st.info(f"**Estatísticas do Modelo:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(proj_ipca):.2f}%")
 
 # --- 7. PLANO DE AÇÃO ---
 elif menu == "Plano de Ação":
@@ -276,8 +287,12 @@ elif menu == "Plano de Ação":
 
 # --- 8. FONTES/REFERÊNCIAS ---
 elif menu == "Fontes/Referências":
-    st.markdown('<p class="section-title">Fontes de Dados</p>', unsafe_allow_html=True)
-    st.write("- IBGE Cidades | Fundação SEADE | Novo CAGED | Plano Diretor de Votorantim")
+    st.markdown('<p class="section-title">Fontes de Dados e Bibliografia</p>', unsafe_allow_html=True)
+    st.write("- **IBGE Cidades**: Séries de PIB Municipal e Valor Adicionado.")
+    st.write("- **Fundação SEADE**: Dados setoriais de VAB (Indústria e Serviços).")
+    st.write("- **Novo CAGED**: Estatísticas de movimentação de mão de obra formal.")
+    st.write("- **Plano Diretor de Votorantim**: Lei Complementar 002/10 e Zoneamento Oficial.")
+    st.write("- **BCB / IBGE**: Índice Nacional de Preços ao Consumidor Amplo (IPCA).")
 
 # --- FOOTER ---
 st.markdown(f"""

@@ -356,11 +356,27 @@ elif menu == "Plano de Ação":
 # Módulo Fontes e Referências
 elif menu == "Fontes/Referências":
     st.markdown('<p class="section-title">Fontes de Dados e Bibliografia</p>', unsafe_allow_html=True)
-    st.write("- **IBGE Cidades**: Séries de PIB Municipal e Valor Adicionado.")
-    st.write("- **Fundação SEADE**: Dados setoriais de VAB (Indústria e Serviços).")
-    st.write("- **Novo CAGED**: Estatísticas de movimentação de mão de obra formal.")
-    st.write("- **Plano Diretor de Votorantim**: Lei Complementar 002/10 e Zoneamento Oficial.")
-    st.write("- **BCB / IBGE**: Índice Nacional de Preços ao Consumidor Amplo (IPCA).")
+    
+    col_ref, col_qr_ref = st.columns([0.6, 0.4])
+    
+    with col_ref:
+        st.write("- **IBGE Cidades**: Séries de PIB Municipal e Valor Adicionado.")
+        st.write("- **Fundação SEADE**: Dados setoriais de VAB (Indústria e Serviços).")
+        st.write("- **Novo CAGED**: Estatísticas de movimentação de mão de obra formal.")
+        st.write("- **Plano Diretor de Votorantim**: Lei Complementar 002/10 e Zoneamento Oficial.")
+        st.write("- **BCB / IBGE**: Índice Nacional de Preços ao Consumidor Amplo (IPCA).")
+    
+    with col_qr_ref:
+        st.markdown("""
+        <div style="background-color: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; text-align: center;">
+            <p style="font-weight: bold; color: #1E3A8A;">Material do Trabalho</p>
+            <p style="font-size: 0.85rem; color: #666;">Acesse as planilhas brutas e referências detalhadas no Drive:</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        url_drive_trabalho = "https://drive.google.com/drive/folders/12XwL_9c_lzHLopxX9lHEeNBGkn1old8G?usp=drive_link"
+        st.image(gerar_qrcode(url_drive_trabalho), width=180)
+        st.link_button("📂 Abrir Pasta de Dados (Google Drive)", url_drive_trabalho, use_container_width=True)
 
 # Footer
 st.markdown(f"""

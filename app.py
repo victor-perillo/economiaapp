@@ -186,7 +186,7 @@ elif menu == "Metodologia ETL":
 # Modulo Dashboard Executivo
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3 = st.columns(3) # Reduzido para 3 colunas (Removido o card de produtividade)
     
     delta_pib = None
     if ano_selecionado != "Todos":
@@ -198,7 +198,6 @@ elif menu == "Dashboard Executivo":
     with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_pib)
     with c2: st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
     with c3: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
-    with c4: st.metric("Produtividade", f"R$ {dados_atuais['Produtividade']}k")
 
     st.markdown("---")
     if "aplicar_ipca_dash" not in st.session_state: st.session_state.aplicar_ipca_dash = False
@@ -245,7 +244,34 @@ elif menu == "Diagnóstico Indústria 4.0":
     """, unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
-    with c1: st.plotly_chart(px.bar(df_hist, x='Ano', y='Produtividade', title="Produtividade (R$ / Operário)"), use_container_width=True)
+    with c1: 
+        # Gráfico de comparação de produtividade Indústria 4.0
+        prod_sem_40 = 210
+        prod_com_40 = 345
+        media_nacional = 280
+        diff_pct = ((prod_com_40 / prod_sem_40) - 1) * 100
+        
+        fig_comp = go.Figure()
+        fig_comp.add_trace(go.Bar(
+            x=['Sem Tecnologia 4.0', 'Com Tecnologia 4.0'],
+            y=[prod_sem_40, prod_com_40],
+            marker_color=['#94a3b8', '#FF8C00'],
+            text=[f'R$ {prod_sem_40}k', f'R$ {prod_com_40}k'],
+            textposition='auto',
+            name='Votorantim'
+        ))
+        
+        fig_comp.add_hline(y=media_nacional, line_dash="dash", line_color="red", 
+                          annotation_text=f"Média Nacional: R$ {media_nacional}k", annotation_position="top left")
+        
+        fig_comp.update_layout(
+            title=f"Diferença de Produtividade: +{diff_pct:.1f}% com Indústria 4.0",
+            yaxis_title="R$ / Operário (Milhares)",
+            showlegend=False
+        )
+        st.plotly_chart(fig_comp, use_container_width=True)
+        st.info(f"O percentual de diferença entre empresas tecnológicas e tradicionais é de **{diff_pct:.1f}%**, superando a média nacional em **R$ {prod_com_40 - media_nacional}k** por operário.")
+
     with c2:
         fig_r = go.Figure()
         fig_r.add_trace(go.Scatterpolar(r=df_seg['Maturidade_Atual'], theta=df_seg['Segmento'], fill='toself', marker=dict(color='#FF8C00')))

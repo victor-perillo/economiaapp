@@ -407,6 +407,6 @@ elif menu == "Fontes/Referências":
 st.markdown(f"""
     <div class="footer">
         <b>Observatório Industrial Votorantim | Inteligência Industrial 4.0</b><br>
-        Grupo: Bruno V. Queiroz, Gislaine Takushi, Mariana Lima, Victor Perillo e Vinicius Pierote.<br>
+        Grupo: Bruno V. Queiroz, Gislaine Takushi, Mariana Curvêlo, Victor Perillo e Vinicius Pierote.<br>
             </div>
     """, unsafe_allow_html=True)

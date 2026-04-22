@@ -344,9 +344,6 @@ elif menu == "Projeção Futura":
 # Modulo Plano de Ação
 elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
-    
-    st.info("""**Visão Estratégica:** O objetivo da Indústria 4.0 é garantir que essa evolução seja de alto nível: transformar a indústria tradicional em uma indústria tecnológica que gere serviços avançados de inteligência de dados.""")
-    
     col_a, col_b = st.columns(2)
     with col_a:
         st.markdown("""
@@ -382,6 +379,12 @@ elif menu == "Plano de Ação":
             <p><b>Ação:</b> Monitoramento de Crescimento Pós-IPCA.</p>
             <p><b>Como:</b> Utilização deste Observatório para demonstrar ganhos reais de eficiência a investidores externos.</p>
             <p><b>Impacto:</b> Melhoria da imagem municipal e competitividade frente a Sorocaba.</p>
+        </div>
+        <div class="card">
+            <h4 style="color: #1E3A8A;">6: Objetivo de Evolução Setorial</h4>
+            <p><b>Ação:</b> Garantir que a transição econômica seja de alto nível tecnológico.</p>
+            <p><b>Como:</b> Transformar a indústria tradicional em uma indústria tecnológica que use e gere serviços avançados de inteligência de dados.</p>
+            <p><b>Impacto:</b> Sustentação do PIB a longo prazo e protagonismo na economia 4.0.</p>
         </div>
         """, unsafe_allow_html=True)
 

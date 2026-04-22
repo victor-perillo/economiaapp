@@ -95,14 +95,21 @@ with st.sidebar:
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 
                     "Plano de Ação", "Fontes/Referências"])
 
-# Filtros
+# Filtros Lógica Atualizada
 if ano_selecionado == "Todos":
-    display_df = df_hist.iloc[[-1]] 
-    ano_txt = "2025 (Projeção)"
+    # Somatória para os cards
+    dados_atuais = pd.Series({
+        'PIB': df_hist['PIB'].sum(),
+        'VAB_Industria': df_hist['VAB_Industria'].sum(),
+        'VAB_Servicos': df_hist['VAB_Servicos'].sum()
+    })
+    df_plot_evolucao = df_hist # Gráfico mostra tudo
+    ano_txt = "Período Completo (Soma)"
 else:
     display_df = df_hist[df_hist['Ano'] == int(ano_selecionado)]
+    dados_atuais = display_df.iloc[0]
+    df_plot_evolucao = df_hist[df_hist['Ano'] <= int(ano_selecionado)] # Gráfico acompanha o ano
     ano_txt = ano_selecionado
-dados_atuais = display_df.iloc[0]
 
 # Módulo - Introdução e Contexto
 if menu == "Introdução & Contexto":
@@ -186,7 +193,7 @@ elif menu == "Metodologia ETL":
 # Modulo Dashboard Executivo
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns(3) # Reduzido para 3 colunas (Removido o card de produtividade)
+    c1, c2, c3 = st.columns(3) 
     
     delta_pib = None
     if ano_selecionado != "Todos":
@@ -204,7 +211,7 @@ elif menu == "Dashboard Executivo":
     if st.button("Inserir IPCA (Impacto Inflacionário Histórico)"):
         st.session_state.aplicar_ipca_dash = not st.session_state.aplicar_ipca_dash
 
-    df_p = df_hist.copy()
+    df_p = df_plot_evolucao.copy()
     if st.session_state.aplicar_ipca_dash:
         df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']

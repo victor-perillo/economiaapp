@@ -362,7 +362,7 @@ elif menu == "Plano de Ação":
         <div class="card">
             <h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4>
             <p><b>Ação:</b> Hub de Inovação Industrial Votorantim.</p>
-            <p><b>Como:</b> Parceria com SESI/SENAI para requalificação técnica focada em análise de dados.</p>
+            <p><b>Como:</b> Parceria com a Fatec para requalificação técnica focada em análise de dados.</p>
             <p><b>Impacto:</b> Combate ao 'Efeito Shadowing' e aumento da renda média local.</p>
         </div>
         """, unsafe_allow_html=True)

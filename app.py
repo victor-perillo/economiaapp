@@ -325,6 +325,10 @@ elif menu == "Projeção Futura":
     if st.button("Aplicar IPCA Previsionado (Ver Crescimento Real Projetado)"):
         st.session_state.deflacao_proj = not st.session_state.get('deflacao_proj', False)
 
+    # Informativo condicional solicitado
+    if st.session_state.get('deflacao_proj', False):
+        st.info("A queda ocorre porque estamos descontando a inflação futura. Ela mostra que, se não inovarmos tecnologicamente (Indústria 4.0), o crescimento de Votorantim será 'falso' (apenas nominal), e a riqueza real produzida pelo município será corroída pelo aumento de preços até 2030.")
+
     df_p_total = pd.DataFrame({'Ano': anos_proj, 'VAB_Industria': proj_ind, 'VAB_Servicos': proj_serv, 'Tipo': 'Projeção'})
     
     if st.session_state.get('deflacao_proj', False):
@@ -362,7 +366,7 @@ elif menu == "Plano de Ação":
         <div class="card">
             <h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4>
             <p><b>Ação:</b> Hub de Inovação Industrial Votorantim.</p>
-            <p><b>Como:</b> Parceria com a Fatec para requalificação técnica focada em análise de dados.</p>
+            <p><b>Como:</b> Parceria com SESI/SENAI para requalificação técnica focada em análise de dados.</p>
             <p><b>Impacto:</b> Combate ao 'Efeito Shadowing' e aumento da renda média local.</p>
         </div>
         """, unsafe_allow_html=True)

@@ -95,20 +95,17 @@ with st.sidebar:
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 
                     "Plano de Ação", "Fontes/Referências"])
 
-# Filtros Lógica Atualizada
+# Filtros
 if ano_selecionado == "Todos":
-    # Somatória para os cards
     dados_atuais = pd.Series({
         'PIB': df_hist['PIB'].sum(),
         'VAB_Industria': df_hist['VAB_Industria'].sum(),
         'VAB_Servicos': df_hist['VAB_Servicos'].sum()
     })
-    df_plot_evolucao = df_hist # Gráfico mostra tudo
     ano_txt = "Período Completo (Soma)"
 else:
     display_df = df_hist[df_hist['Ano'] == int(ano_selecionado)]
     dados_atuais = display_df.iloc[0]
-    df_plot_evolucao = df_hist[df_hist['Ano'] <= int(ano_selecionado)] # Gráfico acompanha o ano
     ano_txt = ano_selecionado
 
 # Módulo - Introdução e Contexto
@@ -211,7 +208,7 @@ elif menu == "Dashboard Executivo":
     if st.button("Inserir IPCA (Impacto Inflacionário Histórico)"):
         st.session_state.aplicar_ipca_dash = not st.session_state.aplicar_ipca_dash
 
-    df_p = df_plot_evolucao.copy()
+    df_p = df_hist.copy() # Mantido como o original para mostrar sempre todos os anos no gráfico
     if st.session_state.aplicar_ipca_dash:
         df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']

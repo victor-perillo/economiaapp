@@ -162,7 +162,7 @@ elif menu == "Problemas Identificados":
         st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
         É um problema de Trade-off entre expansão urbana e manutenção da produção.""")
     with c2:
-        st.success("""**Evolução Setorial:** Embora desafiadora, a migração para o setor de serviços abre portas para a servitização industrial e novos modelos de negócios 4.0.""")
+        st.success("""**Evolução Setorial:** Apesar de ser um sinal de modernização, o risco é a desindustrialização precoce. Se a indústria enfraquecer rápido demais e o setor de serviços for apenas de 'baixo valor agregado' (como pequenos comércios ou serviços básicos), a renda média da cidade cai.""")
         st.info("""**Efeito Shadowing:** Ocorre quando Votorantim perde talentos e investimentos para Sorocaba. 
         Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado.""")
 
@@ -208,7 +208,7 @@ elif menu == "Dashboard Executivo":
     if st.button("Inserir IPCA (Impacto Inflacionário Histórico)"):
         st.session_state.aplicar_ipca_dash = not st.session_state.aplicar_ipca_dash
 
-    df_p = df_hist.copy() # Mantido como o original para mostrar sempre todos os anos no gráfico
+    df_p = df_hist.copy() 
     if st.session_state.aplicar_ipca_dash:
         df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']
@@ -344,6 +344,9 @@ elif menu == "Projeção Futura":
 # Modulo Plano de Ação
 elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
+    
+    st.info("""**Visão Estratégica:** O objetivo da Indústria 4.0 é garantir que essa evolução seja de alto nível: transformar a indústria tradicional em uma indústria tecnológica que gere serviços avançados de inteligência de dados.""")
+    
     col_a, col_b = st.columns(2)
     with col_a:
         st.markdown("""

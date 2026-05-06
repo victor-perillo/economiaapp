@@ -59,19 +59,22 @@ def load_data():
         'Maturidade_Atual': [2.8, 3.2, 3.5, 2.9, 1.8, 2.4] 
     })
     
+    # Dados da Série Histórica (2002 - 2023) baseados no arquivo enviado
+    # Os VABs foram estimados proporcionalmente ao PIB para manter a lógica do dashboard
     df_hist = pd.DataFrame({
         'Ano': [2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
         'PIB': [670.405, 791.318, 844.845, 914.154, 1124.655, 1357.128, 1561.842, 1811.097, 2042.691, 2094.207, 2482.293, 2975.838, 4672.147, 4495.059, 3076.565, 2995.815, 3093.050, 3405.739, 3412.630, 3919.236, 4518.922, 5209.654],
         'PIB_Constante': [2738.300, 2872.278, 2805.643, 2821.385, 3284.191, 3842.402, 4233.203, 4635.299, 5012.020, 4851.686, 5399.786, 6116.218, 9066.783, 8197.656, 5069.796, 4644.585, 4657.926, 4943.435, 4748.766, 5217.874, 5466.351, 5956.990],
-        'VAB_Industria': [250.0, 280.0, 300.0, 320.0, 400.0, 480.0, 550.0, 650.0, 720.0, 710.0, 850.0, 1020.0, 1600.0, 1550.0, 1050.0, 1010.0, 1040.0, 1150.0, 1150.0, 1320.0, 1530.0, 1750.0],
-        'VAB_Servicos': [300.0, 350.0, 380.0, 410.0, 500.0, 620.0, 710.0, 820.0, 950.0, 1000.0, 1200.0, 1450.0, 2200.0, 2100.0, 1450.0, 1400.0, 1450.0, 1600.0, 1620.0, 1850.0, 2150.0, 2500.0]
+        'VAB_Industria': [234.6, 276.9, 295.7, 319.9, 393.6, 475.0, 546.6, 633.9, 714.9, 732.9, 868.8, 1041.5, 1635.2, 1573.3, 1076.8, 1048.5, 1082.6, 1192.0, 1194.4, 1371.7, 1581.6, 1823.4],
+        'VAB_Servicos': [368.7, 435.2, 464.7, 502.8, 618.6, 746.4, 859.0, 996.1, 1123.5, 1151.8, 1365.3, 1636.7, 2569.7, 2472.3, 1692.1, 1647.7, 1701.2, 1873.1, 1876.9, 2155.6, 2485.4, 2865.3]
     })
     return df_seg, df_hist
 
 df_seg, df_hist = load_data()
 ipca_map = {
-    2015: 10.67, 2016: 6.29, 2017: 2.95, 2018: 3.75, 2019: 4.31, 
-    2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4.62, 2024: 4.50, 2025: 4.00
+    2002: 12.53, 2003: 9.30, 2004: 7.60, 2005: 5.69, 2006: 3.14, 2007: 4.46, 2008: 5.90, 2009: 4.31, 2010: 5.91, 
+    2011: 6.50, 2012: 5.84, 2013: 5.91, 2014: 6.41, 2015: 10.67, 2016: 6.29, 2017: 2.95, 2018: 3.75, 2019: 4.31, 
+    2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4.62, 2024: 4.83, 2025: 4.26
 }
 
 # Sidebar
@@ -105,7 +108,7 @@ if ano_selecionado == "Todos":
         'VAB_Industria': df_hist['VAB_Industria'].iloc[-1],
         'VAB_Servicos': df_hist['VAB_Servicos'].iloc[-1]
     })
-    ano_txt = "Período Completo"
+    ano_txt = "Último Dado (2023)"
 else:
     display_df = df_hist[df_hist['Ano'] == int(ano_selecionado)]
     dados_atuais = display_df.iloc[0]
@@ -196,12 +199,12 @@ elif menu == "Dashboard Executivo":
     c1, c2, c3 = st.columns(3) 
     
     with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
-    with c2: st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
-    with c3: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
+    with c2: st.metric("VAB Indústria (Est.)", formatar_valor(dados_atuais['VAB_Industria']))
+    with c3: st.metric("VAB Serviços (Est.)", formatar_valor(dados_atuais['VAB_Servicos']))
 
     st.markdown("---")
     
-    # GRÁFICO COMPARATIVO PIB (RESTREITO À ALTERAÇÃO SOLICITADA)
+    # Gráfico Comparativo PIB (Barras Agrupadas conforme imagem)
     fig_comparativo = go.Figure()
     fig_comparativo.add_trace(go.Bar(
         x=df_hist['Ano'], y=df_hist['PIB'],
@@ -236,11 +239,11 @@ elif menu == "Dashboard Executivo":
 
     col_left, col_right = st.columns([0.65, 0.35])
     with col_left:
-        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços",
+        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços (Proxy)",
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"},
                                markers=True)
         st.plotly_chart(fig_evolucao, use_container_width=True)
-        st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-caption">A análise revela que o PIB cresceu nominalmente de R$ 670 Mi em 2002 para R$ 5.2 Bi em 2023. O pico real em 2014 sugere uma expansão industrial atípica no período.</div>', unsafe_allow_html=True)
     with col_right:
         st.write("**Referência IPCA Aplicada:**")
         df_ipca_tab = pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)'])
@@ -310,19 +313,19 @@ elif menu == "Projeção Futura":
     st.markdown("""
     <div class="card">
         <h3 style="color: #1E3A8A;">Análise de Tendência: O Caminho até 2030</h3>
-        <p>Este gráfico utiliza <b>Regressão Linear</b>, um modelo estatístico que analisa o comportamento dos anos anteriores para prever o futuro.</p>
+        <p>Este gráfico utiliza <b>Regressão Linear</b> baseada na série de 21 anos para prever o futuro econômico municipal.</p>
         <div style="display: flex; gap: 15px;">
             <div class="z-card" style="flex:1;">
                 <b>Crescimento Nominal (Linha Escura):</b><br>
-                Mostra que, mantendo o ritmo atual, Votorantim continuará expandindo seu Valor Adicionado (VAB).
+                Com base no histórico desde 2002, a tendência é de expansão sustentada, apesar das oscilações de 2014-2016.
             </div>
             <div class="z-card" style="flex:1;">
                 <b>Crescimento Real (Linha Clara):</b><br>
-                Ao aplicarmos o <b>IPCA Previsionado</b>, descontamos a inflação. Isso revela o ganho real de produção da cidade.
+                Ao descontarmos a inflação futura, percebemos que a inovação tecnológica é essencial para manter o poder de compra do PIB.
             </div>
             <div class="z-card" style="flex:1;">
                 <b>Confiabilidade ($R^2$):</b><br>
-                Nossos dados mostram uma aderência sólida, indicando uma trajetória previsível de transição tecnológica.
+                A série histórica longa aumenta a robustez estatística das nossas projeções para o decênio de 2030.
             </div>
         </div>
     </div>
@@ -352,7 +355,7 @@ elif menu == "Projeção Futura":
     df_p_total = pd.DataFrame({'Ano': anos_proj, 'VAB_Industria': proj_ind, 'VAB_Servicos': proj_serv, 'Tipo': 'Projeção'})
     
     if st.session_state.get('deflacao_proj', False):
-        f_2023 = np.prod([(1 + v/100) for v in ipca_map.values()])
+        f_2023 = np.prod([(1 + v/100) for v in ipca_map.values() if v > 0])
         fatores_f = [f_2023 * np.prod([(1 + v/100) for v in proj_ipca[:i+1]]) for i in range(len(proj_ipca))]
         df_p_total['Indústria (Real)'] = df_p_total['VAB_Industria'] / fatores_f
         df_p_total['Serviços (Real)'] = df_p_total['VAB_Servicos'] / fatores_f
@@ -361,7 +364,7 @@ elif menu == "Projeção Futura":
         y_cols_p = ['VAB_Industria', 'VAB_Servicos']
 
     df_f = pd.concat([df_hist.assign(Tipo='Histórico'), df_p_total])
-    st.plotly_chart(px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030",
+    st.plotly_chart(px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030 baseada em Série Histórica (2002-2023)",
                     color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"}), use_container_width=True)
     st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(proj_ipca):.2f}%")
 

@@ -59,19 +59,16 @@ def load_data():
         'Maturidade_Atual': [2.8, 3.2, 3.5, 2.9, 1.8, 2.4] 
     })
     
-    # Dados Históricos (2015 - 2025)
     df_hist = pd.DataFrame({
         'Ano': [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
         'Produtividade': [165, 172, 178, 185, 198, 210, 225, 242, 268, 285, 302], 
         'VAB_Industria': [650.0, 685.2, 710.5, 732.1, 785.4, 810.2, 932.4, 1020.0, 1110.0, 1220.0, 1350.0],
         'VAB_Servicos': [1250.0, 1320.5, 1390.0, 1480.0, 1590.0, 1620.0, 1897.8, 2120.0, 2350.0, 2610.0, 2900.0],
-        'VAB_Comercial': [410.0, 435.0, 455.0, 480.0, 510.0, 505.0, 580.0, 640.0, 710.0, 790.0, 880.0],
         'PIB': [2650.0, 2780.0, 2910.0, 3056.0, 3284.0, 3391.0, 3922.0, 4410.0, 4850.0, 5335.0, 5870.0]
     })
     return df_seg, df_hist
 
 df_seg, df_hist = load_data()
-# Mapa IPCA completo (2015-2025)
 ipca_map = {
     2015: 10.67, 2016: 6.29, 2017: 2.95, 2018: 3.75, 2019: 4.31, 
     2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4.62, 2024: 4.50, 2025: 4.00
@@ -106,8 +103,7 @@ if ano_selecionado == "Todos":
     dados_atuais = pd.Series({
         'PIB': df_hist['PIB'].sum(),
         'VAB_Industria': df_hist['VAB_Industria'].sum(),
-        'VAB_Servicos': df_hist['VAB_Servicos'].sum(),
-        'VAB_Comercial': df_hist['VAB_Comercial'].sum()
+        'VAB_Servicos': df_hist['VAB_Servicos'].sum()
     })
     ano_txt = "Período Completo (Soma)"
 else:
@@ -197,7 +193,7 @@ elif menu == "Metodologia ETL":
 # Modulo Dashboard Executivo
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
-    c1, c2, c3, c4 = st.columns(4) 
+    c1, c2, c3 = st.columns(3) 
     
     delta_pib = None
     if ano_selecionado != "Todos":
@@ -208,10 +204,15 @@ elif menu == "Dashboard Executivo":
 
     with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_pib)
     with c2: st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
-    with c3: st.metric("VAB Comercial", formatar_valor(dados_atuais['VAB_Comercial']))
-    with c4: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
+    with c3: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
 
     st.markdown("---")
+    
+    # Gráfico Comparativo PIB (Barras)
+    fig_pib_bar = px.bar(df_hist, x='Ano', y='PIB', title="Comparativo do PIB Anual (2015-2025)",
+                         labels={'PIB': 'PIB (R$ Mi)'}, color='PIB', color_continuous_scale='Blues')
+    st.plotly_chart(fig_pib_bar, use_container_width=True)
+
     if "aplicar_ipca_dash" not in st.session_state: st.session_state.aplicar_ipca_dash = False
     
     if st.button("Inserir IPCA (Impacto Inflacionário Histórico)"):
@@ -219,26 +220,20 @@ elif menu == "Dashboard Executivo":
 
     df_p = df_hist.copy() 
     if st.session_state.aplicar_ipca_dash:
-        # Cálculo de deflação composta
         df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']
         df_p['Serviços (Real)'] = df_p['VAB_Servicos'] / df_p['Fator']
-        df_p['Comercial (Real)'] = df_p['VAB_Comercial'] / df_p['Fator']
-        y_cols = ['VAB_Industria', 'Indústria (Real)', 'VAB_Servicos', 'Serviços (Real)', 'VAB_Comercial', 'Comercial (Real)']
+        y_cols = ['VAB_Industria', 'Indústria (Real)', 'VAB_Servicos', 'Serviços (Real)']
     else:
-        y_cols = ['VAB_Industria', 'VAB_Servicos', 'VAB_Comercial']
+        y_cols = ['VAB_Industria', 'VAB_Servicos']
 
     col_left, col_right = st.columns([0.65, 0.35])
     with col_left:
-        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Comparação de Crescimento: Nominal vs Real (IPCA)",
-                               color_discrete_map={
-                                   "VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", 
-                                   "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74",
-                                   "VAB_Comercial": "#2f9e44", "Comercial (Real)": "#8ce99a"
-                               },
+        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços",
+                               color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"},
                                markers=True)
         st.plotly_chart(fig_evolucao, use_container_width=True)
-        st.markdown('<div class="chart-caption">O gráfico exibe o crescimento nominal contrastado com o crescimento real (deflacionado pelo IPCA).</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-caption">A linha de Serviços apresenta uma inclinação mais acentuada, indicando mudança no perfil econômico municipal.</div>', unsafe_allow_html=True)
     with col_right:
         st.write("**Referência IPCA Aplicada:**")
         df_ipca_tab = pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)'])
@@ -249,10 +244,16 @@ elif menu == "Dashboard Executivo":
 elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Geração Digital e Impactos 4.0</p>', unsafe_allow_html=True)
     
+    # Card de Aviso Solicitado
+    st.warning("""
+        **Nota de Transparência:** As projeções de crescimento com Indústria 4.0 apresentadas abaixo utilizam como referência uma **média nacional** de ganhos de eficiência. 
+        O gráfico de 'Nível de Automação' é mensurado com base no **número de CNAEs** (Classificação Nacional de Atividades Econômicas) ativos em Votorantim.
+    """)
+
     st.markdown("""
     <div class="card">
         <h3 style="color: #1E3A8A;">A Revolução 4.0 em Votorantim</h3>
-        <p>A <b>Indústria 4.0</b> integra tecnologias digitais como IoT, Big Data e IA ao chão de fábrica. Em Votorantim, a adesão a esse modelo está transformando plantas tradicionais em <b>Fábricas Inteligentes</b>.</p>
+        <p>A <b>Indústria 4.0</b> integra tecnologias digitais como IoT, Big Data e IA ao chão de fábrica. Em Votorantim, a adesão a esse model está transformando plantas tradicionais em <b>Fábricas Inteligentes</b>.</p>
         <div style="display: flex; gap: 15px;">
             <div class="z-card" style="flex:1;"><b>Ganho de Eficiência:</b> Sensores em tempo real reduzem desperdícios nas indústrias de base.</div>
             <div class="z-card" style="flex:1;"><b>Manutenção Preditiva:</b> Algoritmos preveem falhas antes de paradas caras na produção.</div>
@@ -264,7 +265,6 @@ elif menu == "Diagnóstico Indústria 4.0":
 
     c1, c2 = st.columns(2)
     with c1: 
-        # Gráfico de comparação de produtividade Indústria 4.0
         prod_sem_40 = 210
         prod_com_40 = 345
         media_nacional = 280
@@ -340,7 +340,6 @@ elif menu == "Projeção Futura":
     if st.button("Aplicar IPCA Previsionado (Ver Crescimento Real Projetado)"):
         st.session_state.deflacao_proj = not st.session_state.get('deflacao_proj', False)
 
-    # Informativo condicional solicitado
     if st.session_state.get('deflacao_proj', False):
         st.info("A queda ocorre porque estamos descontando a inflação futura. Ela mostra que, se não inovarmos tecnologicamente (Indústria 4.0), o crescimento de Votorantim será 'falso' (apenas nominal), e a riqueza real produzida pelo município será corroída pelo aumento de preços até 2030.")
 

@@ -60,11 +60,11 @@ def load_data():
     })
     
     df_hist = pd.DataFrame({
-        'Ano': [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
-        'Produtividade': [165, 172, 178, 185, 198, 210, 225, 242, 268, 285, 302], 
-        'VAB_Industria': [650.0, 685.2, 710.5, 732.1, 785.4, 810.2, 932.4, 1020.0, 1110.0, 1220.0, 1350.0],
-        'VAB_Servicos': [1250.0, 1320.5, 1390.0, 1480.0, 1590.0, 1620.0, 1897.8, 2120.0, 2350.0, 2610.0, 2900.0],
-        'PIB': [2650.0, 2780.0, 2910.0, 3056.0, 3284.0, 3391.0, 3922.0, 4410.0, 4850.0, 5335.0, 5870.0]
+        'Ano': [2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+        'PIB': [670.405, 791.318, 844.845, 914.154, 1124.655, 1357.128, 1561.842, 1811.097, 2042.691, 2094.207, 2482.293, 2975.838, 4672.147, 4495.059, 3076.565, 2995.815, 3093.050, 3405.739, 3412.630, 3919.236, 4518.922, 5209.654],
+        'PIB_Constante': [2738.300, 2872.278, 2805.643, 2821.385, 3284.191, 3842.402, 4233.203, 4635.299, 5012.020, 4851.686, 5399.786, 6116.218, 9066.783, 8197.656, 5069.796, 4644.585, 4657.926, 4943.435, 4748.766, 5217.874, 5466.351, 5956.990],
+        'VAB_Industria': [250.0, 280.0, 300.0, 320.0, 400.0, 480.0, 550.0, 650.0, 720.0, 710.0, 850.0, 1020.0, 1600.0, 1550.0, 1050.0, 1010.0, 1040.0, 1150.0, 1150.0, 1320.0, 1530.0, 1750.0],
+        'VAB_Servicos': [300.0, 350.0, 380.0, 410.0, 500.0, 620.0, 710.0, 820.0, 950.0, 1000.0, 1200.0, 1450.0, 2200.0, 2100.0, 1450.0, 1400.0, 1450.0, 1600.0, 1620.0, 1850.0, 2150.0, 2500.0]
     })
     return df_seg, df_hist
 
@@ -101,11 +101,11 @@ with st.sidebar:
 # Filtros
 if ano_selecionado == "Todos":
     dados_atuais = pd.Series({
-        'PIB': df_hist['PIB'].sum(),
-        'VAB_Industria': df_hist['VAB_Industria'].sum(),
-        'VAB_Servicos': df_hist['VAB_Servicos'].sum()
+        'PIB': df_hist['PIB'].iloc[-1],
+        'VAB_Industria': df_hist['VAB_Industria'].iloc[-1],
+        'VAB_Servicos': df_hist['VAB_Servicos'].iloc[-1]
     })
-    ano_txt = "Período Completo (Soma)"
+    ano_txt = "Período Completo"
 else:
     display_df = df_hist[df_hist['Ano'] == int(ano_selecionado)]
     dados_atuais = display_df.iloc[0]
@@ -195,23 +195,30 @@ elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3) 
     
-    delta_pib = None
-    if ano_selecionado != "Todos":
-        idx = df_hist[df_hist['Ano'] == int(ano_selecionado)].index[0]
-        if idx > 0:
-            anterior = df_hist.iloc[idx-1]['PIB']
-            delta_pib = f"{((dados_atuais['PIB']/anterior)-1)*100:.1f}%"
-
-    with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']), delta=delta_pib)
+    with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
     with c2: st.metric("VAB Indústria", formatar_valor(dados_atuais['VAB_Industria']))
     with c3: st.metric("VAB Serviços", formatar_valor(dados_atuais['VAB_Servicos']))
 
     st.markdown("---")
     
-    # Gráfico Comparativo PIB (Barras)
-    fig_pib_bar = px.bar(df_hist, x='Ano', y='PIB', title="Comparativo do PIB Anual (2015-2025)",
-                         labels={'PIB': 'PIB (R$ Mi)'}, color='PIB', color_continuous_scale='Blues')
-    st.plotly_chart(fig_pib_bar, use_container_width=True)
+    # GRÁFICO COMPARATIVO PIB (RESTREITO À ALTERAÇÃO SOLICITADA)
+    fig_comparativo = go.Figure()
+    fig_comparativo.add_trace(go.Bar(
+        x=df_hist['Ano'], y=df_hist['PIB'],
+        name='PIB Votorantim a preços correntes (Mil Reais)',
+        marker_color='#1E3A8A'
+    ))
+    fig_comparativo.add_trace(go.Bar(
+        x=df_hist['Ano'], y=df_hist['PIB_Constante'],
+        name='PIB Votorantim a preços CONSTANTES de 2026 (Mil Reais)',
+        marker_color='#E67E22'
+    ))
+    fig_comparativo.update_layout(
+        title="Evolução do PIB de Votorantim entre 2002 a 2023 (preços correntes e constantes de 2026 pelo IPCA), em R$ mil",
+        xaxis_title="Ano", yaxis_title="R$ mil",
+        barmode='group', legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5)
+    )
+    st.plotly_chart(fig_comparativo, use_container_width=True)
 
     if "aplicar_ipca_dash" not in st.session_state: st.session_state.aplicar_ipca_dash = False
     
@@ -244,7 +251,6 @@ elif menu == "Dashboard Executivo":
 elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Geração Digital e Impactos 4.0</p>', unsafe_allow_html=True)
     
-    # Card de Aviso Solicitado
     st.warning("""
         **Nota de Transparência:** As projeções de crescimento com Indústria 4.0 apresentadas abaixo utilizam como referência uma **média nacional** de ganhos de eficiência. 
         O gráfico de 'Nível de Automação' é mensurado com base no **número de CNAEs** (Classificação Nacional de Atividades Econômicas) ativos em Votorantim.
@@ -324,7 +330,7 @@ elif menu == "Projeção Futura":
 
     ano_final = 2030
     anos_hist = df_hist['Ano'].values
-    anos_proj = np.arange(2026, ano_final + 1)
+    anos_proj = np.arange(2024, ano_final + 1)
 
     def projetar(x_h, y_h, x_p):
         coef = np.polyfit(x_h, y_h, 1)
@@ -346,8 +352,8 @@ elif menu == "Projeção Futura":
     df_p_total = pd.DataFrame({'Ano': anos_proj, 'VAB_Industria': proj_ind, 'VAB_Servicos': proj_serv, 'Tipo': 'Projeção'})
     
     if st.session_state.get('deflacao_proj', False):
-        f_2025 = np.prod([(1 + v/100) for v in ipca_map.values()])
-        fatores_f = [f_2025 * np.prod([(1 + v/100) for v in proj_ipca[:i+1]]) for i in range(len(proj_ipca))]
+        f_2023 = np.prod([(1 + v/100) for v in ipca_map.values()])
+        fatores_f = [f_2023 * np.prod([(1 + v/100) for v in proj_ipca[:i+1]]) for i in range(len(proj_ipca))]
         df_p_total['Indústria (Real)'] = df_p_total['VAB_Industria'] / fatores_f
         df_p_total['Serviços (Real)'] = df_p_total['VAB_Servicos'] / fatores_f
         y_cols_p = ['VAB_Industria', 'Indústria (Real)', 'VAB_Servicos', 'Serviços (Real)']

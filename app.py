@@ -327,7 +327,7 @@ elif menu == "Projeção Futura":
                 Ao descontarmos a inflação futura, percebemos que a inovação tecnológica é essencial para manter o poder de compra do PIB.
             </div>
             <div class="z-card" style="flex:1;">
-                <b>Confiabilidade ($R²$):</b><br>
+                <b>Confiabilidade (R²):</b><br>
                 A série histórica longa aumenta a robustez estatística das nossas projeções para o decênio de 2030.
             </div>
         </div>

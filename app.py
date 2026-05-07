@@ -256,7 +256,7 @@ elif menu == "Diagnóstico Indústria 4.0":
     
     st.warning("""
         **Nota de Transparência:** As projeções de crescimento com Indústria 4.0 apresentadas abaixo utilizam como referência uma **média nacional** de ganhos de eficiência. 
-        O gráfico de 'Nível de Automação' é mensurado com base no **número de CNAEs** (Classificação Nacional de Atividades Econômicas) ativos em Votorantim.
+        O gráfico de 'Nível de Automação' é mensurado com base no **número de CNAEs** (Classificação Nacional de Atividades Econômicas) ativos em Votorantim. Fontes:ibge.gov.br/estatisticas/multidominio/ciencia-tecnologia-e-inovacao; portaldaindustria.com.br/estatisticas/produtividade-na-industria/; iedi.org.br; abdi.com.br/projetos/industria-4-0
     """)
 
     st.markdown("""

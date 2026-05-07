@@ -134,7 +134,7 @@ if menu == "Introdução & Contexto":
         <div class="card">
             Votorantim possui um <b>Plano Diretor</b> que organiza o crescimento da cidade e define onde atividades industriais podem se instalar, sempre respeitando regras de uso do solo e exigências ambientais. Em teoria, o município permite a instalação de indústrias, desde que elas estejam localizadas nas zonas adequadas e atendam aos critérios legais.
             <br><br>
-            Na prática, porém, o cenário atual cria dificuldades. As áreas industriais são limitadas e, com o crescimento da cidade, muitas delas passaram a ficar próximas ou até “encostadas” em regiões urbanas. Isso gera conflitos, pois aumenta a exigência por controle de impactos como ruído, trânsito de caminhões e poluição, restringindo principalmente a instalação de indústrias de maior porte.
+            Na prática, porém, o cenário atual cria dificuldades. As áreas industriais são limitadas e, com o crescimento da cidade, many delas passaram a ficar próximas ou até “encostadas” em regiões urbanas. Isso gera conflitos, pois aumenta a exigência por controle de impactos como ruído, trânsito de caminhões e poluição, restringindo principalmente a instalação de indústrias de maior porte.
             <br><br>
             Além disso, existem restrições ambientais importantes que reduzem ainda mais o espaço disponível, somadas a processos burocráticos e custos de adequação. O resultado é que, embora não haja proibição, há uma limitação prática: poucas áreas realmente viáveis e um nível alto de exigência para novos empreendimentos.
             <br><br>
@@ -182,7 +182,7 @@ elif menu == "Metodologia ETL":
             Formatos: CSV e consultas em tabelas do SIDRA/IBGE.
         </div>
         <div class="step-box step-transformacao">
-            <b>2. Transformação:</b><br>
+            <b>2. Transformation:</b><br>
             Limpeza de Nulos: Removemos registros incompletos.<br>
             Padronização: Unificamos nomenclaturas CNAE e escalas financeiras (Mi/Bi).<br>
             Unificação (Join): Merge das bases de Emprego e PIB utilizando o Ano como chave primária.
@@ -213,11 +213,11 @@ elif menu == "Dashboard Executivo":
     ))
     fig_comparativo.add_trace(go.Bar(
         x=df_hist['Ano'], y=df_hist['PIB_Constante'],
-        name='PIB Votorantim a preços CONSTANTES de 2026 (Mil Reais)',
+        name='PIB Votorantim a preços CONSTANTES de 2023 (Mil Reais)',
         marker_color='#E67E22'
     ))
     fig_comparativo.update_layout(
-        title="Evolução do PIB de Votorantim entre 2002 a 2023 (preços correntes e constantes de 2026 pelo IPCA), em R$ mil",
+        title="Evolução do PIB de Votorantim entre 2002 a 2023 (preços correntes e constantes), em R$ mil",
         xaxis_title="Ano", yaxis_title="R$ mil",
         barmode='group', legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5)
     )
@@ -225,12 +225,14 @@ elif menu == "Dashboard Executivo":
 
     if "aplicar_ipca_dash" not in st.session_state: st.session_state.aplicar_ipca_dash = False
     
-    if st.button("Inserir IPCA (Impacto Inflacionário Histórico)"):
+    if st.button("Inserir IPCA (Impacto Inflacionário Histórico até 2023)"):
         st.session_state.aplicar_ipca_dash = not st.session_state.aplicar_ipca_dash
 
     df_p = df_hist.copy() 
     if st.session_state.aplicar_ipca_dash:
-        df_p['Fator'] = [(np.prod([(1 + ipca_map[y]/100) for y in ipca_map if y <= ano])) for ano in df_p['Ano']]
+        # Filtra IPCA apenas até 2023 para o cálculo do Dashboard Executivo
+        ipca_filtered = {k: v for k, v in ipca_map.items() if k <= 2023}
+        df_p['Fator'] = [(np.prod([(1 + ipca_filtered[y]/100) for y in ipca_filtered if y <= ano])) for ano in df_p['Ano']]
         df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']
         df_p['Serviços (Real)'] = df_p['VAB_Servicos'] / df_p['Fator']
         y_cols = ['VAB_Industria', 'Indústria (Real)', 'VAB_Servicos', 'Serviços (Real)']
@@ -245,9 +247,9 @@ elif menu == "Dashboard Executivo":
         st.plotly_chart(fig_evolucao, use_container_width=True)
         st.markdown('<div class="chart-caption">A análise revela que o PIB cresceu nominalmente de R$ 670 Mi em 2002 para R$ 5.2 Bi em 2023. O pico real em 2014 sugere uma expansão industrial atípica no período.</div>', unsafe_allow_html=True)
     with col_right:
-        st.write("**Referência IPCA Aplicada:**")
-        df_ipca_tab = pd.DataFrame(list(ipca_map.items()), columns=['Ano', 'IPCA (%)'])
-        st.dataframe(df_ipca_tab, hide_index=True, height=250)
+        st.write("**Referência IPCA Aplicada (até 2023):**")
+        ipca_exec_tab = pd.DataFrame([(k, v) for k, v in ipca_map.items() if k <= 2023], columns=['Ano', 'IPCA (%)'])
+        st.dataframe(ipca_exec_tab, hide_index=True, height=250)
         st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
 
 # Módulo Diagnóstico Industria 4.0

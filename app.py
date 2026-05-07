@@ -294,7 +294,7 @@ elif menu == "Diagnóstico Indústria 4.0":
                           annotation_text=f"Média Nacional: R$ {media_nacional}k", annotation_position="top left")
         
         fig_comp.update_layout(
-            title=f"Diferença de Produtividade: +{diff_pct:.1f}% com Indústria 4.0",
+            title=f"Diferença de Produtividade: +35% com Indústria 4.0",
             yaxis_title="R$ / Operário (Milhares)",
             showlegend=False
         )

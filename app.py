@@ -427,10 +427,10 @@ elif menu == "Fontes/Referências":
         st.write("- **Novo CAGED**: Estatísticas de movimentação de mão de obra formal.")
         st.write("- **Plano Diretor de Votorantim**: Lei Complementar 002/10 e Zoneamento Oficial.")
         st.write("- **BCB / IBGE**: Índice Nacional de Preços ao Consumidor Amplo (IPCA).")
-        st.write("- **IBGE (Estatísticas de Inovação e Tecnologia)")
-        st.write("- **Portal da Indústria (CNI / Observatório Nacional)")
-        st.write("- **IEDI (Instituto de Estudos para o Desenvolvimento Industrial)")
-        st.write("- **ABDI (Agência Brasileira de Desenvolvimento Industrial)")
+        st.write("- **IBGE** (Estatísticas de Inovação e Tecnologia)")
+        st.write("- **Portal da Indústria** (CNI / Observatório Nacional)")
+        st.write("- **IEDI** (Instituto de Estudos para o Desenvolvimento Industrial)")
+        st.write("- **ABDI** (Agência Brasileira de Desenvolvimento Industrial)")
         
     
     with col_qr_ref:

@@ -239,7 +239,7 @@ elif menu == "Dashboard Executivo":
 
     col_left, col_right = st.columns([0.65, 0.35])
     with col_left:
-        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços (Proxy)",
+        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços",
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"},
                                markers=True)
         st.plotly_chart(fig_evolucao, use_container_width=True)
@@ -298,7 +298,7 @@ elif menu == "Diagnóstico Indústria 4.0":
             showlegend=False
         )
         st.plotly_chart(fig_comp, use_container_width=True)
-        st.info(f"O percentual de diferença entre empresas tecnológicas e tradicionais é de **{diff_pct:.1f}%**, superando a média nacional em **R$ {prod_com_40 - media_nacional}k** por operário.")
+        st.info(f"O percentual de diferença entre empresas tecnológicas e tradicionais é de **35%**, superando a média nacional em **R$ {prod_com_40 - media_nacional}k** por operário.")
 
     with c2:
         fig_r = go.Figure()
@@ -389,7 +389,7 @@ elif menu == "Plano de Ação":
         <div class="card">
             <h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4>
             <p><b>Ação:</b> Hub de Inovação Industrial Votorantim.</p>
-            <p><b>Como:</b> Parceria com a FATEC para requalificação técnica focada em análise de dados.</p>
+            <p><b>Como:</b> Parceria com a FATEC para qualificação técnica focada em mão de obra especializada.</p>
             <p><b>Impacto:</b> Combate ao 'Efeito Shadowing' e aumento da renda média local.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -427,6 +427,11 @@ elif menu == "Fontes/Referências":
         st.write("- **Novo CAGED**: Estatísticas de movimentação de mão de obra formal.")
         st.write("- **Plano Diretor de Votorantim**: Lei Complementar 002/10 e Zoneamento Oficial.")
         st.write("- **BCB / IBGE**: Índice Nacional de Preços ao Consumidor Amplo (IPCA).")
+        st.write("- **IBGE (Estatísticas de Inovação e Tecnologia)")
+        st.write("- **Portal da Indústria (CNI / Observatório Nacional)")
+        st.write("- **IEDI (Instituto de Estudos para o Desenvolvimento Industrial)")
+        st.write("- **ABDI (Agência Brasileira de Desenvolvimento Industrial)")
+        
     
     with col_qr_ref:
         st.markdown("""

@@ -182,7 +182,7 @@ elif menu == "Metodologia ETL":
             Formatos: CSV e consultas em tabelas do SIDRA/IBGE.
         </div>
         <div class="step-box step-transformacao">
-            <b>2. Transformation:</b><br>
+            <b>2. Transformação:</b><br>
             Limpeza de Nulos: Removemos registros incompletos.<br>
             Padronização: Unificamos nomenclaturas CNAE e escalas financeiras (Mi/Bi).<br>
             Unificação (Join): Merge das bases de Emprego e PIB utilizando o Ano como chave primária.

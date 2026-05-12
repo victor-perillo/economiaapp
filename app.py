@@ -21,7 +21,6 @@ st.markdown("""
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     .stApp { background-color: #f8fafc; }
     
-    /* Cards Brancos Estilizados */
     .card {
         background: white;
         padding: 2rem;
@@ -31,7 +30,6 @@ st.markdown("""
         margin-bottom: 1.5rem;
     }
     
-    /* Títulos de Seção */
     .section-title {
         color: #1e3a8a;
         font-size: 2rem;
@@ -42,7 +40,6 @@ st.markdown("""
         margin-bottom: 30px;
     }
 
-    /* ETL Steps */
     .step-box { 
         padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; border-left: 8px solid; 
     }
@@ -50,17 +47,14 @@ st.markdown("""
     .step-transformacao { background-color: #fffaf5; border-color: #ff8c00; color: #854d0e; }
     .step-carga { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
 
-    /* Zoneamento Cards */
     .z-card { 
         background-color: #f1f5f9; padding: 1.2rem; border-radius: 8px; 
         border-left: 5px solid #ff8c00; margin-bottom: 12px; min-height: 100px;
     }
 
-    /* Sidebar Dark */
     [data-testid="stSidebar"] { background-color: #0f172a; }
     [data-testid="stSidebar"] * { color: #ffffff !important; }
     
-    /* Utilitários */
     .chart-caption { text-align: center; color: #64748b; font-style: italic; margin-top: 8px; font-size: 0.9rem; }
     .footer {
         text-align: center; padding: 3rem; color: #64748b; font-size: 0.9rem;
@@ -142,7 +136,8 @@ else:
     dados_atuais = display_df.iloc[0]
     ano_txt = ano_selecionado
 
-# --- MÓDULO: INTRODUÇÃO E CONTEXTO ---
+# --- MÓDULOS ---
+
 if menu == "Introdução & Contexto":
     st.markdown('<p class="section-title">Contexto e Plano Diretor</p>', unsafe_allow_html=True)
     tab_econ, tab_diretor, tab_urbano = st.tabs(["📊 Análise Econômica", "📜 Plano Diretor de Votorantim", "🗺️ Zoneamento Urbano"])
@@ -186,7 +181,6 @@ if menu == "Introdução & Contexto":
         pdf_url = "https://www.votorantim.sp.gov.br/arquivos/mapas_002_19043716.pdf"
         st.link_button("🔍 Abrir Mapa de Zoneamento", pdf_url, use_container_width=True)
 
-# --- MÓDULO: PROBLEMAS IDENTIFICADOS ---
 elif menu == "Problemas Identificados":
     st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
@@ -200,7 +194,6 @@ elif menu == "Problemas Identificados":
         st.info("""**Efeito Shadowing:** Ocorre quando Votorantim perde talentos e investimentos para Sorocaba. 
         Isso resulta em uma economia local estagnada, focada em setores de baixo valor agregado.""")
 
-# --- MÓDULO: METODOLOGIA ETL ---
 elif menu == "Metodologia ETL":
     st.markdown('<p class="section-title">Pipeline de Dados (ETL)</p>', unsafe_allow_html=True)
     st.markdown('''
@@ -221,11 +214,29 @@ elif menu == "Metodologia ETL":
         </div>
     ''', unsafe_allow_html=True)
 
-# --- MÓDULO: DASHBOARD EXECUTIVO ---
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns(3) 
     
+    # --- INÍCIO DA ALTERAÇÃO SOLICITADA ---
+    col_info1, col_info2, col_info3 = st.columns(3)
+    with col_info1:
+        st.markdown("""<div class="card" style="min-height: 250px;">
+            <h4 style="color:#1E3A8A;">O que é o PIB?</h4>
+            O <b>Produto Interno Bruto (PIB)</b> representa a soma de todos os bens e serviços finais produzidos em uma região durante um período. É o principal indicador para medir a riqueza e o vigor econômico de um município.
+        </div>""", unsafe_allow_html=True)
+    with col_info2:
+        st.markdown("""<div class="card" style="min-height: 250px;">
+            <h4 style="color:#1E3A8A;">O que é o VAB?</h4>
+            O <b>Valor Adicionado Bruto (VAB)</b> é o valor que cada setor (Indústria, Serviços, Agro) adiciona à economia, deduzindo o custo dos insumos utilizados no processo produtivo. Reflete a contribuição real de cada atividade.
+        </div>""", unsafe_allow_html=True)
+    with col_info3:
+        st.markdown("""<div class="card" style="min-height: 250px;">
+            <h4 style="color:#1E3A8A;">Como são calculados?</h4>
+            O <b>VAB</b> é calculado pela diferença entre o Valor Bruto da Produção e o Consumo Intermediário. O <b>PIB</b> é a soma dos VABs de todos os setores mais os impostos sobre produtos (líquidos de subsídios).
+        </div>""", unsafe_allow_html=True)
+    # --- FIM DA ALTERAÇÃO SOLICITADA ---
+
+    c1, c2, c3 = st.columns(3) 
     with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
     with c2: st.metric("VAB Indústria (Est.)", formatar_valor(dados_atuais['VAB_Industria']))
     with c3: st.metric("VAB Serviços (Est.)", formatar_valor(dados_atuais['VAB_Servicos']))
@@ -267,7 +278,6 @@ elif menu == "Dashboard Executivo":
         st.dataframe(ipca_exec_tab, hide_index=True, height=250)
         st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
 
-# --- MÓDULO: DIAGNÓSTICO INDÚSTRIA 4.0 ---
 elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Geração Digital e Impactos 4.0</p>', unsafe_allow_html=True)
     st.warning("""
@@ -303,7 +313,6 @@ elif menu == "Diagnóstico Indústria 4.0":
         fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Nível de Automação por Setor")
         st.plotly_chart(fig_radar, use_container_width=True)
 
-# --- MÓDULO: PROJEÇÃO FUTURA ---
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva e IPCA Previsionado (2030)</p>', unsafe_allow_html=True)
     st.markdown("""
@@ -351,7 +360,6 @@ elif menu == "Projeção Futura":
                             color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"}), use_container_width=True)
     st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(p_ipca):.2f}%")
 
-# --- MÓDULO: PLANO DE AÇÃO ---
 elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
     col_a, col_b = st.columns(2)
@@ -364,7 +372,6 @@ elif menu == "Plano de Ação":
         st.markdown('<div class="card"><h4 style="color: #1E3A8A;">5: Atração de Investimentos</h4><p><b>Ação:</b> Monitoramento Pós-IPCA.<br><b>Como:</b> Uso do Observatório para demonstrar ganhos reais de eficiência a investidores.<br><b>Impacto:</b> Melhoria da imagem municipal e competitividade.</p></div>', unsafe_allow_html=True)
         st.markdown('<div class="card"><h4 style="color: #1E3A8A;">6: Evolução Setorial</h4><p><b>Ação:</b> Transição de alto nível tecnológico.<br><b>Como:</b> Transformar indústria tradicional em geradora de serviços avançados.<br><b>Impacto:</b> Sustentação do PIB a longo prazo.</p></div>', unsafe_allow_html=True)
 
-# --- MÓDULO: FONTES ---
 elif menu == "Fontes/Referências":
     st.markdown('<p class="section-title">Fontes de Dados e Bibliografia</p>', unsafe_allow_html=True)
     col_ref, col_qr_ref = st.columns([0.6, 0.4])

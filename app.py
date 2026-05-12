@@ -295,7 +295,7 @@ elif menu == "Diagnóstico Indústria 4.0":
             <div class="z-card" style="flex:1;"><b>Manutenção Preditiva:</b> Algoritmos preveem falhas antes de paradas caras na produção.</div>
             <div class="z-card" style="flex:1;"><b>Customização:</b> Flexibilidade para atender demandas específicas com menor custo.</div>
         </div>
-        <p style="margin-top:15px;"><b>Como está acontecendo:</b> Empresas locais investem na digitalização e na qualificação técnica, elevando a competitividade do VAB municipal frente a outros hubs.</p>
+        <p style="margin-top:15px;"><b>Como está acontecendo:</b> Empresas estão investindo na digitalização e na qualificação técnica, elevando a competitividade do VAB municipal frente a outros hubs.</p>
     </div>
     """, unsafe_allow_html=True)
 

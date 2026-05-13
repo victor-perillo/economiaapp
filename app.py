@@ -185,7 +185,7 @@ elif menu == "Problemas Identificados":
     st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como o Grupo Votorantim). 
+        st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como: Grupo Votorantim, Splice, Gás Natural e FLSmidth). 
         Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
         st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
         É um problema de Trade-off entre expansão urbana e manutenção da produção.""")

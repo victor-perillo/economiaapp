@@ -180,6 +180,7 @@ with st.sidebar:
     
     anos_disponiveis = ["Todos"] + [str(ano) for ano in df_hist['Ano'].unique()]
     ano_selecionado = st.selectbox("Período de Análise:", anos_disponiveis)
+    st.markdown(f"**Período selecionado:** {ano_selecionado}")
     
     st.divider()
     menu = st.radio("Navegação Estratégica:", 

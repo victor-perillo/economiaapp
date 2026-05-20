@@ -246,7 +246,6 @@ elif menu == "Metodologia ETL":
 elif menu == "Dashboard Executivo":
     st.markdown('<p class="section-title">Panorama Macro de Votorantim</p>', unsafe_allow_html=True)
     
-    # --- INÍCIO DA ALTERAÇÃO SOLICITADA ---
     col_info1, col_info2, col_info3 = st.columns(3)
     with col_info1:
         st.markdown("""<div class="card" style="min-height: 250px;">
@@ -263,56 +262,16 @@ elif menu == "Dashboard Executivo":
             <h4 style="color:#1E3A8A;">Como são calculados?</h4>
             O <b>VAB</b> é calculado pela diferença entre o Valor Bruto da Produção e o Consumo Intermediário. O <b>PIB</b> é a soma dos VABs de todos os setores mais os impostos sobre produtos (líquidos de subsídios).
         </div>""", unsafe_allow_html=True)
-    # --- FIM DA ALTERAÇÃO SOLICITADA ---
 
-    c1, c2, c3 = st.columns(3) 
-    with c1: st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
-    with c2: st.metric("VAB Indústria (Est.)", formatar_valor(dados_atuais['VAB_Industria']))
-    with c3: st.metric("VAB Serviços (Est.)", formatar_valor(dados_atuais['VAB_Servicos']))
-
-    st.markdown("---")
-
-    emp_col1, emp_col2, emp_col3 = st.columns([1, 1, 1])
-    with emp_col1:
-        st.markdown(f"""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Total de Empregos Formais</h4>\n            <p style=\"font-size:2rem; margin:0;\"><b>{employment_total/1000:.1f} mil</b></p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Vínculos formais registrados em Votorantim em 2023.</p>\n        </div>""", unsafe_allow_html=True)
-    with emp_col2:
-        fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', title='Divisão por Gênero (2023)',
-                            color_discrete_map={'Homens': '#1E40AF', 'Mulheres': '#DB2777'})
-        fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
-        st.plotly_chart(fig_gender, use_container_width=True)
-    with emp_col3:
-        fig_sector_bar = px.bar(sector_df, x='Setor Econômico', y='Percentual', title='Distribuição por Setor (2023)',
-                                text='Percentual', color='Setor Econômico', color_discrete_sequence=px.colors.qualitative.Safe)
-        fig_sector_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
-        fig_sector_bar.update_layout(yaxis_title='Percentual (%)', showlegend=False)
-        st.plotly_chart(fig_sector_bar, use_container_width=True)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
+    with c2:
+        st.metric("VAB Indústria (Est.)", formatar_valor(dados_atuais['VAB_Industria']))
+    with c3:
+        st.metric("VAB Serviços (Est.)", formatar_valor(dados_atuais['VAB_Servicos']))
 
     st.markdown("---")
-    treemap_col, age_col = st.columns([0.65, 0.35])
-    with treemap_col:
-        fig_treemap = px.treemap(sector_df, path=['Setor Econômico'], values='Vínculos',
-                                 title='Distribuição por Setor de Atividade (2023)',
-                                 color='Percentual', color_continuous_scale='Blues')
-        fig_treemap.update_traces(textinfo='label+value+percent parent')
-        st.plotly_chart(fig_treemap, use_container_width=True)
-    with age_col:
-        fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3)
-        fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
-        st.plotly_chart(fig_age, use_container_width=True)
-
-    st.markdown("---")
-    col_pib1, col_pib2 = st.columns([0.5, 0.5])
-    with col_pib1:
-        fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
-                             title='Participação Estimada no PIB (2023)', hole=0.3,
-                             color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
-        fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
-        st.plotly_chart(fig_gdp_pie, use_container_width=True)
-    with col_pib2:
-        st.markdown("""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Observação de Participação</h4>\n            <p style=\"margin:0;\">Serviços representam a maior fatia estimada do PIB, enquanto Agropecuária chega a menos de 1%.</p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Indústria e Administração Pública ocupam cerca de 35% do PIB local.</p>\n        </div>""", unsafe_allow_html=True)
-    fig_trend = px.line(employment_trend, x='Ano', y='Vínculos', title='Evolução dos Empregos Formais (2014-2023)', markers=True)
-    fig_trend.update_layout(yaxis_title='Vínculos formais', xaxis=dict(dtick=1))
-    st.plotly_chart(fig_trend, use_container_width=True)
 
     fig_comparativo = go.Figure()
     fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB'], name='PIB Votorantim Corrente', marker_color='#1E3A8A'))
@@ -321,33 +280,89 @@ elif menu == "Dashboard Executivo":
         title="Evolução do PIB (Correntes vs Constantes de 2023), em R$ mil",
         xaxis_title="Ano", barmode='group', legend=dict(orientation="h", y=-0.3, x=0.5, xanchor="center")
     )
-    st.plotly_chart(fig_comparativo, use_container_width=True)
 
-    if "aplicar_ipca_dash" not in st.session_state: st.session_state.aplicar_ipca_dash = False
-    if st.button("Inserir IPCA (Impacto Inflacionário Histórico até 2023)"):
-        st.session_state.aplicar_ipca_dash = not st.session_state.aplicar_ipca_dash
+    if "aplicar_ipca_dash" not in st.session_state:
+        st.session_state.aplicar_ipca_dash = False
 
-    df_p = df_hist.copy() 
-    if st.session_state.aplicar_ipca_dash:
-        ipca_filtered = {k: v for k, v in ipca_map.items() if k <= 2023}
-        df_p['Fator'] = [(np.prod([(1 + ipca_filtered[y]/100) for y in ipca_filtered if y > ano])) for ano in df_p['Ano']]
-        df_p['Indústria (Ajustado IPCA)'] = df_p['VAB_Industria'] * df_p['Fator']
-        df_p['Serviços (Ajustado IPCA)'] = df_p['VAB_Servicos'] * df_p['Fator']
-        y_cols = ['VAB_Industria', 'Indústria (Ajustado IPCA)', 'VAB_Servicos', 'Serviços (Ajustado IPCA)']
-    else:
-        y_cols = ['VAB_Industria', 'VAB_Servicos']
+    row_evolucao, row_historico = st.columns([0.55, 0.45])
+    with row_evolucao:
+        st.plotly_chart(fig_comparativo, use_container_width=True)
+    with row_historico:
+        if st.button("Inserir IPCA (Impacto Inflacionário Histórico até 2023)"):
+            st.session_state.aplicar_ipca_dash = not st.session_state.aplicar_ipca_dash
 
-    col_left, col_right = st.columns([0.65, 0.35])
-    with col_left:
+        df_p = df_hist.copy()
+        if st.session_state.aplicar_ipca_dash:
+            ipca_filtered = {k: v for k, v in ipca_map.items() if k <= 2023}
+            df_p['Fator'] = [(np.prod([(1 + ipca_filtered[y]/100) for y in ipca_filtered if y > ano])) for ano in df_p['Ano']]
+            df_p['Indústria (Ajustado IPCA)'] = df_p['VAB_Industria'] * df_p['Fator']
+            df_p['Serviços (Ajustado IPCA)'] = df_p['VAB_Servicos'] * df_p['Fator']
+            y_cols = ['VAB_Industria', 'Indústria (Ajustado IPCA)', 'VAB_Servicos', 'Serviços (Ajustado IPCA)']
+        else:
+            y_cols = ['VAB_Industria', 'VAB_Servicos']
+
         fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços", markers=True,
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Ajustado IPCA)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Ajustado IPCA)": "#fdba74"})
         st.plotly_chart(fig_evolucao, use_container_width=True)
         st.markdown('<div class="chart-caption">As séries históricas mostram valores menores inicialmente. Ao aplicar o IPCA, os valores ficam maiores e refletem a inflação histórica acumulada até 2023.</div>', unsafe_allow_html=True)
-    with col_right:
+
+    st.markdown("---")
+
+    dist_pib_col, obs_col = st.columns([0.6, 0.4])
+    with dist_pib_col:
+        fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
+                             title='Participação Estimada no PIB (2023)', hole=0.3,
+                             color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
+        fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        st.plotly_chart(fig_gdp_pie, use_container_width=True)
+    with obs_col:
+        st.markdown("""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Observação de Participação</h4>\n            <p style=\"margin:0;\">Serviços representam a maior fatia estimada do PIB, enquanto Agropecuária chega a menos de 1%.</p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Indústria e Administração Pública ocupam cerca de 35% do PIB local.</p>\n        </div>""", unsafe_allow_html=True)
+
+    st.markdown("---")
+    ref_col, cnae_col = st.columns(2)
+    with ref_col:
         st.write("**Referência IPCA Aplicada (até 2023):**")
         ipca_exec_tab = pd.DataFrame([(k, v) for k, v in ipca_map.items() if k <= 2023], columns=['Ano', 'IPCA (%)'])
         st.dataframe(ipca_exec_tab, hide_index=True, height=250)
+    with cnae_col:
         st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
+
+    st.markdown("---")
+    st.markdown('<h3>Distribuição de Empregos em Votorantim</h3>', unsafe_allow_html=True)
+    emp_card_col, emp_trend_col = st.columns([0.4, 0.6])
+    with emp_card_col:
+        st.markdown(f"""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Total de Empregos Formais</h4>\n            <p style=\"font-size:2rem; margin:0;\"><b>{employment_total/1000:.1f} mil</b></p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Vínculos formais registrados em Votorantim em 2023.</p>\n        </div>""", unsafe_allow_html=True)
+    with emp_trend_col:
+        fig_trend = px.line(employment_trend, x='Ano', y='Vínculos', title='Evolução dos Empregos Formais (2014-2023)', markers=True)
+        fig_trend.update_layout(yaxis_title='Vínculos formais', xaxis=dict(dtick=1))
+        st.plotly_chart(fig_trend, use_container_width=True)
+
+    st.markdown("---")
+    row_job1, row_job2 = st.columns(2)
+    with row_job1:
+        fig_sector_bar = px.bar(sector_df, x='Setor Econômico', y='Percentual', title='Distribuição por Setor (2023)',
+                                text='Percentual', color='Setor Econômico', color_discrete_sequence=px.colors.qualitative.Safe)
+        fig_sector_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+        fig_sector_bar.update_layout(yaxis_title='Percentual (%)', showlegend=False)
+        st.plotly_chart(fig_sector_bar, use_container_width=True)
+    with row_job2:
+        fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', title='Divisão por Gênero (2023)',
+                            color_discrete_map={'Homens': '#1E40AF', 'Mulheres': '#DB2777'}, hole=0.3)
+        fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        st.plotly_chart(fig_gender, use_container_width=True)
+
+    st.markdown("---")
+    row_job3, row_job4 = st.columns(2)
+    with row_job3:
+        fig_treemap = px.treemap(sector_df, path=['Setor Econômico'], values='Vínculos',
+                                 title='Distribuição por Setor de Atividade (2023)',
+                                 color='Percentual', color_continuous_scale='Blues')
+        fig_treemap.update_traces(textinfo='label+value+percent parent')
+        st.plotly_chart(fig_treemap, use_container_width=True)
+    with row_job4:
+        fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3)
+        fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        st.plotly_chart(fig_age, use_container_width=True)
 
 elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Geração Digital e Impactos 4.0</p>', unsafe_allow_html=True)

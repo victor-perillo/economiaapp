@@ -352,8 +352,9 @@ elif menu == "Dashboard Executivo":
         fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
                              title='Participação Estimada no PIB (2023)', hole=0.3,
                              color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
-        fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=14)
-        style_figure(fig_gdp_pie, title_size=22, legend=False)
+        fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
+        style_figure(fig_gdp_pie, title_size=22, legend=True)
+        fig_gdp_pie.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
         st.plotly_chart(fig_gdp_pie, use_container_width=True)
     with obs_col:
         st.markdown("""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Observação de Participação</h4>\n            <p style=\"margin:0;\">Serviços representam a maior fatia estimada do PIB, enquanto Agropecuária chega a menos de 1%.</p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Indústria e Administração Pública ocupam cerca de 35% do PIB local.</p>\n        </div>""", unsafe_allow_html=True)
@@ -366,8 +367,9 @@ elif menu == "Dashboard Executivo":
         st.dataframe(ipca_exec_tab, hide_index=True, height=250)
     with cnae_col:
         fig_cnae = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE")
-        fig_cnae.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=13)
-        style_figure(fig_cnae, title_size=20, legend=False)
+        fig_cnae.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=13, insidetextorientation='radial')
+        style_figure(fig_cnae, title_size=20, legend=True)
+        fig_cnae.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
         st.plotly_chart(fig_cnae, use_container_width=True)
 
     st.markdown("---")
@@ -393,8 +395,9 @@ elif menu == "Dashboard Executivo":
     with row_job2:
         fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', title='Divisão por Gênero (2023)',
                             color_discrete_map={'Homens': '#1E40AF', 'Mulheres': '#DB2777'}, hole=0.3)
-        fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=14)
-        style_figure(fig_gender, title_size=22, legend=False)
+        fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
+        style_figure(fig_gender, title_size=22, legend=True)
+        fig_gender.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
         st.plotly_chart(fig_gender, use_container_width=True)
 
     st.markdown("---")
@@ -408,8 +411,9 @@ elif menu == "Dashboard Executivo":
         st.plotly_chart(fig_treemap, use_container_width=True)
     with row_job4:
         fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3)
-        fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=14)
-        style_figure(fig_age, title_size=22, legend=False)
+        fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
+        style_figure(fig_age, title_size=22, legend=True)
+        fig_age.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
         st.plotly_chart(fig_age, use_container_width=True)
 
 elif menu == "Diagnóstico Indústria 4.0":

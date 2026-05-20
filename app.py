@@ -61,6 +61,16 @@ st.markdown("""
     [data-testid="stSidebar"] { background-color: #0f172a; }
     [data-testid="stSidebar"] * { color: #ffffff !important; font-size: 1.05rem !important; }
     [data-testid="stSidebar"] img { max-width: 120px !important; }
+    [data-testid="stSidebar"] select, [data-testid="stSidebar"] .stSelectbox>div>div, [data-testid="stSidebar"] .stSelectbox>div>div>div,
+    [data-testid="stSidebar"] .stTextInput>div>div>input {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid #334155 !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox>label>div, [data-testid="stSidebar"] .stSelectbox>label>div span {
+        color: #ffffff !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox>div>div>div span { color: #ffffff !important; }
     .stButton>button { font-size: 1.1rem !important; padding: 0.9rem 1rem !important; }
     .stSelectbox, .stRadio { font-size: 1.1rem !important; }
     .css-1oe9bi0, .css-1d391kg, .css-hxt7ib { font-size: 1.1rem !important; }

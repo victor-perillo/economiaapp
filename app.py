@@ -120,6 +120,11 @@ age_df = pd.DataFrame({
     'Percentual': [50.3, 18.8, 16.2, 13.4, 1.4]
 })
 
+gdp_sector_df = pd.DataFrame({
+    'Setor Econômico': ['Serviços', 'Indústria', 'Administração Pública', 'Agropecuária'],
+    'Participação PIB': [61.5, 17.5, 18.0, 0.5]
+})
+
 employment_trend = pd.DataFrame({
     'Ano': [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
     'Vínculos': [24300, 24350, 24370, 24380, 24390, 24390, 24390, 24850, 25500, 26700]
@@ -296,6 +301,15 @@ elif menu == "Dashboard Executivo":
         st.plotly_chart(fig_age, use_container_width=True)
 
     st.markdown("---")
+    col_pib1, col_pib2 = st.columns([0.5, 0.5])
+    with col_pib1:
+        fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
+                             title='Participação Estimada no PIB (2023)', hole=0.3,
+                             color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
+        fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        st.plotly_chart(fig_gdp_pie, use_container_width=True)
+    with col_pib2:
+        st.markdown("""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Observação de Participação</h4>\n            <p style=\"margin:0;\">Serviços representam a maior fatia estimada do PIB, enquanto Agropecuária chega a menos de 1%.</p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Indústria e Administração Pública ocupam cerca de 35% do PIB local.</p>\n        </div>""", unsafe_allow_html=True)
     fig_trend = px.line(employment_trend, x='Ano', y='Vínculos', title='Evolução dos Empregos Formais (2014-2023)', markers=True)
     fig_trend.update_layout(yaxis_title='Vínculos formais', xaxis=dict(dtick=1))
     st.plotly_chart(fig_trend, use_container_width=True)

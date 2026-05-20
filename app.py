@@ -365,7 +365,7 @@ elif menu == "Dashboard Executivo":
         fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
         st.plotly_chart(fig_age, use_container_width=True)
 
-elif menu == "Diagnóstico Indústria 4.0":
+elif menu == "Votorantim 4.0: Projeções de Competitividade Industrial":
     st.markdown('<p class="section-title">Geração Digital e Impactos 4.0</p>', unsafe_allow_html=True)
     st.warning("""
         **Nota de Transparência:** As projeções de crescimento com Indústria 4.0 apresentadas abaixo utilizam como referência uma **média nacional** de ganhos de eficiência. 
@@ -375,7 +375,7 @@ elif menu == "Diagnóstico Indústria 4.0":
 
     st.markdown("""
     <div class="card">
-        <h3 style="color: #1E3A8A;">A Revolução 4.0 em Votorantim</h3>
+        <h3 style="color: #1E3A8A;"></h3>
         <p>A <b>Indústria 4.0</b> integra tecnologias digitais como IoT, Big Data e IA ao chão de fábrica. Em nível nacional, a adesão a esse modelo está transformando plantas tradicionais em <b>Fábricas Inteligentes</b>.</p>
         <div style="display: flex; gap: 15px;">
             <div class="z-card" style="flex:1;"><b>Ganho de Eficiência:</b> Sensores em tempo real reduzem desperdícios nas indústrias de base.</div>

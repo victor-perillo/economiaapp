@@ -169,7 +169,7 @@ employment_trend = pd.DataFrame({
 with st.sidebar:
     col_logo, col_qr = st.columns([1, 1])
     with col_logo:
-        st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=90)
+        st.image("https://img.icons8.com/ios-filled/96/ffffff/factory.png", width=90)
     with col_qr:
         url_da_pagina = "https://economiaapp-economia-fatec.streamlit.app/" 
         st.image(gerar_qrcode(url_da_pagina), width=110)

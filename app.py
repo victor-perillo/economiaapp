@@ -18,51 +18,57 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
     
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 16px; color: #0f172a; }
-    body, p, li, span, div { font-size: 1rem; line-height: 1.7; }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 18px; color: #0f172a; }
+    body, p, li, span, div, a, button, input, label, select { font-size: 1.05rem; line-height: 1.75; }
     .stApp { background-color: #f8fafc; }
     
     .card {
         background: white;
-        padding: 2.2rem;
-        border-radius: 18px;
+        padding: 2.4rem;
+        border-radius: 20px;
         box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
         border: none;
-        margin-bottom: 1.8rem;
+        margin-bottom: 2rem;
     }
     
     .section-title {
         color: #0f172a;
-        font-size: 2.6rem;
+        font-size: 2.9rem;
         font-weight: 800;
         border-left: 10px solid #ff8c00;
         padding-left: 22px;
         margin-top: 20px;
-        margin-bottom: 34px;
+        margin-bottom: 36px;
     }
     .stApp h3, .stApp h4 { color: #0f172a; }
-    .stApp h3 { font-size: 1.9rem; margin-bottom: 0.8rem; }
-    .stApp h4 { font-size: 1.3rem; margin-bottom: 0.6rem; }
+    .stApp h3 { font-size: 2.2rem; margin-bottom: 1rem; }
+    .stApp h4 { font-size: 1.55rem; margin-bottom: 0.75rem; }
 
     .step-box { 
-        padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; border-left: 8px solid; 
+        padding: 1.8rem; border-radius: 12px; margin-bottom: 1.2rem; border-left: 8px solid; 
+        font-size: 1.05rem;
     }
     .step-extracao { background-color: #eff6ff; border-color: #1e3a8a; color: #1e3a8a; }
     .step-transformacao { background-color: #fffaf5; border-color: #ff8c00; color: #854d0e; }
     .step-carga { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
 
     .z-card { 
-        background-color: #f1f5f9; padding: 1.4rem; border-radius: 14px; 
-        border-left: 5px solid #ff8c00; margin-bottom: 16px; min-height: 120px;
-        font-size: 1rem;
+        background-color: #f1f5f9; padding: 1.6rem; border-radius: 16px; 
+        border-left: 5px solid #ff8c00; margin-bottom: 18px; min-height: 130px;
+        font-size: 1.05rem;
     }
 
     [data-testid="stSidebar"] { background-color: #0f172a; }
-    [data-testid="stSidebar"] * { color: #ffffff !important; }
+    [data-testid="stSidebar"] * { color: #ffffff !important; font-size: 1.05rem !important; }
+    [data-testid="stSidebar"] img { max-width: 120px !important; }
+    .stButton>button { font-size: 1.1rem !important; padding: 0.9rem 1rem !important; }
+    .stSelectbox, .stRadio { font-size: 1.1rem !important; }
+    .css-1oe9bi0, .css-1d391kg, .css-hxt7ib { font-size: 1.1rem !important; }
+    .stTextInput>div>div>input { font-size: 1.05rem !important; padding: 0.9rem !important; }
     
-    .chart-caption { text-align: center; color: #475569; font-style: italic; margin-top: 12px; font-size: 1rem; }
+    .chart-caption { text-align: center; color: #475569; font-style: italic; margin-top: 14px; font-size: 1.05rem; }
     .footer {
-        text-align: center; padding: 3rem; color: #475569; font-size: 1rem;
+        text-align: center; padding: 3.2rem; color: #475569; font-size: 1.05rem;
         border-top: 1px solid #e2e8f0; margin-top: 5rem;
     }
     </style>
@@ -163,10 +169,10 @@ employment_trend = pd.DataFrame({
 with st.sidebar:
     col_logo, col_qr = st.columns([1, 1])
     with col_logo:
-        st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=70)
+        st.image("https://cdn-icons-png.flaticon.com/512/4300/4300058.png", width=90)
     with col_qr:
         url_da_pagina = "https://economiaapp-economia-fatec.streamlit.app/" 
-        st.image(gerar_qrcode(url_da_pagina), width=75)
+        st.image(gerar_qrcode(url_da_pagina), width=110)
         st.caption("Acesse aqui")
 
     st.title("Inteligência Industrial")
@@ -236,7 +242,7 @@ if menu == "Introdução & Contexto":
             st.markdown('<div class="z-card"><b>Competição com Sorocaba:</b> A cidade vizinha oferece distritos industriais mais consolidados e planos diretores que facilitam a instalação rápida, gerando uma fuga de investimentos para o município vizinho.</div>', unsafe_allow_html=True)
             st.markdown('<div class="z-card"><b>Infraestrutura de Acesso:</b> Dificuldade em escoar carga pesada sem atravessar perímetros urbanos adensados, o que sobrecarrega o trânsito local e atrasa a logística.</div>', unsafe_allow_html=True)
         st.markdown("---")
-        st.image("Zoneamento Urbano Vot.png", caption="Mapa de Zoneamento Urbano de Votorantim", use_column_width=True)
+        st.image("Zoneamento Urbano Vot.png", caption="Mapa de Zoneamento Urbano de Votorantim", width=1000)
         pdf_url = "https://www.votorantim.sp.gov.br/arquivos/mapas_002_19043716.pdf"
         st.link_button("🔍 Abrir Mapa de Zoneamento", pdf_url, use_container_width=True)
 

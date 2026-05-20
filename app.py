@@ -560,4 +560,4 @@ elif menu == "Fontes/Referências":
         st.link_button("📂 Abrir Pasta de Dados", url_drive, use_container_width=True)
 
 # --- FOOTER ---
-st.markdown('<div class="footer"><b>Observatório Industrial Votorantim | Inteligência Industrial 4.0</b><br>Grupo: Bruno V. Queiroz, Gislaine Takushi, Mariana Curvêlo, Victor Perillo e Vinicius Pierote.</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer"><b>Observatório Industrial Votorantim | Inteligência Industrial 4.0</b><br>Grupo: Bruno V. Queiroz, Gislaine Takushi, Mariana Curvêlo, Victor Perillo e Vinicius Pierote.<br>Orientador: Flavianno A. de Lima</div>', unsafe_allow_html=True)

@@ -207,6 +207,7 @@ if menu == "Introdução & Contexto":
             st.markdown('<div class="z-card"><b>Competição com Sorocaba:</b> A cidade vizinha oferece distritos industriais mais consolidados e planos diretores que facilitam a instalação rápida, gerando uma fuga de investimentos para o município vizinho.</div>', unsafe_allow_html=True)
             st.markdown('<div class="z-card"><b>Infraestrutura de Acesso:</b> Dificuldade em escoar carga pesada sem atravessar perímetros urbanos adensados, o que sobrecarrega o trânsito local e atrasa a logística.</div>', unsafe_allow_html=True)
         st.markdown("---")
+        st.image("Zoneamento Urbano Vot.png", caption="Mapa de Zoneamento Urbano de Votorantim", use_column_width=True)
         pdf_url = "https://www.votorantim.sp.gov.br/arquivos/mapas_002_19043716.pdf"
         st.link_button("🔍 Abrir Mapa de Zoneamento", pdf_url, use_container_width=True)
 

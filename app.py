@@ -396,8 +396,11 @@ elif menu == "Dashboard Executivo":
         fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', title='Divisão por Gênero (2023)',
                             color_discrete_map={'Homens': '#1E40AF', 'Mulheres': '#DB2777'}, hole=0.3)
         fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
-        style_figure(fig_gender, title_size=22, legend=True)
-        fig_gender.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
+        style_figure(fig_gender, title_size=22, legend=False)
+        fig_gender.update_layout(
+            legend=dict(orientation='h', y=-0.18, x=0.5, xanchor='center', font=dict(size=14)),
+            margin=dict(t=90, b=120, l=40, r=40)
+        )
         st.plotly_chart(fig_gender, use_container_width=True)
 
     st.markdown("---")

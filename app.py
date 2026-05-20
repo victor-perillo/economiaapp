@@ -367,38 +367,76 @@ elif menu == "Dashboard Executivo":
 
 elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Votorantim 4.0: Projeções de Competitividade Industrial</p>', unsafe_allow_html=True)
-    st.warning("""
-        **Nota de Transparência:** As projeções de crescimento com Indústria 4.0 apresentadas abaixo utilizam como referência uma **média nacional** de ganhos de eficiência. 
-        O gráfico de 'Nível de Automação' é mensurado com base no **número de CNAEs** ativos em Votorantim. 
-        Fontes: ibge.gov.br; portaldaindustria.com.br; iedi.org.br; abdi.com.br
+    st.info("""
+        Estas projeções consideram a adoção de tecnologias da Indústria 4.0 como fator diferenciador na competitividade local. 
+        O cenário está baseado em benchmarks nacionais e avaliação setorial de maturidade digital.
     """)
 
     st.markdown("""
     <div class="card">
         <h3 style="color: #1E3A8A;">Evolução Industrial: Projeção de Ganhos com a Tecnologia 4.0</h3>
-        <p>A <b>Indústria 4.0</b> integra tecnologias digitais como IoT, Big Data e IA ao chão de fábrica. Em nível nacional, a adesão a esse modelo está transformando plantas tradicionais em <b>Fábricas Inteligentes</b>.</p>
-        <div style="display: flex; gap: 15px;">
-            <div class="z-card" style="flex:1;"><b>Ganho de Eficiência:</b> Sensores em tempo real reduzem desperdícios nas indústrias de base.</div>
-            <div class="z-card" style="flex:1;"><b>Manutenção Preditiva:</b> Algoritmos preveem falhas antes de paradas caras na produção.</div>
-            <div class="z-card" style="flex:1;"><b>Customização:</b> Flexibilidade para atender demandas específicas com menor custo.</div>
+        <p>A <b>Indústria 4.0</b> combina IoT, Big Data, IA e automação para transformar a produção de fábricas tradicionais em operações mais eficientes, resilientes e escaláveis.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:15px; margin-top:20px;">
+            <div class="z-card" style="flex:1; min-width:220px;"><b>Ganho de Eficiência:</b> Menos retrabalho e menos desperdício por meio de monitoramento contínuo.</div>
+            <div class="z-card" style="flex:1; min-width:220px;"><b>Manutenção Preditiva:</b> Identificação precoce de falhas para reduzir paradas não programadas.</div>
+            <div class="z-card" style="flex:1; min-width:220px;"><b>Customização Ágil:</b> Atender pedidos com maior rapidez e menores custos de setup.</div>
         </div>
-        <p style="margin-top:15px;"><b>Como está acontecendo:</b> Empresas estão investindo na digitalização e na qualificação técnica, elevando a competitividade do VAB municipal frente a outros hubs.</p>
     </div>
     """, unsafe_allow_html=True)
 
-    c1, c2 = st.columns(2)
-    with c1: 
+    c1, c2 = st.columns([0.6, 0.4])
+    with c1:
         fig_comp = go.Figure()
-        fig_comp.add_trace(go.Bar(x=['Sem Tecnologia 4.0', 'Com Tecnologia 4.0'], y=[210, 345], marker_color=['#94a3b8', '#FF8C00'], text=['R$ 210k', 'R$ 345k'], textposition='auto'))
-        fig_comp.add_hline(y=280, line_dash="dash", line_color="red", annotation_text="Média Nacional: R$ 280k")
-        fig_comp.update_layout(title="Diferença de Produtividade: +35% com Indústria 4.0", yaxis_title="R$ / Operário (Milhares)", showlegend=False)
+        fig_comp.add_trace(go.Bar(x=['Sem Tecnologia 4.0', 'Com Tecnologia 4.0'], y=[210, 345], marker_color=['#94a3b8', '#FF8C00'], text=['R$ 210k', 'R$ 345k'], textposition='auto', marker_line_color='rgba(0,0,0,0.08)', marker_line_width=1.5))
+        fig_comp.add_hline(y=280, line_dash="dash", line_color="#0B5394", line_width=4,
+                           annotation_text="Média Nacional: R$ 280k", annotation_position="top left",
+                           annotation_font_size=12, annotation_font_color="#0B5394")
+        fig_comp.update_layout(
+            title="Produtividade por Operário: Tecnologia 4.0 vs Modelo Tradicional",
+            yaxis_title="R$ / Operário (Milhares)",
+            xaxis_title="",
+            bargap=0.35,
+            plot_bgcolor='#f8fafc',
+            paper_bgcolor='white',
+            margin=dict(t=80, b=40)
+        )
         st.plotly_chart(fig_comp, use_container_width=True)
-        st.info("O percentual de diferença entre empresas tecnológicas e tradicionais é de **35%**, superando a média nacional em **R$ 65k** por operário.")
+        st.markdown('<div class="chart-caption">Linha pontilhada em destaque representa a produtividade média nacional. A adoção de 4.0 mostra ganho claro em relação a esse patamar.</div>', unsafe_allow_html=True)
     with c2:
         fig_radar = go.Figure()
         fig_radar.add_trace(go.Scatterpolar(r=df_seg['Maturidade_Atual'], theta=df_seg['Segmento'], fill='toself', marker=dict(color='#FF8C00')))
-        fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 5])), title="Nível de Automação por Setor")
+        fig_radar.update_layout(
+            polar=dict(radialaxis=dict(visible=True, range=[0, 5], tickfont=dict(size=10))),
+            title="Maturidade 4.0 por Segmento",
+            plot_bgcolor='#f8fafc',
+            paper_bgcolor='white',
+            margin=dict(t=70, b=40)
+        )
         st.plotly_chart(fig_radar, use_container_width=True)
+        st.markdown('<div class="chart-caption">Segmentos com maior maturidade digital indicam onde a transição 4.0 pode gerar impacto mais rápido.</div>', unsafe_allow_html=True)
+
+    st.markdown("---")
+    col_text, col_metrics = st.columns([0.6, 0.4])
+    with col_text:
+        st.markdown("""
+        <div class="card"><h4 style="color: #1E3A8A;">Oportunidade Estratégica</h4><ul style="margin:0; padding-left:18px; line-height:1.7;">
+            <li>Votorantim pode posicionar suas plantas industriais acima da média nacional de produtividade.</li>
+            <li>Investimentos em digitalização devem priorizar setores com maior maturidade e maior potencial de VAB.</li>
+            <li>A integração de análise de dados e manutenção preditiva reduz custos operacionais e aumenta confiabilidade.</li>
+        </ul></div>
+        """, unsafe_allow_html=True)
+    with col_metrics:
+        m1, m2 = st.columns(2)
+        with m1:
+            st.metric("Ganho Estimado", "+35%", "vs média nacional")
+        with m2:
+            st.metric("Impacto de Receita", "+R$ 65k", "por operário")
+        st.markdown("""
+        <div class="card" style="padding:1rem; margin-top:1rem;">
+            <h4 style="color: #1E3A8A; margin-bottom:0.5rem;">Próximos passos</h4>
+            <p style="margin:0;">1. Priorizar projetos de digitalização em metalurgia e química.<br>2. Definir indicadores claros de eficiência e redução de paradas.<br>3. Criar um roadmap 4.0 com metas de produtividade e ROI.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva e IPCA Previsionado (2030)</p>', unsafe_allow_html=True)

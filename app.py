@@ -185,7 +185,7 @@ elif menu == "Problemas Identificados":
     st.markdown('<p class="section-title">Matriz de Problemas</p>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
-        st.error("""**Clusterização e Dependência**: O ecossistema é muito dependente de poucos players gigantes (como: Grupo Votorantim, Splice, Gás Natural e FLSmidth). 
+        st.error("""**Clusterização e Dependência em relação ao PIB    **: O ecossistema é muito dependente de poucos players gigantes (como: Grupo Votorantim, Splice, Gás Natural e FLSmidth). 
         Em termos de risco de negócio, isso é perigoso: se uma dessas verticais sofre um choque, o impacto no município é sistêmico.""")
         st.warning("""**Conflito Territorial:** O avanço do setor imobiliário sobre áreas industriais cria barreiras para a escalabilidade das fábricas. 
         É um problema de Trade-off entre expansão urbana e manutenção da produção.""")
@@ -259,19 +259,19 @@ elif menu == "Dashboard Executivo":
     df_p = df_hist.copy() 
     if st.session_state.aplicar_ipca_dash:
         ipca_filtered = {k: v for k, v in ipca_map.items() if k <= 2023}
-        df_p['Fator'] = [(np.prod([(1 + ipca_filtered[y]/100) for y in ipca_filtered if y <= ano])) for ano in df_p['Ano']]
-        df_p['Indústria (Real)'] = df_p['VAB_Industria'] / df_p['Fator']
-        df_p['Serviços (Real)'] = df_p['VAB_Servicos'] / df_p['Fator']
-        y_cols = ['VAB_Industria', 'Indústria (Real)', 'VAB_Servicos', 'Serviços (Real)']
+        df_p['Fator'] = [(np.prod([(1 + ipca_filtered[y]/100) for y in ipca_filtered if y > ano])) for ano in df_p['Ano']]
+        df_p['Indústria (Ajustado IPCA)'] = df_p['VAB_Industria'] * df_p['Fator']
+        df_p['Serviços (Ajustado IPCA)'] = df_p['VAB_Servicos'] * df_p['Fator']
+        y_cols = ['Indústria (Ajustado IPCA)', 'Serviços (Ajustado IPCA)']
     else:
         y_cols = ['VAB_Industria', 'VAB_Servicos']
 
     col_left, col_right = st.columns([0.65, 0.35])
     with col_left:
         fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços", markers=True,
-                               color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Real)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Real)": "#fdba74"})
+                               color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Ajustado IPCA)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Ajustado IPCA)": "#fdba74"})
         st.plotly_chart(fig_evolucao, use_container_width=True)
-        st.markdown('<div class="chart-caption">A análise revela que o PIB cresceu nominalmente de R$ 670 Mi em 2002 para R$ 5.2 Bi em 2023. O pico real em 2014 sugere uma expansão industrial atípica no período.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-caption">As séries históricas mostram valores menores inicialmente. Ao aplicar o IPCA, os valores ficam maiores e refletem a inflação histórica acumulada até 2023.</div>', unsafe_allow_html=True)
     with col_right:
         st.write("**Referência IPCA Aplicada (até 2023):**")
         ipca_exec_tab = pd.DataFrame([(k, v) for k, v in ipca_map.items() if k <= 2023], columns=['Ano', 'IPCA (%)'])
@@ -342,16 +342,15 @@ elif menu == "Projeção Futura":
     p_ipca, _ = projetar(np.array(list(ipca_map.keys())), np.array(list(ipca_map.values())), anos_proj)
 
     if st.button("Aplicar IPCA Previsionado"):
-        st.session_state.deflacao_proj = not st.session_state.get('deflacao_proj', False)
+        st.session_state.mostrar_ipca_proj = not st.session_state.get('mostrar_ipca_proj', False)
 
     df_p_total = pd.DataFrame({'Ano': anos_proj, 'VAB_Industria': p_ind, 'VAB_Servicos': p_serv, 'Tipo': 'Projeção'})
-    if st.session_state.get('deflacao_proj', False):
-        st.info("A queda ocorre porque estamos descontando a inflação futura. Sem inovação tecnológica, a riqueza real será corroída.")
-        f_2023 = np.prod([(1 + v/100) for v in ipca_map.values() if v > 0])
-        fatores = [f_2023 * np.prod([(1 + v/100) for v in p_ipca[:i+1]]) for i in range(len(p_ipca))]
-        df_p_total['Indústria (Real)'] = df_p_total['VAB_Industria'] / fatores
-        df_p_total['Serviços (Real)'] = df_p_total['VAB_Servicos'] / fatores
-        y_cols_p = ['VAB_Industria', 'Indústria (Real)', 'VAB_Servicos', 'Serviços (Real)']
+    if st.session_state.get('mostrar_ipca_proj', False):
+        st.info("Ao aplicar o IPCA previsto, os valores projetados aumentam para a base inflacionada.")
+        fatores = [np.prod([1 + v/100 for v in p_ipca[:i+1]]) for i in range(len(p_ipca))]
+        df_p_total['Indústria (Ajustado IPCA)'] = df_p_total['VAB_Industria'] * fatores
+        df_p_total['Serviços (Ajustado IPCA)'] = df_p_total['VAB_Servicos'] * fatores
+        y_cols_p = ['Indústria (Ajustado IPCA)', 'Serviços (Ajustado IPCA)']
     else:
         y_cols_p = ['VAB_Industria', 'VAB_Servicos']
 
@@ -369,7 +368,7 @@ elif menu == "Plano de Ação":
         st.markdown('<div class="card"><h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4><p><b>Ação:</b> Hub de Inovação Industrial.<br><b>Como:</b> Parceria com a FATEC para qualificação técnica especializada.<br><b>Impacto:</b> Combate ao "Efeito Shadowing" e aumento da renda média.</p></div>', unsafe_allow_html=True)
     with col_b:
         st.markdown('<div class="card"><h4 style="color: #1E3A8A;">4: Servitização Industrial</h4><p><b>Ação:</b> Estímulo à Indústria como Serviço.<br><b>Como:</b> Apoio para grandes plantas incubarem startups de logística e manutenção preditiva.<br><b>Impacto:</b> Equilíbrio setorial e novas receitas tributárias.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">5: Atração de Investimentos</h4><p><b>Ação:</b> Monitoramento Pós-IPCA.<br><b>Como:</b> Uso do Observatório para demonstrar ganhos reais de eficiência a investidores.<br><b>Impacto:</b> Melhoria da imagem municipal e competitividade.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">5: Atração de Investimentos e Empreendedorismo</h4><p><b>Ação:</b> Monitoramento Pós-IPCA.<br><b>Como:</b> Uso do Observatório para demonstrar ganhos reais de eficiência a investidores.<br><b>Impacto:</b> Melhoria da imagem municipal e competitividade.</p></div>', unsafe_allow_html=True)
         st.markdown('<div class="card"><h4 style="color: #1E3A8A;">6: Evolução Setorial</h4><p><b>Ação:</b> Transição de alto nível tecnológico.<br><b>Como:</b> Transformar indústria tradicional em geradora de serviços avançados.<br><b>Impacto:</b> Sustentação do PIB a longo prazo.</p></div>', unsafe_allow_html=True)
 
 elif menu == "Fontes/Referências":

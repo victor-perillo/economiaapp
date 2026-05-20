@@ -365,7 +365,7 @@ elif menu == "Dashboard Executivo":
         fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
         st.plotly_chart(fig_age, use_container_width=True)
 
-elif menu == "Diagnóstico Industria 4.0":
+elif menu == "Diagnóstico Indústria 4.0":
     st.markdown('<p class="section-title">Votorantim 4.0: Projeções de Competitividade Industrial</p>', unsafe_allow_html=True)
     st.warning("""
         **Nota de Transparência:** As projeções de crescimento com Indústria 4.0 apresentadas abaixo utilizam como referência uma **média nacional** de ganhos de eficiência. 

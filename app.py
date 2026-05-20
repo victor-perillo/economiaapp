@@ -375,7 +375,7 @@ elif menu == "Diagnóstico Indústria 4.0":
 
     st.markdown("""
     <div class="card">
-        <h3 style="color: #1E3A8A;"></h3>
+        <h3 style="color: #1E3A8A;">Evolução Industrial: Projeção de Ganhos com a Tecnologia 4.0</h3>
         <p>A <b>Indústria 4.0</b> integra tecnologias digitais como IoT, Big Data e IA ao chão de fábrica. Em nível nacional, a adesão a esse modelo está transformando plantas tradicionais em <b>Fábricas Inteligentes</b>.</p>
         <div style="display: flex; gap: 15px;">
             <div class="z-card" style="flex:1;"><b>Ganho de Eficiência:</b> Sensores em tempo real reduzem desperdícios nas indústrias de base.</div>

@@ -18,27 +18,31 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
     
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 16px; color: #0f172a; }
+    body, p, li, span, div { font-size: 1rem; line-height: 1.7; }
     .stApp { background-color: #f8fafc; }
     
     .card {
         background: white;
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
-        margin-bottom: 1.5rem;
+        padding: 2.2rem;
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+        border: none;
+        margin-bottom: 1.8rem;
     }
     
     .section-title {
-        color: #1e3a8a;
-        font-size: 2rem;
-        font-weight: 700;
+        color: #0f172a;
+        font-size: 2.6rem;
+        font-weight: 800;
         border-left: 10px solid #ff8c00;
-        padding-left: 20px;
+        padding-left: 22px;
         margin-top: 20px;
-        margin-bottom: 30px;
+        margin-bottom: 34px;
     }
+    .stApp h3, .stApp h4 { color: #0f172a; }
+    .stApp h3 { font-size: 1.9rem; margin-bottom: 0.8rem; }
+    .stApp h4 { font-size: 1.3rem; margin-bottom: 0.6rem; }
 
     .step-box { 
         padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; border-left: 8px solid; 
@@ -48,16 +52,17 @@ st.markdown("""
     .step-carga { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
 
     .z-card { 
-        background-color: #f1f5f9; padding: 1.2rem; border-radius: 8px; 
-        border-left: 5px solid #ff8c00; margin-bottom: 12px; min-height: 100px;
+        background-color: #f1f5f9; padding: 1.4rem; border-radius: 14px; 
+        border-left: 5px solid #ff8c00; margin-bottom: 16px; min-height: 120px;
+        font-size: 1rem;
     }
 
     [data-testid="stSidebar"] { background-color: #0f172a; }
     [data-testid="stSidebar"] * { color: #ffffff !important; }
     
-    .chart-caption { text-align: center; color: #64748b; font-style: italic; margin-top: 8px; font-size: 0.9rem; }
+    .chart-caption { text-align: center; color: #475569; font-style: italic; margin-top: 12px; font-size: 1rem; }
     .footer {
-        text-align: center; padding: 3rem; color: #64748b; font-size: 0.9rem;
+        text-align: center; padding: 3rem; color: #475569; font-size: 1rem;
         border-top: 1px solid #e2e8f0; margin-top: 5rem;
     }
     </style>
@@ -94,6 +99,30 @@ def load_data():
     return df_seg, df_hist
 
 df_seg, df_hist = load_data()
+
+def style_figure(fig, title_size=20, legend=True):
+    layout_options = dict(
+        template='plotly_white',
+        font=dict(family='Inter, sans-serif', size=16, color='#0f172a'),
+        title_font=dict(family='Inter, sans-serif', size=title_size, color='#0f172a'),
+        plot_bgcolor='#f8fafc',
+        paper_bgcolor='white',
+        margin=dict(t=90, b=60, l=60, r=40),
+    )
+    if legend:
+        layout_options['legend'] = dict(font=dict(size=14), orientation='h', y=-0.2, x=0.5, xanchor='center')
+    else:
+        layout_options['showlegend'] = False
+    fig.update_layout(**layout_options)
+    try:
+        fig.update_xaxes(showgrid=False, zeroline=False, tickfont=dict(size=14))
+    except Exception:
+        pass
+    try:
+        fig.update_yaxes(showgrid=True, gridcolor='rgba(15, 23, 42, 0.08)', zeroline=False, tickfont=dict(size=14))
+    except Exception:
+        pass
+    return fig
 
 ipca_map = {
     2002: 12.53, 2003: 9.30, 2004: 7.60, 2005: 5.69, 2006: 3.14, 2007: 4.46, 2008: 5.90, 2009: 4.31, 2010: 5.91, 
@@ -304,6 +333,8 @@ elif menu == "Dashboard Executivo":
 
         fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços", markers=True,
                                color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Ajustado IPCA)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Ajustado IPCA)": "#fdba74"})
+        fig_evolucao.update_layout(yaxis_title='Valor (R$ milhões)')
+        style_figure(fig_evolucao, title_size=22)
         st.plotly_chart(fig_evolucao, use_container_width=True)
         st.markdown('<div class="chart-caption">As séries históricas mostram valores menores inicialmente. Ao aplicar o IPCA, os valores ficam maiores e refletem a inflação histórica acumulada até 2023.</div>', unsafe_allow_html=True)
 
@@ -314,7 +345,8 @@ elif menu == "Dashboard Executivo":
         fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
                              title='Participação Estimada no PIB (2023)', hole=0.3,
                              color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
-        fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=14)
+        style_figure(fig_gdp_pie, title_size=22, legend=False)
         st.plotly_chart(fig_gdp_pie, use_container_width=True)
     with obs_col:
         st.markdown("""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Observação de Participação</h4>\n            <p style=\"margin:0;\">Serviços representam a maior fatia estimada do PIB, enquanto Agropecuária chega a menos de 1%.</p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Indústria e Administração Pública ocupam cerca de 35% do PIB local.</p>\n        </div>""", unsafe_allow_html=True)
@@ -326,7 +358,10 @@ elif menu == "Dashboard Executivo":
         ipca_exec_tab = pd.DataFrame([(k, v) for k, v in ipca_map.items() if k <= 2023], columns=['Ano', 'IPCA (%)'])
         st.dataframe(ipca_exec_tab, hide_index=True, height=250)
     with cnae_col:
-        st.plotly_chart(px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE"), use_container_width=True)
+        fig_cnae = px.pie(df_seg, values='VAB_Pct', names='Segmento', hole=.4, title="Riqueza Industrial por CNAE")
+        fig_cnae.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=13)
+        style_figure(fig_cnae, title_size=20, legend=False)
+        st.plotly_chart(fig_cnae, use_container_width=True)
 
     st.markdown("---")
     st.markdown('<h3>Distribuição de Empregos em Votorantim</h3>', unsafe_allow_html=True)
@@ -336,6 +371,7 @@ elif menu == "Dashboard Executivo":
     with emp_trend_col:
         fig_trend = px.line(employment_trend, x='Ano', y='Vínculos', title='Evolução dos Empregos Formais (2014-2023)', markers=True)
         fig_trend.update_layout(yaxis_title='Vínculos formais', xaxis=dict(dtick=1))
+        style_figure(fig_trend, title_size=22)
         st.plotly_chart(fig_trend, use_container_width=True)
 
     st.markdown("---")
@@ -343,13 +379,15 @@ elif menu == "Dashboard Executivo":
     with row_job1:
         fig_sector_bar = px.bar(sector_df, x='Setor Econômico', y='Percentual', title='Distribuição por Setor (2023)',
                                 text='Percentual', color='Setor Econômico', color_discrete_sequence=px.colors.qualitative.Safe)
-        fig_sector_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+        fig_sector_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside', textfont_size=13)
         fig_sector_bar.update_layout(yaxis_title='Percentual (%)', showlegend=False)
+        style_figure(fig_sector_bar, title_size=22, legend=False)
         st.plotly_chart(fig_sector_bar, use_container_width=True)
     with row_job2:
         fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', title='Divisão por Gênero (2023)',
                             color_discrete_map={'Homens': '#1E40AF', 'Mulheres': '#DB2777'}, hole=0.3)
-        fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=14)
+        style_figure(fig_gender, title_size=22, legend=False)
         st.plotly_chart(fig_gender, use_container_width=True)
 
     st.markdown("---")
@@ -359,10 +397,12 @@ elif menu == "Dashboard Executivo":
                                  title='Distribuição por Setor de Atividade (2023)',
                                  color='Percentual', color_continuous_scale='Blues')
         fig_treemap.update_traces(textinfo='label+value+percent parent')
+        style_figure(fig_treemap, title_size=22, legend=False)
         st.plotly_chart(fig_treemap, use_container_width=True)
     with row_job4:
         fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3)
-        fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside', textfont_size=14)
+        style_figure(fig_age, title_size=22, legend=False)
         st.plotly_chart(fig_age, use_container_width=True)
 
 elif menu == "Diagnóstico Indústria 4.0":
@@ -396,22 +436,20 @@ elif menu == "Diagnóstico Indústria 4.0":
             yaxis_title="R$ / Operário (Milhares)",
             xaxis_title="",
             bargap=0.35,
-            plot_bgcolor='#f8fafc',
-            paper_bgcolor='white',
             margin=dict(t=80, b=40)
         )
+        style_figure(fig_comp, title_size=22, legend=False)
         st.plotly_chart(fig_comp, use_container_width=True)
         st.markdown('<div class="chart-caption">Linha pontilhada em destaque representa a produtividade média nacional. A adoção de 4.0 mostra ganho claro em relação a esse patamar.</div>', unsafe_allow_html=True)
     with c2:
         fig_radar = go.Figure()
         fig_radar.add_trace(go.Scatterpolar(r=df_seg['Maturidade_Atual'], theta=df_seg['Segmento'], fill='toself', marker=dict(color='#FF8C00')))
         fig_radar.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 5], tickfont=dict(size=10))),
+            polar=dict(radialaxis=dict(visible=True, range=[0, 5], tickfont=dict(size=12))),
             title="Maturidade 4.0 por Segmento",
-            plot_bgcolor='#f8fafc',
-            paper_bgcolor='white',
             margin=dict(t=70, b=40)
         )
+        style_figure(fig_radar, title_size=22, legend=False)
         st.plotly_chart(fig_radar, use_container_width=True)
         st.markdown('<div class="chart-caption">Segmentos com maior maturidade digital indicam onde a transição 4.0 pode gerar impacto mais rápido.</div>', unsafe_allow_html=True)
 
@@ -480,8 +518,10 @@ elif menu == "Projeção Futura":
         y_cols_p = ['VAB_Industria', 'VAB_Servicos']
 
     df_f = pd.concat([df_hist.assign(Tipo='Histórico'), df_p_total])
-    st.plotly_chart(px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030", 
-                            color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"}), use_container_width=True)
+    fig_proj = px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030", 
+                        color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"})
+    style_figure(fig_proj, title_size=22)
+    st.plotly_chart(fig_proj, use_container_width=True)
     st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(p_ipca):.2f}%")
 
 elif menu == "Plano de Ação":

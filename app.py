@@ -262,7 +262,7 @@ elif menu == "Dashboard Executivo":
         df_p['Fator'] = [(np.prod([(1 + ipca_filtered[y]/100) for y in ipca_filtered if y > ano])) for ano in df_p['Ano']]
         df_p['Indústria (Ajustado IPCA)'] = df_p['VAB_Industria'] * df_p['Fator']
         df_p['Serviços (Ajustado IPCA)'] = df_p['VAB_Servicos'] * df_p['Fator']
-        y_cols = ['Indústria (Ajustado IPCA)', 'Serviços (Ajustado IPCA)']
+        y_cols = ['VAB_Industria', 'Indústria (Ajustado IPCA)', 'VAB_Servicos', 'Serviços (Ajustado IPCA)']
     else:
         y_cols = ['VAB_Industria', 'VAB_Servicos']
 
@@ -350,7 +350,7 @@ elif menu == "Projeção Futura":
         fatores = [np.prod([1 + v/100 for v in p_ipca[:i+1]]) for i in range(len(p_ipca))]
         df_p_total['Indústria (Ajustado IPCA)'] = df_p_total['VAB_Industria'] * fatores
         df_p_total['Serviços (Ajustado IPCA)'] = df_p_total['VAB_Servicos'] * fatores
-        y_cols_p = ['Indústria (Ajustado IPCA)', 'Serviços (Ajustado IPCA)']
+        y_cols_p = ['VAB_Industria', 'Indústria (Ajustado IPCA)', 'VAB_Servicos', 'Serviços (Ajustado IPCA)']
     else:
         y_cols_p = ['VAB_Industria', 'VAB_Servicos']
 

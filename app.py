@@ -101,6 +101,30 @@ ipca_map = {
     2020: 4.52, 2021: 10.06, 2022: 5.79, 2023: 4.62, 2024: 4.83, 2025: 4.26
 }
 
+employment_total = 26700
+
+gender_df = pd.DataFrame({
+    'Gênero': ['Homens', 'Mulheres'],
+    'Vínculos': [13400, 13300],
+    'Percentual': [50.2, 49.8]
+})
+
+sector_df = pd.DataFrame({
+    'Setor Econômico': ['Serviços', 'Comércio', 'Indústria', 'Construção'],
+    'Percentual': [47.0, 26.0, 22.1, 4.9],
+    'Vínculos': [12549, 6608, 5900, 1300]
+})
+
+age_df = pd.DataFrame({
+    'Faixa Etária': ['30 a 49 anos', '50 a 64 anos', '14 a 24 anos', '25 a 29 anos', '65 anos ou mais'],
+    'Percentual': [50.3, 18.8, 16.2, 13.4, 1.4]
+})
+
+employment_trend = pd.DataFrame({
+    'Ano': [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+    'Vínculos': [24300, 24350, 24370, 24380, 24390, 24390, 24390, 24850, 25500, 26700]
+})
+
 # --- SIDEBAR ---
 with st.sidebar:
     col_logo, col_qr = st.columns([1, 1])
@@ -242,7 +266,40 @@ elif menu == "Dashboard Executivo":
     with c3: st.metric("VAB Serviços (Est.)", formatar_valor(dados_atuais['VAB_Servicos']))
 
     st.markdown("---")
-    
+
+    emp_col1, emp_col2, emp_col3 = st.columns([1, 1, 1])
+    with emp_col1:
+        st.markdown(f"""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Total de Empregos Formais</h4>\n            <p style=\"font-size:2rem; margin:0;\"><b>{employment_total/1000:.1f} mil</b></p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Vínculos formais registrados em Votorantim em 2023.</p>\n        </div>""", unsafe_allow_html=True)
+    with emp_col2:
+        fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', title='Divisão por Gênero (2023)',
+                            color_discrete_map={'Homens': '#1E40AF', 'Mulheres': '#DB2777'})
+        fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        st.plotly_chart(fig_gender, use_container_width=True)
+    with emp_col3:
+        fig_sector_bar = px.bar(sector_df, x='Setor Econômico', y='Percentual', title='Distribuição por Setor (2023)',
+                                text='Percentual', color='Setor Econômico', color_discrete_sequence=px.colors.qualitative.Safe)
+        fig_sector_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+        fig_sector_bar.update_layout(yaxis_title='Percentual (%)', showlegend=False)
+        st.plotly_chart(fig_sector_bar, use_container_width=True)
+
+    st.markdown("---")
+    treemap_col, age_col = st.columns([0.65, 0.35])
+    with treemap_col:
+        fig_treemap = px.treemap(sector_df, path=['Setor Econômico'], values='Vínculos',
+                                 title='Distribuição por Setor de Atividade (2023)',
+                                 color='Percentual', color_continuous_scale='Blues')
+        fig_treemap.update_traces(textinfo='label+value+percent parent')
+        st.plotly_chart(fig_treemap, use_container_width=True)
+    with age_col:
+        fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3)
+        fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='inside')
+        st.plotly_chart(fig_age, use_container_width=True)
+
+    st.markdown("---")
+    fig_trend = px.line(employment_trend, x='Ano', y='Vínculos', title='Evolução dos Empregos Formais (2014-2023)', markers=True)
+    fig_trend.update_layout(yaxis_title='Vínculos formais', xaxis=dict(dtick=1))
+    st.plotly_chart(fig_trend, use_container_width=True)
+
     fig_comparativo = go.Figure()
     fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB'], name='PIB Votorantim Corrente', marker_color='#1E3A8A'))
     fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB_Constante'], name='PIB Constante (2023)', marker_color='#E67E22'))

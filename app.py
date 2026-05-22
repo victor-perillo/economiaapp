@@ -16,53 +16,71 @@ st.set_page_config(
 # --- CUSTOMIZAÇÃO CSS (FRONT-END MODERNO) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 18px; color: #0f172a; }
+    body, p, li, span, div, a, button, input, label, select { font-size: 1.05rem; line-height: 1.75; }
+    .stApp { background-color: #f8fafc; }
+    
+    .card {
+        background: white;
+        padding: 2.4rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+        border: none;
+        margin-bottom: 2rem;
+    }
+    
+    .section-title {
+        color: #0f172a;
+        font-size: 2.9rem;
+        font-weight: 800;
+        border-left: 10px solid #ff8c00;
+        padding-left: 22px;
+        margin-top: 20px;
+        margin-bottom: 36px;
+    }
+    .stApp h3, .stApp h4 { color: #0f172a; }
+    .stApp h3 { font-size: 2.2rem; margin-bottom: 1rem; }
+    .stApp h4 { font-size: 1.55rem; margin-bottom: 0.75rem; }
 
-    :root{ --bg:#f1f5f9; --surface:#ffffff; --surface-soft:#f8fbff; --text:#0f172a; --text-muted:#64748b; --primary:#334155; --accent:#ff8c00; }
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); }
-    body, p, li, span, div, a, button, input, label, select { font-size: 1rem; line-height: 1.72; }
-    .stApp { background: var(--bg); padding: 18px 20px 40px; }
-    .reportview-container .main .block-container { padding-top: 0; padding-left: 0; padding-right: 0; max-width: 1700px; margin: 0 auto; }
+    .step-box { 
+        padding: 1.8rem; border-radius: 12px; margin-bottom: 1.2rem; border-left: 8px solid; 
+        font-size: 1.05rem;
+    }
+    .step-extracao { background-color: #eff6ff; border-color: #1e3a8a; color: #1e3a8a; }
+    .step-transformacao { background-color: #fffaf5; border-color: #ff8c00; color: #854d0e; }
+    .step-carga { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
 
-    .topbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; background: linear-gradient(90deg, #111827 0%, #111827 50%, #1f2937 100%); padding:24px 26px; border-radius:24px; box-shadow:0 24px 60px rgba(15,23,42,0.18); color:#fff; margin-bottom:24px; }
-    .topbar .title { font-size:1.9rem; font-weight:700; letter-spacing:0.01em; margin:0; }
-    .topbar .subtitle { margin:0.35rem 0 0; max-width:720px; opacity:0.95; }
-    .topbar .cta { display:inline-flex; align-items:center; justify-content:center; gap:10px; background:rgba(255,255,255,0.18); color:#fff; padding:12px 18px; border-radius:16px; border:1px solid rgba(255,255,255,0.28); text-decoration:none; font-weight:600; transition: background .2s ease; }
-    .topbar .cta:hover { background:rgba(255,255,255,0.26); }
+    .z-card { 
+        background-color: #f1f5f9; padding: 1.6rem; border-radius: 16px; 
+        border-left: 5px solid #ff8c00; margin-bottom: 18px; min-height: 130px;
+        font-size: 1.05rem;
+    }
 
-    .section-title { color:#0f172a; font-size:2.55rem; font-weight:800; border-left:10px solid var(--accent); padding-left:18px; margin:0 0 24px; }
-    .section-note { color:var(--text-muted); font-size:1rem; margin-top:-8px; margin-bottom:20px; }
-    .module-card { background: var(--surface); border-radius:24px; padding:26px; box-shadow:0 20px 40px rgba(15,23,42,0.08); border:1px solid rgba(15,23,42,0.06); margin-bottom:24px; }
-    .card { background: var(--surface); border-radius:22px; padding:24px; box-shadow:0 14px 32px rgba(15,23,42,0.08); border:1px solid rgba(15,23,42,0.06); margin-bottom:22px; }
-    .card-slim { background: var(--surface); border-radius:18px; padding:18px; box-shadow:0 10px 24px rgba(15,23,42,0.05); border:1px solid rgba(15,23,42,0.06); margin-bottom:18px; }
-    .highlight { color: var(--primary); font-weight:700; }
-    .z-card { background:#f8fbff; padding:20px; border-radius:18px; border-left:5px solid var(--accent); box-shadow:0 14px 26px rgba(15,23,42,0.04); margin-bottom:18px; }
-    .step-box { padding:20px; border-radius:18px; margin-bottom:18px; box-shadow:0 14px 28px rgba(15,23,42,0.05); }
-    .step-extracao { background:#f3f4f6; border-left:6px solid #334155; color:#111827; }
-    .step-transformacao { background:#fff7ed; border-left:6px solid #ff8c00; color:#7c4c11; }
-    .step-carga { background:#f3fff6; border-left:6px solid #16a34a; color:#0f5132; }
-
-    [data-testid="stSidebar"] { background: #111827; }
-    [data-testid="stSidebar"] *, [data-testid="stSidebar"] label { color:#fff !important; }
-    [data-testid="stSidebar"] .stButton>button { border-radius:14px; background:var(--accent); color:#fff; border:none; font-weight:600; }
-    [data-testid="stSidebar"] .stButton>button:hover { background:#f97316; }
-    [data-testid="stSidebar"] .stSelectbox>div>div>div, [data-testid="stSidebar"] .stTextInput>div>div>input { background:#1f2937 !important; color:#fff !important; border:1px solid rgba(255,255,255,0.10) !important; }
-    [data-testid="stSidebar"] .stSelectbox>label>div, [data-testid="stSidebar"] .stSelectbox>label>div span { color:#f8fafc !important; }
-    input[type=range] { accent-color: #ff8c00 !important; }
-    input[type=range]::-webkit-slider-runnable-track { background:#cbd5e1 !important; border-radius:12px; height:10px; }
-    input[type=range]::-webkit-slider-thumb { background:#334155 !important; border:none; border-radius:50%; height:22px; width:22px; margin-top:-6px; }
-    input[type=range]::-moz-range-track { background:#cbd5e1 !important; border-radius:12px; height:10px; }
-    input[type=range]::-moz-range-thumb { background:#334155 !important; border:none; border-radius:50%; height:22px; width:22px; }
-    [data-testid="stSidebar"] img { max-width: 120px !important; margin-bottom: 16px; }
-    .stButton>button { font-size:1.05rem !important; padding:0.85rem 1rem !important; }
-    .stSelectbox, .stRadio { font-size:1.05rem !important; }
-
-    .chart-caption { text-align:center; color:var(--text-muted); font-style:italic; margin-top:16px; font-size:1rem; }
-    .footer { text-align:center; padding:32px 0 16px; color:var(--text-muted); font-size:0.96rem; border-top:1px solid rgba(15,23,42,0.08); margin-top:44px; }
-    .link-button { display:inline-flex; align-items:center; justify-content:center; padding:12px 18px; background:#334155; color:#fff; border-radius:14px; text-decoration:none; font-weight:600; }
-    .charts-grid { display:grid; gap:22px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); }
-
-    @media (max-width: 900px) { .topbar { flex-direction:column; align-items:flex-start; } .section-title { font-size:1.95rem; } }
+    [data-testid="stSidebar"] { background-color: #0f172a; }
+    [data-testid="stSidebar"] * { color: #ffffff !important; font-size: 1.05rem !important; }
+    [data-testid="stSidebar"] img { max-width: 120px !important; }
+    [data-testid="stSidebar"] select, [data-testid="stSidebar"] .stSelectbox>div>div, [data-testid="stSidebar"] .stSelectbox>div>div>div,
+    [data-testid="stSidebar"] .stTextInput>div>div>input {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid #334155 !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox>label>div, [data-testid="stSidebar"] .stSelectbox>label>div span {
+        color: #ffffff !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox>div>div>div span { color: #ffffff !important; }
+    .stButton>button { font-size: 1.1rem !important; padding: 0.9rem 1rem !important; }
+    .stSelectbox, .stRadio { font-size: 1.1rem !important; }
+    .css-1oe9bi0, .css-1d391kg, .css-hxt7ib { font-size: 1.1rem !important; }
+    .stTextInput>div>div>input { font-size: 1.05rem !important; padding: 0.9rem !important; }
+    
+    .chart-caption { text-align: center; color: #475569; font-style: italic; margin-top: 14px; font-size: 1.05rem; }
+    .footer {
+        text-align: center; padding: 3.2rem; color: #475569; font-size: 1.05rem;
+        border-top: 1px solid #e2e8f0; margin-top: 5rem;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -97,18 +115,6 @@ def load_data():
     return df_seg, df_hist
 
 df_seg, df_hist = load_data()
-
-st.markdown("""
-    <div class="topbar">
-      <div>
-        <div class="title">Observatório Industrial Votorantim | Inteligência 4.0</div>
-        <div class="subtitle">Painel interativo — visão estratégica e operacional</div>
-      </div>
-      <div>
-        <a class="cta" href="https://economiaapp-economia-fatec.streamlit.app/" target="_blank">Abrir no Streamlit</a>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
 
 def style_figure(fig, title_size=20, legend=True):
     layout_options = dict(
@@ -290,51 +296,33 @@ elif menu == "Dashboard Executivo":
     col_info1, col_info2, col_info3 = st.columns(3)
     with col_info1:
         st.markdown("""<div class="card" style="min-height: 250px;">
-            <h4 style="color:var(--primary);">O que é o PIB?</h4>
+            <h4 style="color:#1E3A8A;">O que é o PIB?</h4>
             O <b>Produto Interno Bruto (PIB)</b> representa a soma de todos os bens e serviços finais produzidos em uma região durante um período. É o principal indicador para medir a riqueza e o vigor econômico de um município.
         </div>""", unsafe_allow_html=True)
     with col_info2:
         st.markdown("""<div class="card" style="min-height: 250px;">
-            <h4 style="color:var(--primary);">O que é o VAB?</h4>
+            <h4 style="color:#1E3A8A;">O que é o VAB?</h4>
             O <b>Valor Adicionado Bruto (VAB)</b> é o valor que cada setor (Indústria, Serviços, Agro) adiciona à economia, deduzindo o custo dos insumos utilizados no processo produtivo. Reflete a contribuição real de cada atividade.
         </div>""", unsafe_allow_html=True)
     with col_info3:
         st.markdown("""<div class="card" style="min-height: 250px;">
-            <h4 style="color:var(--primary);">Como são calculados?</h4>
+            <h4 style="color:#1E3A8A;">Como são calculados?</h4>
             O <b>VAB</b> é calculado pela diferença entre o Valor Bruto da Produção e o Consumo Intermediário. O <b>PIB</b> é a soma dos VABs de todos os setores mais os impostos sobre produtos (líquidos de subsídios).
         </div>""", unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.markdown(f"""
-            <div class="card-slim" style="min-height: 180px;">
-                <h4 style="color:var(--primary); margin-bottom:0.75rem;">PIB Municipal ({ano_txt})</h4>
-                <p style="font-size:2rem; font-weight:700; margin-bottom:0.4rem;">{formatar_valor(dados_atuais['PIB'])}</p>
-                <p style="color:#64748b; margin:0;">Indicador principal da performance econômica local.</p>
-            </div>
-        """, unsafe_allow_html=True)
+        st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
     with c2:
-        st.markdown(f"""
-            <div class="card-slim" style="min-height: 180px;">
-                <h4 style="color:var(--primary); margin-bottom:0.75rem;">VAB Indústria (Est.)</h4>
-                <p style="font-size:2rem; font-weight:700; margin-bottom:0.4rem;">{formatar_valor(dados_atuais['VAB_Industria'])}</p>
-                <p style="color:#64748b; margin:0;">Contribuição estimada da indústria ao valor adicionado bruto.</p>
-            </div>
-        """, unsafe_allow_html=True)
+        st.metric("VAB Indústria (Est.)", formatar_valor(dados_atuais['VAB_Industria']))
     with c3:
-        st.markdown(f"""
-            <div class="card-slim" style="min-height: 180px;">
-                <h4 style="color:var(--primary); margin-bottom:0.75rem;">VAB Serviços (Est.)</h4>
-                <p style="font-size:2rem; font-weight:700; margin-bottom:0.4rem;">{formatar_valor(dados_atuais['VAB_Servicos'])}</p>
-                <p style="color:#64748b; margin:0;">Contribuição estimada do setor de serviços ao PIB municipal.</p>
-            </div>
-        """, unsafe_allow_html=True)
+        st.metric("VAB Serviços (Est.)", formatar_valor(dados_atuais['VAB_Servicos']))
 
     st.markdown("---")
 
     fig_comparativo = go.Figure()
-    fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB'], name='PIB Votorantim Corrente', marker_color='#334155'))
-    fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB_Constante'], name='PIB Constante (2023)', marker_color='#64748b'))
+    fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB'], name='PIB Votorantim Corrente', marker_color='#1E3A8A'))
+    fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB_Constante'], name='PIB Constante (2023)', marker_color='#E67E22'))
     fig_comparativo.update_layout(
         title="Evolução do PIB (Correntes vs Constantes de 2023), em R$ mil",
         xaxis_title="Ano", barmode='group', legend=dict(orientation="h", y=-0.3, x=0.5, xanchor="center")
@@ -361,7 +349,7 @@ elif menu == "Dashboard Executivo":
             y_cols = ['VAB_Industria', 'VAB_Servicos']
 
         fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços", markers=True,
-                               color_discrete_map={"VAB_Industria": "#334155", "Indústria (Ajustado IPCA)": "#94a3b8", "VAB_Servicos": "#FF8C00", "Serviços (Ajustado IPCA)": "#f59e0b"})
+                               color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Ajustado IPCA)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Ajustado IPCA)": "#fdba74"})
         fig_evolucao.update_layout(yaxis_title='Valor (R$ milhões)')
         style_figure(fig_evolucao, title_size=22)
         st.plotly_chart(fig_evolucao, use_container_width=True)
@@ -373,7 +361,7 @@ elif menu == "Dashboard Executivo":
     with dist_pib_col:
         fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
                              title='Participação Estimada no PIB (2023)', hole=0.3,
-                             color='Setor Econômico', color_discrete_sequence=['#334155', '#64748b', '#94a3b8', '#ff8c00'])
+                             color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
         fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
         style_figure(fig_gdp_pie, title_size=22, legend=True)
         fig_gdp_pie.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
@@ -409,14 +397,14 @@ elif menu == "Dashboard Executivo":
     row_job1, row_job2 = st.columns(2)
     with row_job1:
         fig_sector_bar = px.bar(sector_df, x='Setor Econômico', y='Percentual', title='Distribuição por Setor (2023)',
-                                text='Percentual', color='Setor Econômico', color_discrete_sequence=['#334155', '#64748b', '#94a3b8', '#ff8c00'])
+                                text='Percentual', color='Setor Econômico', color_discrete_sequence=px.colors.qualitative.Safe)
         fig_sector_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside', textfont_size=13)
         fig_sector_bar.update_layout(yaxis_title='Percentual (%)', showlegend=False)
         style_figure(fig_sector_bar, title_size=22, legend=False)
         st.plotly_chart(fig_sector_bar, use_container_width=True)
     with row_job2:
         fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', title='Divisão por Gênero (2023)',
-                            color_discrete_map={'Homens': '#334155', 'Mulheres': '#b91c1c'}, hole=0.3)
+                            color_discrete_map={'Homens': '#1E40AF', 'Mulheres': '#DB2777'}, hole=0.3)
         fig_gender.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
         style_figure(fig_gender, title_size=22, legend=False)
         fig_gender.update_layout(
@@ -430,13 +418,12 @@ elif menu == "Dashboard Executivo":
     with row_job3:
         fig_treemap = px.treemap(sector_df, path=['Setor Econômico'], values='Vínculos',
                                  title='Distribuição por Setor de Atividade (2023)',
-                                 color='Percentual', color_continuous_scale=['#f8fafc', '#cbd5e1', '#64748b', '#334155'])
+                                 color='Percentual', color_continuous_scale='Blues')
         fig_treemap.update_traces(textinfo='label+value+percent parent')
         style_figure(fig_treemap, title_size=22, legend=False)
         st.plotly_chart(fig_treemap, use_container_width=True)
     with row_job4:
-        fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3,
-                        color_discrete_sequence=['#334155', '#64748b', '#94a3b8', '#cbd5e1', '#ff8c00'])
+        fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3)
         fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
         style_figure(fig_age, title_size=22, legend=True)
         fig_age.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
@@ -451,7 +438,7 @@ elif menu == "Diagnóstico Indústria 4.0":
 
     st.markdown("""
     <div class="card">
-        <h3 style="color: var(--primary);">Evolução Industrial: Projeção de Ganhos com a Tecnologia 4.0</h3>
+        <h3 style="color: #1E3A8A;">Evolução Industrial: Projeção de Ganhos com a Tecnologia 4.0</h3>
         <p>A <b>Indústria 4.0</b> combina IoT, Big Data, IA e automação para transformar a produção de fábricas tradicionais em operações mais eficientes, resilientes e escaláveis.</p>
         <div style="display:flex; flex-wrap:wrap; gap:15px; margin-top:20px;">
             <div class="z-card" style="flex:1; min-width:220px;"><b>Ganho de Eficiência:</b> Menos retrabalho e menos desperdício por meio de monitoramento contínuo.</div>
@@ -467,7 +454,7 @@ elif menu == "Diagnóstico Indústria 4.0":
         fig_comp.add_trace(go.Bar(x=['Sem Tecnologia 4.0', 'Com Tecnologia 4.0'], y=[210, 345], marker_color=['#94a3b8', '#FF8C00'], text=['R$ 210k', 'R$ 345k'], textposition='auto', marker_line_color='rgba(0,0,0,0.08)', marker_line_width=1.5))
         fig_comp.add_hline(y=280, line_dash="dash", line_color="#0B5394", line_width=4,
                            annotation_text="Média Nacional: R$ 280k", annotation_position="top left",
-                           annotation_font_size=12, annotation_font_color="#334155")
+                           annotation_font_size=12, annotation_font_color="#0B5394")
         fig_comp.update_layout(
             title="Produtividade por Operário: Tecnologia 4.0 vs Modelo Tradicional",
             yaxis_title="R$ / Operário (Milhares)",
@@ -494,7 +481,7 @@ elif menu == "Diagnóstico Indústria 4.0":
     col_text, col_metrics = st.columns([0.6, 0.4])
     with col_text:
         st.markdown("""
-        <div class="card"><h4 style="color: var(--primary);">Oportunidade Estratégica</h4><ul style="margin:0; padding-left:18px; line-height:1.7;">
+        <div class="card"><h4 style="color: #1E3A8A;">Oportunidade Estratégica</h4><ul style="margin:0; padding-left:18px; line-height:1.7;">
             <li>Votorantim pode posicionar suas plantas industriais acima da média nacional de produtividade.</li>
             <li>Investimentos em digitalização devem priorizar setores com maior maturidade e maior potencial de VAB.</li>
             <li>A integração de análise de dados e manutenção preditiva reduz custos operacionais e aumenta confiabilidade.</li>
@@ -508,7 +495,7 @@ elif menu == "Diagnóstico Indústria 4.0":
             st.metric("Impacto de Receita", "+R$ 65k", "por operário")
         st.markdown("""
         <div class="card" style="padding:1rem; margin-top:1rem;">
-            <h4 style="color: var(--primary); margin-bottom:0.5rem;">Próximos passos</h4>
+            <h4 style="color: #1E3A8A; margin-bottom:0.5rem;">Próximos passos</h4>
             <p style="margin:0;">1. Priorizar projetos de digitalização em metalurgia e química.<br>2. Definir indicadores claros de eficiência e redução de paradas.<br>3. Criar um roadmap 4.0 com metas de produtividade e ROI.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -517,7 +504,7 @@ elif menu == "Projeção Futura":
     st.markdown('<p class="section-title">Análise Preditiva e IPCA Previsionado (2030)</p>', unsafe_allow_html=True)
     st.markdown("""
     <div class="card">
-        <h3 style="color: var(--primary);">Análise de Tendência: O Caminho até 2030</h3>
+        <h3 style="color: #1E3A8A;">Análise de Tendência: O Caminho até 2030</h3>
         <p>Este gráfico utiliza <b>Regressão Linear</b> baseada na série de 21 anos para prever o futuro econômico municipal.</p>
         <div style="display: flex; gap: 15px;">
             <div class="z-card" style="flex:1;"><b>Crescimento Nominal:</b> Expansão sustentada baseada no histórico desde 2002.</div>
@@ -556,7 +543,7 @@ elif menu == "Projeção Futura":
 
     df_f = pd.concat([df_hist.assign(Tipo='Histórico'), df_p_total])
     fig_proj = px.line(df_f, x='Ano', y=y_cols_p, line_dash='Tipo', title="Projeção Econômica até 2030", 
-                        color_discrete_map={"VAB_Industria": "#334155", "VAB_Servicos": "#FF8C00"})
+                        color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"})
     style_figure(fig_proj, title_size=22)
     st.plotly_chart(fig_proj, use_container_width=True)
     st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(p_ipca):.2f}%")
@@ -565,13 +552,13 @@ elif menu == "Plano de Ação":
     st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
     col_a, col_b = st.columns(2)
     with col_a:
-        st.markdown('<div class="card"><h4 style="color: var(--primary);">1: Modernização Industrial</h4><p><b>Ação:</b> Programa Votorantim 4.0.<br><b>Como:</b> Isenção parcial de ISS/IPTU para empresas que investirem em IoT e Big Data.<br><b>Impacto:</b> Aumento real da produtividade e diversificação do VAB.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card"><h4 style="color: var(--primary);">2: Zoneamento e Território</h4><p><b>Ação:</b> Zonas de Transição Tecnológica.<br><b>Como:</b> Revisão do Plano Diretor para criar "amortecedores" entre áreas residenciais e fábricas limpas.<br><b>Impacto:</b> Redução de conflitos urbanos e segurança jurídica.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card"><h4 style="color: var(--primary);">3: Retenção de Talentos</h4><p><b>Ação:</b> Hub de Inovação Industrial.<br><b>Como:</b> Parceria com a FATEC para qualificação técnica especializada.<br><b>Impacto:</b> Combate ao "Efeito Shadowing" e aumento da renda média.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">1: Modernização Industrial</h4><p><b>Ação:</b> Programa Votorantim 4.0.<br><b>Como:</b> Isenção parcial de ISS/IPTU para empresas que investirem em IoT e Big Data.<br><b>Impacto:</b> Aumento real da produtividade e diversificação do VAB.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">2: Zoneamento e Território</h4><p><b>Ação:</b> Zonas de Transição Tecnológica.<br><b>Como:</b> Revisão do Plano Diretor para criar "amortecedores" entre áreas residenciais e fábricas limpas.<br><b>Impacto:</b> Redução de conflitos urbanos e segurança jurídica.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4><p><b>Ação:</b> Hub de Inovação Industrial.<br><b>Como:</b> Parceria com a FATEC para qualificação técnica especializada.<br><b>Impacto:</b> Combate ao "Efeito Shadowing" e aumento da renda média.</p></div>', unsafe_allow_html=True)
     with col_b:
-        st.markdown('<div class="card"><h4 style="color: var(--primary);">4: Servitização Industrial</h4><p><b>Ação:</b> Estímulo à Indústria como Serviço.<br><b>Como:</b> Apoio para grandes plantas incubarem startups de logística e manutenção preditiva.<br><b>Impacto:</b> Equilíbrio setorial e novas receitas tributárias.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card"><h4 style="color: var(--primary);">5: Atração de Investimentos e Empreendedorismo</h4><p><b>Ação:</b> Monitoramento Pós-IPCA.<br><b>Como:</b> Uso do Observatório para demonstrar ganhos reais de eficiência a investidores.<br><b>Impacto:</b> Melhoria da imagem municipal e competitividade.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card"><h4 style="color: var(--primary);">6: Evolução Setorial</h4><p><b>Ação:</b> Transição de alto nível tecnológico.<br><b>Como:</b> Transformar indústria tradicional em geradora de serviços avançados.<br><b>Impacto:</b> Sustentação do PIB a longo prazo.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">4: Servitização Industrial</h4><p><b>Ação:</b> Estímulo à Indústria como Serviço.<br><b>Como:</b> Apoio para grandes plantas incubarem startups de logística e manutenção preditiva.<br><b>Impacto:</b> Equilíbrio setorial e novas receitas tributárias.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">5: Atração de Investimentos e Empreendedorismo</h4><p><b>Ação:</b> Monitoramento Pós-IPCA.<br><b>Como:</b> Uso do Observatório para demonstrar ganhos reais de eficiência a investidores.<br><b>Impacto:</b> Melhoria da imagem municipal e competitividade.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">6: Evolução Setorial</h4><p><b>Ação:</b> Transição de alto nível tecnológico.<br><b>Como:</b> Transformar indústria tradicional em geradora de serviços avançados.<br><b>Impacto:</b> Sustentação do PIB a longo prazo.</p></div>', unsafe_allow_html=True)
 
 elif menu == "Fontes/Referências":
     st.markdown('<p class="section-title">Fontes de Dados e Bibliografia</p>', unsafe_allow_html=True)

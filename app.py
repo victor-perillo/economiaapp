@@ -17,70 +17,45 @@ st.set_page_config(
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-    
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 18px; color: #0f172a; }
-    body, p, li, span, div, a, button, input, label, select { font-size: 1.05rem; line-height: 1.75; }
-    .stApp { background-color: #f8fafc; }
-    
-    .card {
-        background: white;
-        padding: 2.4rem;
-        border-radius: 20px;
-        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
-        border: none;
-        margin-bottom: 2rem;
-    }
-    
-    .section-title {
-        color: #0f172a;
-        font-size: 2.9rem;
-        font-weight: 800;
-        border-left: 10px solid #ff8c00;
-        padding-left: 22px;
-        margin-top: 20px;
-        margin-bottom: 36px;
-    }
-    .stApp h3, .stApp h4 { color: #0f172a; }
-    .stApp h3 { font-size: 2.2rem; margin-bottom: 1rem; }
-    .stApp h4 { font-size: 1.55rem; margin-bottom: 0.75rem; }
 
-    .step-box { 
-        padding: 1.8rem; border-radius: 12px; margin-bottom: 1.2rem; border-left: 8px solid; 
-        font-size: 1.05rem;
-    }
-    .step-extracao { background-color: #eff6ff; border-color: #1e3a8a; color: #1e3a8a; }
-    .step-transformacao { background-color: #fffaf5; border-color: #ff8c00; color: #854d0e; }
-    .step-carga { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+    :root{ --bg:#f6f8fb; --card:#ffffff; --muted:#6b7280; --accent:#0b61a4; --accent2:#ff8c00; }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 16px; color: #0b1220; background: var(--bg); }
+    .stApp { background: linear-gradient(180deg, #f6f8fb 0%, #ffffff 100%); padding-bottom:40px; }
 
-    .z-card { 
-        background-color: #f1f5f9; padding: 1.6rem; border-radius: 16px; 
-        border-left: 5px solid #ff8c00; margin-bottom: 18px; min-height: 130px;
-        font-size: 1.05rem;
-    }
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:linear-gradient(90deg,#0b61a4 0%, #0e7bd6 100%);border-radius:12px;color:#fff;margin-bottom:22px;box-shadow:0 18px 42px rgba(11,97,164,0.16);}
+    .topbar .title{font-size:1.65rem;font-weight:700;letter-spacing:0.01em;}
+    .topbar .subtitle{opacity:0.92;font-size:0.98rem;margin-top:4px;}
+    .topbar .cta{background:rgba(255,255,255,0.16);padding:10px 16px;border-radius:12px;color:#fff;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,0.22);}
 
-    [data-testid="stSidebar"] { background-color: #0f172a; }
-    [data-testid="stSidebar"] * { color: #ffffff !important; font-size: 1.05rem !important; }
-    [data-testid="stSidebar"] img { max-width: 120px !important; }
+    .card{background:var(--card);padding:24px;border-radius:18px;box-shadow:0 12px 32px rgba(15,23,42,0.08);border:none;margin-bottom:1.8rem;}
+    .section-title{color:#08122a;font-size:2.4rem;font-weight:800;border-left:8px solid var(--accent2);padding-left:18px;margin:6px 0 18px;}
+    .stApp h3, .stApp h4 { color:#08122a; }
+    .stApp h3 { font-size:2.1rem; margin-bottom:0.9rem; }
+    .stApp h4 { font-size:1.45rem; margin-bottom:0.75rem; }
+
+    .step-box{padding:18px;border-radius:14px;margin-bottom:14px;font-size:1rem;}
+    .step-extracao{background:#eef6ff;border-left:6px solid #1e3a8a;color:#0b3b66;}
+    .step-transformacao{background:#fff7ed;border-left:6px solid #ff8c00;color:#7c4c11;}
+    .step-carga{background:#f3fff6;border-left:6px solid #16a34a;color:#0f5132;}
+
+    .z-card{background:#f8fafc;padding:16px;border-radius:14px;border-left:5px solid var(--accent2);margin-bottom:18px;min-height:140px;font-size:1.02rem;}
+
+    [data-testid="stSidebar"]{background:linear-gradient(180deg,#0b1220 0%, #11243a 100%);}    
+    [data-testid="stSidebar"] *{color:#ffffff !important;}
+    [data-testid="stSidebar"] img{max-width:120px !important;}
     [data-testid="stSidebar"] select, [data-testid="stSidebar"] .stSelectbox>div>div, [data-testid="stSidebar"] .stSelectbox>div>div>div,
-    [data-testid="stSidebar"] .stTextInput>div>div>input {
-        background-color: #1e293b !important;
-        color: #ffffff !important;
-        border: 1px solid #334155 !important;
-    }
-    [data-testid="stSidebar"] .stSelectbox>label>div, [data-testid="stSidebar"] .stSelectbox>label>div span {
-        color: #ffffff !important;
-    }
-    [data-testid="stSidebar"] .stSelectbox>div>div>div span { color: #ffffff !important; }
-    .stButton>button { font-size: 1.1rem !important; padding: 0.9rem 1rem !important; }
-    .stSelectbox, .stRadio { font-size: 1.1rem !important; }
-    .css-1oe9bi0, .css-1d391kg, .css-hxt7ib { font-size: 1.1rem !important; }
-    .stTextInput>div>div>input { font-size: 1.05rem !important; padding: 0.9rem !important; }
-    
-    .chart-caption { text-align: center; color: #475569; font-style: italic; margin-top: 14px; font-size: 1.05rem; }
-    .footer {
-        text-align: center; padding: 3.2rem; color: #475569; font-size: 1.05rem;
-        border-top: 1px solid #e2e8f0; margin-top: 5rem;
-    }
+    [data-testid="stSidebar"] .stTextInput>div>div>input{background-color:#1e293b !important;color:#ffffff !important;border:1px solid #334155 !important;}
+    [data-testid="stSidebar"] .stSelectbox>label>div, [data-testid="stSidebar"] .stSelectbox>label>div span{color:#ffffff !important;}
+    [data-testid="stSidebar"] .stSelectbox>div>div>div span{color:#ffffff !important;}
+    .stButton>button{font-size:1.05rem !important;padding:0.85rem 1rem !important;}
+    .stSelectbox, .stRadio{font-size:1.05rem !important;}
+    .css-1oe9bi0, .css-1d391kg, .css-hxt7ib{font-size:1.05rem !important;}
+    .stTextInput>div>div>input{font-size:1.05rem !important;padding:0.9rem !important;}
+
+    .chart-caption{text-align:center;color:var(--muted);font-style:italic;margin-top:12px;}
+    .footer{text-align:center;padding:28px;color:var(--muted);font-size:1.03rem;border-top:1px solid #e2e8f0;margin-top:38px;}
+
+    @media (max-width: 900px){ .section-title{font-size:1.75rem;} .topbar{flex-direction:column;align-items:flex-start;gap:10px;} }
     </style>
     """, unsafe_allow_html=True)
 
@@ -115,6 +90,19 @@ def load_data():
     return df_seg, df_hist
 
 df_seg, df_hist = load_data()
+
+st.markdown("""
+    <div class="topbar">
+      <div>
+        <div class="title">Observatório Industrial Votorantim | Inteligência 4.0</div>
+        <div class="subtitle">Painel interativo — visão estratégica e operacional</div>
+      </div>
+      <div>
+        <a class="cta" href="https://economiaapp-economia-fatec.streamlit.app/" target="_blank">Abrir no Streamlit</a>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 def style_figure(fig, title_size=20, legend=True):
     layout_options = dict(

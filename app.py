@@ -16,46 +16,50 @@ st.set_page_config(
 # --- CUSTOMIZAÇÃO CSS (FRONT-END MODERNO) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    :root{ --bg:#f6f8fb; --card:#ffffff; --muted:#6b7280; --accent:#0b61a4; --accent2:#ff8c00; }
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-size: 16px; color: #0b1220; background: var(--bg); }
-    .stApp { background: linear-gradient(180deg, #f6f8fb 0%, #ffffff 100%); padding-bottom:40px; }
+    :root{ --bg:#eef2f7; --surface:#ffffff; --surface-soft:#f8fbff; --text:#0f172a; --text-muted:#64748b; --primary:#0b61a4; --accent:#ff8c00; }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); }
+    body, p, li, span, div, a, button, input, label, select { font-size: 1rem; line-height: 1.72; }
+    .stApp { background: var(--bg); padding: 18px 20px 40px; }
+    .reportview-container .main .block-container { padding-top: 0; padding-left: 0; padding-right: 0; max-width: 1700px; margin: 0 auto; }
 
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:linear-gradient(90deg,#0b61a4 0%, #0e7bd6 100%);border-radius:12px;color:#fff;margin-bottom:22px;box-shadow:0 18px 42px rgba(11,97,164,0.16);}
-    .topbar .title{font-size:1.65rem;font-weight:700;letter-spacing:0.01em;}
-    .topbar .subtitle{opacity:0.92;font-size:0.98rem;margin-top:4px;}
-    .topbar .cta{background:rgba(255,255,255,0.16);padding:10px 16px;border-radius:12px;color:#fff;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,0.22);}
+    .topbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; background: linear-gradient(90deg,#0b61a4 0%,#0e7bd6 70%,#0db4ff 100%); padding:24px 26px; border-radius:24px; box-shadow:0 24px 60px rgba(11,97,164,0.16); color:#fff; margin-bottom:24px; }
+    .topbar .title { font-size:1.9rem; font-weight:700; letter-spacing:0.01em; margin:0; }
+    .topbar .subtitle { margin:0.35rem 0 0; max-width:720px; opacity:0.95; }
+    .topbar .cta { display:inline-flex; align-items:center; justify-content:center; gap:10px; background:rgba(255,255,255,0.18); color:#fff; padding:12px 18px; border-radius:16px; border:1px solid rgba(255,255,255,0.28); text-decoration:none; font-weight:600; transition: background .2s ease; }
+    .topbar .cta:hover { background:rgba(255,255,255,0.26); }
+    .topbar-pill-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .pill { display:inline-flex; align-items:center; justify-content:center; padding:10px 16px; border-radius:999px; background:rgba(255,255,255,0.16); color:#fff; font-size:0.95rem; }
 
-    .card{background:var(--card);padding:24px;border-radius:18px;box-shadow:0 12px 32px rgba(15,23,42,0.08);border:none;margin-bottom:1.8rem;}
-    .section-title{color:#08122a;font-size:2.4rem;font-weight:800;border-left:8px solid var(--accent2);padding-left:18px;margin:6px 0 18px;}
-    .stApp h3, .stApp h4 { color:#08122a; }
-    .stApp h3 { font-size:2.1rem; margin-bottom:0.9rem; }
-    .stApp h4 { font-size:1.45rem; margin-bottom:0.75rem; }
+    .section-title { color:#0f172a; font-size:2.55rem; font-weight:800; border-left:10px solid var(--accent); padding-left:18px; margin:0 0 24px; }
+    .section-note { color:var(--text-muted); font-size:1rem; margin-top:-8px; margin-bottom:20px; }
+    .module-card { background: var(--surface); border-radius:24px; padding:26px; box-shadow:0 20px 40px rgba(15,23,42,0.08); border:1px solid rgba(15,23,42,0.06); margin-bottom:24px; }
+    .card { background: var(--surface); border-radius:22px; padding:24px; box-shadow:0 14px 32px rgba(15,23,42,0.08); border:1px solid rgba(15,23,42,0.06); margin-bottom:22px; }
+    .card-slim { background: var(--surface); border-radius:18px; padding:18px; box-shadow:0 10px 24px rgba(15,23,42,0.05); border:1px solid rgba(15,23,42,0.06); margin-bottom:18px; }
+    .highlight { color: var(--primary); font-weight:700; }
+    .z-card { background:#f8fbff; padding:20px; border-radius:18px; border-left:5px solid var(--accent); box-shadow:0 14px 26px rgba(15,23,42,0.04); margin-bottom:18px; }
+    .step-box { padding:20px; border-radius:18px; margin-bottom:18px; box-shadow:0 14px 28px rgba(15,23,42,0.05); }
+    .step-extracao { background:#eef6ff; border-left:6px solid #1e3a8a; color:#0f3b66; }
+    .step-transformacao { background:#fff7ed; border-left:6px solid #ff8c00; color:#7c4c11; }
+    .step-carga { background:#f3fff6; border-left:6px solid #16a34a; color:#0f5132; }
 
-    .step-box{padding:18px;border-radius:14px;margin-bottom:14px;font-size:1rem;}
-    .step-extracao{background:#eef6ff;border-left:6px solid #1e3a8a;color:#0b3b66;}
-    .step-transformacao{background:#fff7ed;border-left:6px solid #ff8c00;color:#7c4c11;}
-    .step-carga{background:#f3fff6;border-left:6px solid #16a34a;color:#0f5132;}
+    [data-testid="stSidebar"] { background: linear-gradient(180deg,#0f172a 0%,#13294b 100%); }
+    [data-testid="stSidebar"] *, [data-testid="stSidebar"] label { color:#fff !important; }
+    [data-testid="stSidebar"] .stButton>button { border-radius:14px; background:#0b61a4; color:#fff; border:none; font-weight:600; }
+    [data-testid="stSidebar"] .stButton>button:hover { background:#0d75d1; }
+    [data-testid="stSidebar"] .stSelectbox>div>div>div, [data-testid="stSidebar"] .stTextInput>div>div>input { background:#13294b !important; color:#fff !important; border:1px solid rgba(255,255,255,0.12) !important; }
+    [data-testid="stSidebar"] .stSelectbox>label>div, [data-testid="stSidebar"] .stSelectbox>label>div span { color:#f8fafc !important; }
+    [data-testid="stSidebar"] img { max-width: 120px !important; margin-bottom: 16px; }
+    .stButton>button { font-size:1.05rem !important; padding:0.85rem 1rem !important; }
+    .stSelectbox, .stRadio { font-size:1.05rem !important; }
 
-    .z-card{background:#f8fafc;padding:16px;border-radius:14px;border-left:5px solid var(--accent2);margin-bottom:18px;min-height:140px;font-size:1.02rem;}
+    .chart-caption { text-align:center; color:var(--text-muted); font-style:italic; margin-top:16px; font-size:1rem; }
+    .footer { text-align:center; padding:32px 0 16px; color:var(--text-muted); font-size:0.96rem; border-top:1px solid rgba(15,23,42,0.08); margin-top:44px; }
+    .link-button { display:inline-flex; align-items:center; justify-content:center; padding:12px 18px; background:#0b61a4; color:#fff; border-radius:14px; text-decoration:none; font-weight:600; }
+    .charts-grid { display:grid; gap:22px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); }
 
-    [data-testid="stSidebar"]{background:linear-gradient(180deg,#0b1220 0%, #11243a 100%);}    
-    [data-testid="stSidebar"] *{color:#ffffff !important;}
-    [data-testid="stSidebar"] img{max-width:120px !important;}
-    [data-testid="stSidebar"] select, [data-testid="stSidebar"] .stSelectbox>div>div, [data-testid="stSidebar"] .stSelectbox>div>div>div,
-    [data-testid="stSidebar"] .stTextInput>div>div>input{background-color:#1e293b !important;color:#ffffff !important;border:1px solid #334155 !important;}
-    [data-testid="stSidebar"] .stSelectbox>label>div, [data-testid="stSidebar"] .stSelectbox>label>div span{color:#ffffff !important;}
-    [data-testid="stSidebar"] .stSelectbox>div>div>div span{color:#ffffff !important;}
-    .stButton>button{font-size:1.05rem !important;padding:0.85rem 1rem !important;}
-    .stSelectbox, .stRadio{font-size:1.05rem !important;}
-    .css-1oe9bi0, .css-1d391kg, .css-hxt7ib{font-size:1.05rem !important;}
-    .stTextInput>div>div>input{font-size:1.05rem !important;padding:0.9rem !important;}
-
-    .chart-caption{text-align:center;color:var(--muted);font-style:italic;margin-top:12px;}
-    .footer{text-align:center;padding:28px;color:var(--muted);font-size:1.03rem;border-top:1px solid #e2e8f0;margin-top:38px;}
-
-    @media (max-width: 900px){ .section-title{font-size:1.75rem;} .topbar{flex-direction:column;align-items:flex-start;gap:10px;} }
+    @media (max-width: 900px) { .topbar { flex-direction:column; align-items:flex-start; } .topbar-pill-row { justify-content:flex-start; } .section-title { font-size:1.95rem; } }
     </style>
     """, unsafe_allow_html=True)
 
@@ -101,8 +105,12 @@ st.markdown("""
         <a class="cta" href="https://economiaapp-economia-fatec.streamlit.app/" target="_blank">Abrir no Streamlit</a>
       </div>
     </div>
+    <div class="topbar-pill-row">
+      <span class="pill">Visão estratégica</span>
+      <span class="pill">Painel multidimensional</span>
+      <span class="pill">Foco em Indústria 4.0</span>
+    </div>
     """, unsafe_allow_html=True)
-
 
 def style_figure(fig, title_size=20, legend=True):
     layout_options = dict(
@@ -300,11 +308,29 @@ elif menu == "Dashboard Executivo":
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.metric(f"PIB Municipal ({ano_txt})", formatar_valor(dados_atuais['PIB']))
+        st.markdown(f"""
+            <div class="card-slim" style="min-height: 180px;">
+                <h4 style="color:#1E3A8A; margin-bottom:0.75rem;">PIB Municipal ({ano_txt})</h4>
+                <p style="font-size:2rem; font-weight:700; margin-bottom:0.4rem;">{formatar_valor(dados_atuais['PIB'])}</p>
+                <p style="color:#64748b; margin:0;">Indicador principal da performance econômica local.</p>
+            </div>
+        """, unsafe_allow_html=True)
     with c2:
-        st.metric("VAB Indústria (Est.)", formatar_valor(dados_atuais['VAB_Industria']))
+        st.markdown(f"""
+            <div class="card-slim" style="min-height: 180px;">
+                <h4 style="color:#1E3A8A; margin-bottom:0.75rem;">VAB Indústria (Est.)</h4>
+                <p style="font-size:2rem; font-weight:700; margin-bottom:0.4rem;">{formatar_valor(dados_atuais['VAB_Industria'])}</p>
+                <p style="color:#64748b; margin:0;">Contribuição estimada da indústria ao valor adicionado bruto.</p>
+            </div>
+        """, unsafe_allow_html=True)
     with c3:
-        st.metric("VAB Serviços (Est.)", formatar_valor(dados_atuais['VAB_Servicos']))
+        st.markdown(f"""
+            <div class="card-slim" style="min-height: 180px;">
+                <h4 style="color:#1E3A8A; margin-bottom:0.75rem;">VAB Serviços (Est.)</h4>
+                <p style="font-size:2rem; font-weight:700; margin-bottom:0.4rem;">{formatar_valor(dados_atuais['VAB_Servicos'])}</p>
+                <p style="color:#64748b; margin:0;">Contribuição estimada do setor de serviços ao PIB municipal.</p>
+            </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("---")
 

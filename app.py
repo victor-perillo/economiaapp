@@ -31,45 +31,6 @@ st.markdown("""
         margin-bottom: 2rem;
     }
     
-    .card-lg {
-        background: white;
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
-        border: none;
-        margin-bottom: 1.5rem;
-        min-height: 240px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    
-    .card-md {
-        background: white;
-        padding: 1.8rem;
-        border-radius: 16px;
-        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
-        border: none;
-        margin-bottom: 1.5rem;
-        min-height: 160px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    
-    .card-sm {
-        background: #f1f5f9;
-        padding: 1.6rem;
-        border-radius: 16px;
-        border-left: 5px solid #ff8c00;
-        margin-bottom: 1.2rem;
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        font-size: 1.05rem;
-    }
-    
     .section-title {
         color: #0f172a;
         font-size: 2.9rem;
@@ -92,15 +53,8 @@ st.markdown("""
     .step-carga { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
 
     .z-card { 
-        background-color: #f1f5f9; 
-        padding: 1.6rem; 
-        border-radius: 16px; 
-        border-left: 5px solid #ff8c00; 
-        margin-bottom: 1.2rem; 
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        background-color: #f1f5f9; padding: 1.6rem; border-radius: 16px; 
+        border-left: 5px solid #ff8c00; margin-bottom: 18px; min-height: 130px;
         font-size: 1.05rem;
     }
 
@@ -341,19 +295,19 @@ elif menu == "Dashboard Executivo":
     
     col_info1, col_info2, col_info3 = st.columns(3)
     with col_info1:
-        st.markdown("""<div class="card-lg">
+        st.markdown("""<div class="card" style="min-height: 250px;">
             <h4 style="color:#1E3A8A;">O que é o PIB?</h4>
-            <p>O <b>Produto Interno Bruto (PIB)</b> representa a soma de todos os bens e serviços finais produzidos em uma região durante um período. É o principal indicador para medir a riqueza e o vigor econômico de um município.</p>
+            O <b>Produto Interno Bruto (PIB)</b> representa a soma de todos os bens e serviços finais produzidos em uma região durante um período. É o principal indicador para medir a riqueza e o vigor econômico de um município.
         </div>""", unsafe_allow_html=True)
     with col_info2:
-        st.markdown("""<div class="card-lg">
+        st.markdown("""<div class="card" style="min-height: 250px;">
             <h4 style="color:#1E3A8A;">O que é o VAB?</h4>
-            <p>O <b>Valor Adicionado Bruto (VAB)</b> é o valor que cada setor (Indústria, Serviços, Agro) adiciona à economia, deduzindo o custo dos insumos utilizados no processo produtivo. Reflete a contribuição real de cada atividade.</p>
+            O <b>Valor Adicionado Bruto (VAB)</b> é o valor que cada setor (Indústria, Serviços, Agro) adiciona à economia, deduzindo o custo dos insumos utilizados no processo produtivo. Reflete a contribuição real de cada atividade.
         </div>""", unsafe_allow_html=True)
     with col_info3:
-        st.markdown("""<div class="card-lg">
+        st.markdown("""<div class="card" style="min-height: 250px;">
             <h4 style="color:#1E3A8A;">Como são calculados?</h4>
-            <p>O <b>VAB</b> é calculado pela diferença entre o Valor Bruto da Produção e o Consumo Intermediário. O <b>PIB</b> é a soma dos VABs de todos os setores mais os impostos sobre produtos (líquidos de subsídios).</p>
+            O <b>VAB</b> é calculado pela diferença entre o Valor Bruto da Produção e o Consumo Intermediário. O <b>PIB</b> é a soma dos VABs de todos os setores mais os impostos sobre produtos (líquidos de subsídios).
         </div>""", unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns(3)
@@ -413,11 +367,7 @@ elif menu == "Dashboard Executivo":
         fig_gdp_pie.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
         st.plotly_chart(fig_gdp_pie, use_container_width=True)
     with obs_col:
-        st.markdown("""<div class="card-md">
-            <h4>Observação de Participação</h4>
-            <p style="margin:0;">Serviços representam a maior fatia estimada do PIB, enquanto Agropecuária chega a menos de 1%.</p>
-            <p style="color:#64748b; margin-top:0.5rem;">Indústria e Administração Pública ocupam cerca de 35% do PIB local.</p>
-        </div>""", unsafe_allow_html=True)
+        st.markdown("""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Observação de Participação</h4>\n            <p style=\"margin:0;\">Serviços representam a maior fatia estimada do PIB, enquanto Agropecuária chega a menos de 1%.</p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Indústria e Administração Pública ocupam cerca de 35% do PIB local.</p>\n        </div>""", unsafe_allow_html=True)
 
     st.markdown("---")
     ref_col, cnae_col = st.columns(2)
@@ -436,11 +386,7 @@ elif menu == "Dashboard Executivo":
     st.markdown('<h3>Distribuição de Empregos em Votorantim</h3>', unsafe_allow_html=True)
     emp_card_col, emp_trend_col = st.columns([0.4, 0.6])
     with emp_card_col:
-        st.markdown(f"""<div class="card-md">
-            <h4>Total de Empregos Formais</h4>
-            <p style="font-size:2rem; margin:0;"><b>{employment_total/1000:.1f} mil</b></p>
-            <p style="color:#64748b; margin-top:0.5rem;">Vínculos formais registrados em Votorantim em 2023.</p>
-        </div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class=\"card\" style=\"min-height: 180px;\">\n            <h4>Total de Empregos Formais</h4>\n            <p style=\"font-size:2rem; margin:0;\"><b>{employment_total/1000:.1f} mil</b></p>\n            <p style=\"color:#64748b; margin-top:0.5rem;\">Vínculos formais registrados em Votorantim em 2023.</p>\n        </div>""", unsafe_allow_html=True)
     with emp_trend_col:
         fig_trend = px.line(employment_trend, x='Ano', y='Vínculos', title='Evolução dos Empregos Formais (2014-2023)', markers=True)
         fig_trend.update_layout(yaxis_title='Vínculos formais', xaxis=dict(dtick=1))
@@ -535,7 +481,7 @@ elif menu == "Diagnóstico Indústria 4.0":
     col_text, col_metrics = st.columns([0.6, 0.4])
     with col_text:
         st.markdown("""
-        <div class="card-md"><h4 style="color: #1E3A8A;">Oportunidade Estratégica</h4><ul style="margin:0.5rem 0 0 0; padding-left:18px; line-height:1.7;">
+        <div class="card"><h4 style="color: #1E3A8A;">Oportunidade Estratégica</h4><ul style="margin:0; padding-left:18px; line-height:1.7;">
             <li>Votorantim pode posicionar suas plantas industriais acima da média nacional de produtividade.</li>
             <li>Investimentos em digitalização devem priorizar setores com maior maturidade e maior potencial de VAB.</li>
             <li>A integração de análise de dados e manutenção preditiva reduz custos operacionais e aumenta confiabilidade.</li>
@@ -548,9 +494,9 @@ elif menu == "Diagnóstico Indústria 4.0":
         with m2:
             st.metric("Impacto de Receita", "+R$ 65k", "por operário")
         st.markdown("""
-        <div class="card-sm" style="min-height: 140px;">
+        <div class="card" style="padding:1rem; margin-top:1rem;">
             <h4 style="color: #1E3A8A; margin-bottom:0.5rem;">Próximos passos</h4>
-            <p style="margin:0; font-size: 0.95rem;">1. Priorizar projetos de digitalização em metalurgia e química.<br>2. Definir indicadores claros de eficiência e redução de paradas.<br>3. Criar um roadmap 4.0 com metas de produtividade e ROI.</p>
+            <p style="margin:0;">1. Priorizar projetos de digitalização em metalurgia e química.<br>2. Definir indicadores claros de eficiência e redução de paradas.<br>3. Criar um roadmap 4.0 com metas de produtividade e ROI.</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -603,16 +549,16 @@ elif menu == "Projeção Futura":
     st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(p_ipca):.2f}%")
 
 elif menu == "Plano de Ação":
-    st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_have_html=True)
+    st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
     col_a, col_b = st.columns(2)
     with col_a:
-        st.markdown('<div class="card-md"><h4 style="color: #1E3A8A;">1: Modernização Industrial</h4><p><b>Ação:</b> Programa Votorantim 4.0.<br><b>Como:</b> Isenção parcial de ISS/IPTU para empresas que investirem em IoT e Big Data.<br><b>Impacto:</b> Aumento real da produtividade e diversificação do VAB.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card-md"><h4 style="color: #1E3A8A;">2: Zoneamento e Território</h4><p><b>Ação:</b> Zonas de Transição Tecnológica.<br><b>Como:</b> Revisão do Plano Diretor para criar "amortecedores" entre áreas residenciais e fábricas limpas.<br><b>Impacto:</b> Redução de conflitos urbanos e segurança jurídica.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card-md"><h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4><p><b>Ação:</b> Hub de Inovação Industrial.<br><b>Como:</b> Parceria com a FATEC para qualificação técnica especializada.<br><b>Impacto:</b> Combate ao "Efeito Shadowing" e aumento da renda média.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">1: Modernização Industrial</h4><p><b>Ação:</b> Programa Votorantim 4.0.<br><b>Como:</b> Isenção parcial de ISS/IPTU para empresas que investirem em IoT e Big Data.<br><b>Impacto:</b> Aumento real da produtividade e diversificação do VAB.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">2: Zoneamento e Território</h4><p><b>Ação:</b> Zonas de Transição Tecnológica.<br><b>Como:</b> Revisão do Plano Diretor para criar "amortecedores" entre áreas residenciais e fábricas limpas.<br><b>Impacto:</b> Redução de conflitos urbanos e segurança jurídica.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">3: Retenção de Talentos</h4><p><b>Ação:</b> Hub de Inovação Industrial.<br><b>Como:</b> Parceria com a FATEC para qualificação técnica especializada.<br><b>Impacto:</b> Combate ao "Efeito Shadowing" e aumento da renda média.</p></div>', unsafe_allow_html=True)
     with col_b:
-        st.markdown('<div class="card-md"><h4 style="color: #1E3A8A;">4: Servitização Industrial</h4><p><b>Ação:</b> Estímulo à Indústria como Serviço.<br><b>Como:</b> Apoio para grandes plantas incubarem startups de logística e manutenção preditiva.<br><b>Impacto:</b> Equilíbrio setorial e novas receitas tributárias.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card-md"><h4 style="color: #1E3A8A;">5: Atração de Investimentos e Empreendedorismo</h4><p><b>Ação:</b> Monitoramento Pós-IPCA.<br><b>Como:</b> Uso do Observatório para demonstrar ganhos reais de eficiência a investidores.<br><b>Impacto:</b> Melhoria da imagem municipal e competitividade.</p></div>', unsafe_allow_html=True)
-        st.markdown('<div class="card-md"><h4 style="color: #1E3A8A;">6: Evolução Setorial</h4><p><b>Ação:</b> Transição de alto nível tecnológico.<br><b>Como:</b> Transformar indústria tradicional em geradora de serviços avançados.<br><b>Impacto:</b> Sustentação do PIB a longo prazo.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">4: Servitização Industrial</h4><p><b>Ação:</b> Estímulo à Indústria como Serviço.<br><b>Como:</b> Apoio para grandes plantas incubarem startups de logística e manutenção preditiva.<br><b>Impacto:</b> Equilíbrio setorial e novas receitas tributárias.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">5: Atração de Investimentos e Empreendedorismo</h4><p><b>Ação:</b> Monitoramento Pós-IPCA.<br><b>Como:</b> Uso do Observatório para demonstrar ganhos reais de eficiência a investidores.<br><b>Impacto:</b> Melhoria da imagem municipal e competitividade.</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="card"><h4 style="color: #1E3A8A;">6: Evolução Setorial</h4><p><b>Ação:</b> Transição de alto nível tecnológico.<br><b>Como:</b> Transformar indústria tradicional em geradora de serviços avançados.<br><b>Impacto:</b> Sustentação do PIB a longo prazo.</p></div>', unsafe_allow_html=True)
 
 elif menu == "Fontes/Referências":
     st.markdown('<p class="section-title">Fontes de Dados e Bibliografia</p>', unsafe_allow_html=True)
@@ -625,9 +571,9 @@ elif menu == "Fontes/Referências":
         st.write("- **BCB / IBGE**: IPCA.")
         st.write("- **Portal da Indústria / IEDI / ABDI**")
     with col_qr_ref:
-        st.markdown('<div class="card-md" style="text-align:center;"><b>Material do Trabalho</b><p style="font-size:0.9rem; color:#666; margin-top:0.5rem;">Acesse planilhas brutas no Drive:</p></div>', unsafe_allow_html=True)
+        st.markdown('<div style="background:white; padding:20px; border-radius:12px; border:1px solid #e0e0e0; text-align:center;"><b>Material do Trabalho</b><p style="font-size:0.85rem; color:#666;">Acesse planilhas brutas no Drive:</p></div>', unsafe_allow_html=True)
         url_drive = "https://drive.google.com/drive/folders/12XwL_9c_lzHLopxX9lHEeNBGkn1old8G?usp=drive_link"
-        st.image(gerar_qrcode(url_drive), width=150)
+        st.image(gerar_qrcode(url_drive), width=180)
         st.link_button("📂 Abrir Pasta de Dados", url_drive, use_container_width=True)
 
 # --- FOOTER ---

@@ -29,8 +29,6 @@ st.markdown("""
     .topbar .subtitle { margin:0.35rem 0 0; max-width:720px; opacity:0.95; }
     .topbar .cta { display:inline-flex; align-items:center; justify-content:center; gap:10px; background:rgba(255,255,255,0.18); color:#fff; padding:12px 18px; border-radius:16px; border:1px solid rgba(255,255,255,0.28); text-decoration:none; font-weight:600; transition: background .2s ease; }
     .topbar .cta:hover { background:rgba(255,255,255,0.26); }
-    .topbar-pill-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
-    .pill { display:inline-flex; align-items:center; justify-content:center; padding:10px 16px; border-radius:999px; background:rgba(255,255,255,0.16); color:#fff; font-size:0.95rem; }
 
     .section-title { color:#0f172a; font-size:2.55rem; font-weight:800; border-left:10px solid var(--accent); padding-left:18px; margin:0 0 24px; }
     .section-note { color:var(--text-muted); font-size:1rem; margin-top:-8px; margin-bottom:20px; }
@@ -64,7 +62,7 @@ st.markdown("""
     .link-button { display:inline-flex; align-items:center; justify-content:center; padding:12px 18px; background:#334155; color:#fff; border-radius:14px; text-decoration:none; font-weight:600; }
     .charts-grid { display:grid; gap:22px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); }
 
-    @media (max-width: 900px) { .topbar { flex-direction:column; align-items:flex-start; } .topbar-pill-row { justify-content:flex-start; } .section-title { font-size:1.95rem; } }
+    @media (max-width: 900px) { .topbar { flex-direction:column; align-items:flex-start; } .section-title { font-size:1.95rem; } }
     </style>
     """, unsafe_allow_html=True)
 
@@ -109,11 +107,6 @@ st.markdown("""
       <div>
         <a class="cta" href="https://economiaapp-economia-fatec.streamlit.app/" target="_blank">Abrir no Streamlit</a>
       </div>
-    </div>
-    <div class="topbar-pill-row">
-      <span class="pill">Visão estratégica</span>
-      <span class="pill">Painel multidimensional</span>
-      <span class="pill">Foco em Indústria 4.0</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -341,7 +334,7 @@ elif menu == "Dashboard Executivo":
 
     fig_comparativo = go.Figure()
     fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB'], name='PIB Votorantim Corrente', marker_color='#334155'))
-    fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB_Constante'], name='PIB Constante (2023)', marker_color='#E67E22'))
+    fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB_Constante'], name='PIB Constante (2023)', marker_color='#64748b'))
     fig_comparativo.update_layout(
         title="Evolução do PIB (Correntes vs Constantes de 2023), em R$ mil",
         xaxis_title="Ano", barmode='group', legend=dict(orientation="h", y=-0.3, x=0.5, xanchor="center")
@@ -380,7 +373,7 @@ elif menu == "Dashboard Executivo":
     with dist_pib_col:
         fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
                              title='Participação Estimada no PIB (2023)', hole=0.3,
-                             color='Setor Econômico', color_discrete_sequence=['#475569', '#6b7280', '#7c3aed', '#ff8c00'])
+                             color='Setor Econômico', color_discrete_sequence=['#334155', '#64748b', '#94a3b8', '#ff8c00'])
         fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
         style_figure(fig_gdp_pie, title_size=22, legend=True)
         fig_gdp_pie.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
@@ -416,7 +409,7 @@ elif menu == "Dashboard Executivo":
     row_job1, row_job2 = st.columns(2)
     with row_job1:
         fig_sector_bar = px.bar(sector_df, x='Setor Econômico', y='Percentual', title='Distribuição por Setor (2023)',
-                                text='Percentual', color='Setor Econômico', color_discrete_sequence=px.colors.qualitative.Safe)
+                                text='Percentual', color='Setor Econômico', color_discrete_sequence=['#334155', '#64748b', '#94a3b8', '#ff8c00'])
         fig_sector_bar.update_traces(texttemplate='%{text:.1f}%', textposition='outside', textfont_size=13)
         fig_sector_bar.update_layout(yaxis_title='Percentual (%)', showlegend=False)
         style_figure(fig_sector_bar, title_size=22, legend=False)
@@ -437,12 +430,13 @@ elif menu == "Dashboard Executivo":
     with row_job3:
         fig_treemap = px.treemap(sector_df, path=['Setor Econômico'], values='Vínculos',
                                  title='Distribuição por Setor de Atividade (2023)',
-                                 color='Percentual', color_continuous_scale='Blues')
+                                 color='Percentual', color_continuous_scale=['#f8fafc', '#cbd5e1', '#64748b', '#334155'])
         fig_treemap.update_traces(textinfo='label+value+percent parent')
         style_figure(fig_treemap, title_size=22, legend=False)
         st.plotly_chart(fig_treemap, use_container_width=True)
     with row_job4:
-        fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3)
+        fig_age = px.pie(age_df, names='Faixa Etária', values='Percentual', title='Distribuição por Faixa Etária (2023)', hole=0.3,
+                        color_discrete_sequence=['#334155', '#64748b', '#94a3b8', '#cbd5e1', '#ff8c00'])
         fig_age.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
         style_figure(fig_age, title_size=22, legend=True)
         fig_age.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
@@ -473,7 +467,7 @@ elif menu == "Diagnóstico Indústria 4.0":
         fig_comp.add_trace(go.Bar(x=['Sem Tecnologia 4.0', 'Com Tecnologia 4.0'], y=[210, 345], marker_color=['#94a3b8', '#FF8C00'], text=['R$ 210k', 'R$ 345k'], textposition='auto', marker_line_color='rgba(0,0,0,0.08)', marker_line_width=1.5))
         fig_comp.add_hline(y=280, line_dash="dash", line_color="#0B5394", line_width=4,
                            annotation_text="Média Nacional: R$ 280k", annotation_position="top left",
-                           annotation_font_size=12, annotation_font_color="#0B5394")
+                           annotation_font_size=12, annotation_font_color="#334155")
         fig_comp.update_layout(
             title="Produtividade por Operário: Tecnologia 4.0 vs Modelo Tradicional",
             yaxis_title="R$ / Operário (Milhares)",

@@ -595,7 +595,7 @@ elif menu == "Projeção Futura":
     st.info(f"**Estatísticas:** Indústria $R^2$: {r2_ind:.4f} | Serviços $R^2$: {r2_serv:.4f} | IPCA Médio Previsto: {np.mean(p_ipca):.2f}%")
 
 elif menu == "Plano de Ação":
-    st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_have_html=True)
+    st.markdown('<p class="section-title">Plano Estratégico Condizente</p>', unsafe_allow_html=True)
     col_a, col_b = st.columns(2)
     with col_a:
         st.markdown('<div class="card-md"><h4 style="color: #1E3A8A;">1: Modernização Industrial</h4><p><b>Ação:</b> Programa Votorantim 4.0.<br><b>Como:</b> Isenção parcial de ISS/IPTU para empresas que investirem em IoT e Big Data.<br><b>Impacto:</b> Aumento real da produtividade e diversificação do VAB.</p></div>', unsafe_allow_html=True)

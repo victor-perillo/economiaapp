@@ -8,12 +8,22 @@ from io import BytesIO
 try:
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import getSampleStyleSheet
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak, Image as RLImage
     from reportlab.lib import colors
     from reportlab.lib.units import cm
     PDF_LIB_AVAILABLE = True
 except Exception:
     PDF_LIB_AVAILABLE = False
+try:
+    import kaleido
+    KALEIDO_AVAILABLE = True
+except Exception:
+    KALEIDO_AVAILABLE = False
+try:
+    from playwright.sync_api import sync_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except Exception:
+    PLAYWRIGHT_AVAILABLE = False
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -174,7 +184,6 @@ def gerar_pdf_relatorio():
     )
     story.append(Paragraph(intro_text, styles['BodyText']))
     story.append(Spacer(1, 12))
-
     # Indicadores principais
     story.append(Paragraph("Panorama Macro de Votorantim", styles['Heading2']))
     try:
@@ -187,6 +196,68 @@ def gerar_pdf_relatorio():
     story.append(Paragraph(f"VAB Indústria (Est.): {vab_ind}", styles['Normal']))
     story.append(Paragraph(f"VAB Serviços (Est.): {vab_serv}", styles['Normal']))
     story.append(Spacer(1, 12))
+
+    # Inserir gráficos (tentar exportar imagens via kaleido)
+    def append_fig_image(fig, width_cm=16):
+        if not KALEIDO_AVAILABLE:
+            return False
+        try:
+            img_bytes = fig.to_image(format='png', scale=2)
+            img_buf = BytesIO(img_bytes)
+            im = RLImage(img_buf, width=width_cm*cm, preserveAspectRatio=True)
+            story.append(im)
+            story.append(Spacer(1, 12))
+            return True
+        except Exception:
+            return False
+
+    # Recriar os principais gráficos para capturar a imagem
+    try:
+        # comparativo PIB
+        fig_comparativo = go.Figure()
+        fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB'], name='PIB Votorantim Corrente', marker_color='#1E3A8A'))
+        fig_comparativo.add_trace(go.Bar(x=df_hist['Ano'], y=df_hist['PIB_Constante'], name='PIB Constante (2023)', marker_color='#E67E22'))
+        fig_comparativo.update_layout(title="Evolução do PIB (Correntes vs Constantes de 2023), em R$ mil")
+        appended = append_fig_image(fig_comparativo)
+        if not appended:
+            story.append(Paragraph("(Gráfico comparativo não incluído — falta 'kaleido')", styles['BodyText']))
+            story.append(Spacer(1, 12))
+
+        # evolução indústria vs serviços
+        df_p = df_hist.copy()
+        y_cols = ['VAB_Industria', 'VAB_Servicos']
+        fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços", markers=True,
+                               color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"})
+        appended = append_fig_image(fig_evolucao)
+        if not appended:
+            story.append(Paragraph("(Gráfico evolução não incluído — falta 'kaleido')", styles['BodyText']))
+            story.append(Spacer(1, 12))
+
+        # participação PIB (pie)
+        fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB', hole=0.3,
+                             color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
+        appended = append_fig_image(fig_gdp_pie)
+        if not appended:
+            story.append(Paragraph("(Gráfico pizza PIB não incluído — falta 'kaleido')", styles['BodyText']))
+            story.append(Spacer(1, 12))
+
+        # distribuição por setor (bar)
+        fig_sector_bar = px.bar(sector_df, x='Setor Econômico', y='Percentual', text='Percentual', color='Setor Econômico')
+        appended = append_fig_image(fig_sector_bar)
+        if not appended:
+            story.append(Paragraph("(Gráfico setores não incluído — falta 'kaleido')", styles['BodyText']))
+            story.append(Spacer(1, 12))
+
+        # gender pie
+        fig_gender = px.pie(gender_df, names='Gênero', values='Vínculos', hole=0.3)
+        appended = append_fig_image(fig_gender)
+        if not appended:
+            story.append(Paragraph("(Gráfico gênero não incluído — falta 'kaleido')", styles['BodyText']))
+            story.append(Spacer(1, 12))
+
+    except Exception:
+        story.append(Paragraph("(Não foi possível gerar imagens dos gráficos.)", styles['BodyText']))
+        story.append(Spacer(1, 12))
 
     # Séries históricas (tabela)
     story.append(Paragraph("Séries Históricas (trecho)", styles['Heading2']))
@@ -253,6 +324,18 @@ def gerar_pdf_relatorio():
     doc.build(story)
     buffer.seek(0)
     return buffer.getvalue()
+
+
+def gerar_pdf_via_playwright(url, timeout=30000):
+    if not PLAYWRIGHT_AVAILABLE:
+        raise ModuleNotFoundError("playwright não está instalado no ambiente. Instale 'playwright' e execute 'playwright install' antes de usar esta função.")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=['--no-sandbox'])
+        page = browser.new_page(viewport={"width": 1200, "height": 1600})
+        page.goto(url, wait_until='networkidle', timeout=timeout)
+        pdf_bytes = page.pdf(format='A4', print_background=True)
+        browser.close()
+        return pdf_bytes
 
 # --- CARREGANDO OS DADOS ---
 @st.cache_data
@@ -361,6 +444,19 @@ with st.sidebar:
                 st.error(f"Erro ao gerar PDF: {e}")
     else:
         st.warning("Geração de PDF desabilitada: 'reportlab' não está instalado neste ambiente. Adicione 'reportlab' em requirements.txt e redeploy/reinicie o app.")
+    st.markdown("---")
+    # Opção avançada: captura completa via navegador (PDF idêntico)
+    st.markdown("**PDF idêntico ao Streamlit (captura do navegador)**")
+    url_capture = st.text_input("URL para captura (página Streamlit)", value=url_da_pagina)
+    if PLAYWRIGHT_AVAILABLE:
+        if st.button("Gerar PDF (Captura Navegador)"):
+            try:
+                pdf_bytes = gerar_pdf_via_playwright(url_capture)
+                st.download_button("Baixar PDF (Captura)", data=pdf_bytes, file_name="observatorio_votorantim_capture.pdf", mime="application/pdf")
+            except Exception as e:
+                st.error(f"Erro na captura via navegador: {e}")
+    else:
+        st.info("Para PDF idêntico instale 'playwright' e execute 'playwright install' localmente.")
     menu = st.radio("Navegação Estratégica:", 
                     ["Introdução & Contexto", "Problemas Identificados", "Metodologia ETL", 
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 

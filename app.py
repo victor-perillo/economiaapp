@@ -5,11 +5,15 @@ import plotly.express as px
 import plotly.graph_objects as go
 import segno
 from io import BytesIO
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak
-from reportlab.lib import colors
-from reportlab.lib.units import cm
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak
+    from reportlab.lib import colors
+    from reportlab.lib.units import cm
+    PDF_LIB_AVAILABLE = True
+except Exception:
+    PDF_LIB_AVAILABLE = False
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -149,6 +153,8 @@ def gerar_qrcode(url):
 
 
 def gerar_pdf_relatorio():
+    if not PDF_LIB_AVAILABLE:
+        raise ModuleNotFoundError("reportlab não está instalado no ambiente. Instale 'reportlab' e reinicie o app.")
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
     styles = getSampleStyleSheet()
@@ -346,9 +352,15 @@ with st.sidebar:
     
     st.divider()
     # Botão para gerar e baixar PDF do trabalho
-    if st.button("Gerar PDF do Trabalho"):
-        pdf_bytes = gerar_pdf_relatorio()
-        st.download_button("Baixar PDF (Relatório Completo)", data=pdf_bytes, file_name="observatorio_votorantim_relatorio.pdf", mime="application/pdf")
+    if PDF_LIB_AVAILABLE:
+        if st.button("Gerar PDF do Trabalho"):
+            try:
+                pdf_bytes = gerar_pdf_relatorio()
+                st.download_button("Baixar PDF (Relatório Completo)", data=pdf_bytes, file_name="observatorio_votorantim_relatorio.pdf", mime="application/pdf")
+            except Exception as e:
+                st.error(f"Erro ao gerar PDF: {e}")
+    else:
+        st.warning("Geração de PDF desabilitada: 'reportlab' não está instalado neste ambiente. Adicione 'reportlab' em requirements.txt e redeploy/reinicie o app.")
     menu = st.radio("Navegação Estratégica:", 
                     ["Introdução & Contexto", "Problemas Identificados", "Metodologia ETL", 
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 

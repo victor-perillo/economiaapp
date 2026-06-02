@@ -19,11 +19,6 @@ try:
     KALEIDO_AVAILABLE = True
 except Exception:
     KALEIDO_AVAILABLE = False
-try:
-    from playwright.sync_api import sync_playwright
-    PLAYWRIGHT_AVAILABLE = True
-except Exception:
-    PLAYWRIGHT_AVAILABLE = False
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -326,17 +321,6 @@ def gerar_pdf_relatorio():
     return buffer.getvalue()
 
 
-def gerar_pdf_via_playwright(url, timeout=30000):
-    if not PLAYWRIGHT_AVAILABLE:
-        raise ModuleNotFoundError("playwright não está instalado no ambiente. Instale 'playwright' e execute 'playwright install' antes de usar esta função.")
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=['--no-sandbox'])
-        page = browser.new_page(viewport={"width": 1200, "height": 1600})
-        page.goto(url, wait_until='networkidle', timeout=timeout)
-        pdf_bytes = page.pdf(format='A4', print_background=True)
-        browser.close()
-        return pdf_bytes
-
 # --- CARREGANDO OS DADOS ---
 @st.cache_data
 def load_data():
@@ -436,27 +420,13 @@ with st.sidebar:
     st.divider()
     # Botão para gerar e baixar PDF do trabalho
     if PDF_LIB_AVAILABLE:
-        if st.button("Gerar PDF do Trabalho"):
-            try:
-                pdf_bytes = gerar_pdf_relatorio()
-                st.download_button("Baixar PDF (Relatório Completo)", data=pdf_bytes, file_name="observatorio_votorantim_relatorio.pdf", mime="application/pdf")
-            except Exception as e:
-                st.error(f"Erro ao gerar PDF: {e}")
+        try:
+            pdf_bytes = gerar_pdf_relatorio()
+            st.download_button("Baixar PDF do Trabalho (Relatório Completo)", data=pdf_bytes, file_name="observatorio_votorantim_relatorio.pdf", mime="application/pdf")
+        except Exception as e:
+            st.error(f"Erro ao gerar PDF: {e}")
     else:
         st.warning("Geração de PDF desabilitada: 'reportlab' não está instalado neste ambiente. Adicione 'reportlab' em requirements.txt e redeploy/reinicie o app.")
-    st.markdown("---")
-    # Opção avançada: captura completa via navegador (PDF idêntico)
-    st.markdown("**PDF idêntico ao Streamlit (captura do navegador)**")
-    url_capture = st.text_input("URL para captura (página Streamlit)", value=url_da_pagina)
-    if PLAYWRIGHT_AVAILABLE:
-        if st.button("Gerar PDF (Captura Navegador)"):
-            try:
-                pdf_bytes = gerar_pdf_via_playwright(url_capture)
-                st.download_button("Baixar PDF (Captura)", data=pdf_bytes, file_name="observatorio_votorantim_capture.pdf", mime="application/pdf")
-            except Exception as e:
-                st.error(f"Erro na captura via navegador: {e}")
-    else:
-        st.info("Para PDF idêntico instale 'playwright' e execute 'playwright install' localmente.")
     menu = st.radio("Navegação Estratégica:", 
                     ["Introdução & Contexto", "Problemas Identificados", "Metodologia ETL", 
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 

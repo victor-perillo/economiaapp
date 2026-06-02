@@ -222,7 +222,7 @@ def gerar_pdf_relatorio():
         df_p = df_hist.copy()
         y_cols = ['VAB_Industria', 'VAB_Servicos']
         fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços", markers=True,
-                               color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"})
+                            color_discrete_map={"VAB_Industria": "#1E3A8A", "VAB_Servicos": "#FF8C00"})
         appended = append_fig_image(fig_evolucao)
         if not appended:
             story.append(Paragraph("(Gráfico evolução não incluído — falta 'kaleido')", styles['BodyText']))
@@ -230,7 +230,7 @@ def gerar_pdf_relatorio():
 
         # participação PIB (pie)
         fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB', hole=0.3,
-                             color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
+                            color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
         appended = append_fig_image(fig_gdp_pie)
         if not appended:
             story.append(Paragraph("(Gráfico pizza PIB não incluído — falta 'kaleido')", styles['BodyText']))
@@ -418,15 +418,6 @@ with st.sidebar:
     st.markdown(f"**Período selecionado:** {ano_selecionado}")
     
     st.divider()
-    # Botão para gerar e baixar PDF do trabalho
-    if PDF_LIB_AVAILABLE:
-        try:
-            pdf_bytes = gerar_pdf_relatorio()
-            st.download_button("Baixar PDF do Trabalho (Relatório Completo)", data=pdf_bytes, file_name="observatorio_votorantim_relatorio.pdf", mime="application/pdf")
-        except Exception as e:
-            st.error(f"Erro ao gerar PDF: {e}")
-    else:
-        st.warning("Geração de PDF desabilitada: 'reportlab' não está instalado neste ambiente. Adicione 'reportlab' em requirements.txt e redeploy/reinicie o app.")
     menu = st.radio("Navegação Estratégica:", 
                     ["Introdução & Contexto", "Problemas Identificados", "Metodologia ETL", 
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 
@@ -583,7 +574,7 @@ elif menu == "Dashboard Executivo":
             y_cols = ['VAB_Industria', 'VAB_Servicos']
 
         fig_evolucao = px.line(df_p, x='Ano', y=y_cols, title="Evolução Histórica: Indústria vs Serviços", markers=True,
-                               color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Ajustado IPCA)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Ajustado IPCA)": "#fdba74"})
+                            color_discrete_map={"VAB_Industria": "#1E3A8A", "Indústria (Ajustado IPCA)": "#93c5fd", "VAB_Servicos": "#FF8C00", "Serviços (Ajustado IPCA)": "#fdba74"})
         fig_evolucao.update_layout(yaxis_title='Valor (R$ milhões)')
         style_figure(fig_evolucao, title_size=22)
         st.plotly_chart(fig_evolucao, use_container_width=True)
@@ -594,8 +585,8 @@ elif menu == "Dashboard Executivo":
     dist_pib_col, obs_col = st.columns([0.6, 0.4])
     with dist_pib_col:
         fig_gdp_pie = px.pie(gdp_sector_df, names='Setor Econômico', values='Participação PIB',
-                             title='Participação Estimada no PIB (2023)', hole=0.3,
-                             color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
+                            title='Participação Estimada no PIB (2023)', hole=0.3,
+                            color='Setor Econômico', color_discrete_sequence=['#1E40AF', '#0EA5E9', '#9333EA', '#22C55E'])
         fig_gdp_pie.update_traces(texttemplate='%{label}: %{percent:.1%}', textposition='outside', textfont_size=14, insidetextorientation='radial')
         style_figure(fig_gdp_pie, title_size=22, legend=True)
         fig_gdp_pie.update_layout(legend=dict(orientation='v', x=1.02, y=0.5, xanchor='left', yanchor='middle', font=dict(size=14)))
@@ -651,8 +642,8 @@ elif menu == "Dashboard Executivo":
     row_job3, row_job4 = st.columns(2)
     with row_job3:
         fig_treemap = px.treemap(sector_df, path=['Setor Econômico'], values='Vínculos',
-                                 title='Distribuição por Setor de Atividade (2023)',
-                                 color='Percentual', color_continuous_scale='Blues')
+                                title='Distribuição por Setor de Atividade (2023)',
+                                color='Percentual', color_continuous_scale='Blues')
         fig_treemap.update_traces(textinfo='label+value+percent parent')
         style_figure(fig_treemap, title_size=22, legend=False)
         st.plotly_chart(fig_treemap, use_container_width=True)
@@ -687,8 +678,8 @@ elif menu == "Diagnóstico Indústria 4.0":
         fig_comp = go.Figure()
         fig_comp.add_trace(go.Bar(x=['Sem Tecnologia 4.0', 'Com Tecnologia 4.0'], y=[210, 345], marker_color=['#94a3b8', '#FF8C00'], text=['R$ 210k', 'R$ 345k'], textposition='auto', marker_line_color='rgba(0,0,0,0.08)', marker_line_width=1.5))
         fig_comp.add_hline(y=280, line_dash="dash", line_color="#0B5394", line_width=4,
-                           annotation_text="Média Nacional: R$ 280k", annotation_position="top left",
-                           annotation_font_size=12, annotation_font_color="#0B5394")
+                        annotation_text="Média Nacional: R$ 280k", annotation_position="top left",
+                        annotation_font_size=12, annotation_font_color="#0B5394")
         fig_comp.update_layout(
             title="Produtividade por Operário: Tecnologia 4.0 vs Modelo Tradicional",
             yaxis_title="R$ / Operário (Milhares)",

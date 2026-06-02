@@ -5,6 +5,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import segno
 from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, PageBreak
+from reportlab.lib import colors
+from reportlab.lib.units import cm
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -142,6 +147,107 @@ def gerar_qrcode(url):
     qrcode.save(out, kind='png', scale=10)
     return out.getvalue()
 
+
+def gerar_pdf_relatorio():
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Header
+    story.append(Paragraph("Observatório Industrial Votorantim | Inteligência Industrial 4.0", styles['Title']))
+    story.append(Spacer(1, 12))
+    story.append(Paragraph("Grupo: Bruno V. Queiroz, Gislaine Takushi, Mariana Curvêlo, Victor Perillo e Vinicius Pierote.", styles['Normal']))
+    story.append(Paragraph("Orientador: Flavianno A. de Lima", styles['Normal']))
+    story.append(Spacer(1, 12))
+
+    # Introdução / Contexto
+    story.append(Paragraph("Contexto e Plano Diretor", styles['Heading2']))
+    intro_text = (
+        "Votorantim atravessa um momento crucial de transição econômica. Historicamente consolidada como um pilar da indústria de base (minerais e metalurgia), a cidade hoje apresenta uma nova dinâmica revelada pelos dados: a ascensão acelerada do setor de serviços e um aumento expressivo na produtividade por operário."
+    )
+    story.append(Paragraph(intro_text, styles['BodyText']))
+    story.append(Spacer(1, 12))
+
+    # Indicadores principais
+    story.append(Paragraph("Panorama Macro de Votorantim", styles['Heading2']))
+    try:
+        pib_val = formatar_valor(dados_atuais['PIB'])
+        vab_ind = formatar_valor(dados_atuais['VAB_Industria'])
+        vab_serv = formatar_valor(dados_atuais['VAB_Servicos'])
+    except Exception:
+        pib_val = vab_ind = vab_serv = "-"
+    story.append(Paragraph(f"PIB Municipal (período selecionado): {pib_val}", styles['Normal']))
+    story.append(Paragraph(f"VAB Indústria (Est.): {vab_ind}", styles['Normal']))
+    story.append(Paragraph(f"VAB Serviços (Est.): {vab_serv}", styles['Normal']))
+    story.append(Spacer(1, 12))
+
+    # Séries históricas (tabela)
+    story.append(Paragraph("Séries Históricas (trecho)", styles['Heading2']))
+    try:
+        hist_table = [list(df_hist.columns)] + df_hist.tail(10).values.tolist()
+        t = Table(hist_table, repeatRows=1)
+        t.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1E3A8A')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('GRID', (0,0), (-1,-1), 0.25, colors.grey),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold')
+        ]))
+        story.append(t)
+    except Exception:
+        story.append(Paragraph("Não foi possível gerar a tabela histórica.", styles['BodyText']))
+    story.append(Spacer(1, 12))
+
+    # Distribuição por setor
+    story.append(Paragraph("Distribuição de Empregos e Setores (2023)", styles['Heading2']))
+    try:
+        sector_table = [list(sector_df.columns)] + sector_df.values.tolist()
+        t2 = Table(sector_table, repeatRows=1)
+        t2.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#FF8C00')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('GRID', (0,0), (-1,-1), 0.25, colors.grey),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold')
+        ]))
+        story.append(t2)
+    except Exception:
+        story.append(Paragraph("Não foi possível gerar a tabela setorial.", styles['BodyText']))
+    story.append(Spacer(1, 12))
+
+    # Segmentos industriais
+    story.append(Paragraph("Riqueza Industrial por CNAE", styles['Heading2']))
+    try:
+        seg_table = [list(df_seg.columns)] + df_seg.values.tolist()
+        t3 = Table(seg_table, repeatRows=1)
+        t3.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1E40AF')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('GRID', (0,0), (-1,-1), 0.25, colors.grey),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold')
+        ]))
+        story.append(t3)
+    except Exception:
+        story.append(Paragraph("Não foi possível gerar a tabela de segmentos.", styles['BodyText']))
+    story.append(PageBreak())
+
+    # Conclusões e plano de ação
+    story.append(Paragraph("Principais Problemas Identificados", styles['Heading2']))
+    story.append(Paragraph("Clusterização e Dependência em relação ao PIB; Conflito Territorial; Evolução Setorial e Efeito Shadowing.", styles['BodyText']))
+    story.append(Spacer(1, 12))
+    story.append(Paragraph("Plano Estratégico (Resumido)", styles['Heading2']))
+    plano_text = (
+        "1. Modernização Industrial (Programa Votorantim 4.0).\n"
+        "2. Zoneamento e Território - Zonas de Transição Tecnológica.\n"
+        "3. Retenção de Talentos - Hub de Inovação Industrial.\n"
+        "4. Servitização Industrial e Atração de Investimentos."
+    )
+    story.append(Paragraph(plano_text.replace('\n', '<br/>'), styles['BodyText']))
+
+    # Build PDF
+    doc.build(story)
+    buffer.seek(0)
+    return buffer.getvalue()
+
 # --- CARREGANDO OS DADOS ---
 @st.cache_data
 def load_data():
@@ -239,6 +345,10 @@ with st.sidebar:
     st.markdown(f"**Período selecionado:** {ano_selecionado}")
     
     st.divider()
+    # Botão para gerar e baixar PDF do trabalho
+    if st.button("Gerar PDF do Trabalho"):
+        pdf_bytes = gerar_pdf_relatorio()
+        st.download_button("Baixar PDF (Relatório Completo)", data=pdf_bytes, file_name="observatorio_votorantim_relatorio.pdf", mime="application/pdf")
     menu = st.radio("Navegação Estratégica:", 
                     ["Introdução & Contexto", "Problemas Identificados", "Metodologia ETL", 
                     "Dashboard Executivo", "Diagnóstico Indústria 4.0", "Projeção Futura", 
